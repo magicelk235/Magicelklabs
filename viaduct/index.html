@@ -7,7 +7,7 @@
   <title>Viaduct</title>
   <meta name="description" content="Viaduct converts any Chrome extension into a native Safari Web Extension. One click. No terminal, no Xcode." />
   <link rel="canonical" href="https://magicelklabs.com/viaduct/" />
-  <meta property="og:title" content="Viaduct — Run Chrome extensions in Safari" />
+  <meta property="og:title" content="Viaduct: run Chrome extensions in Safari" />
   <meta property="og:description" content="Drop in a .zip, a .crx, or a Chrome Web Store link. Viaduct converts, signs, and installs it into Safari for you." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://magicelklabs.com/viaduct/" />
@@ -35,7 +35,7 @@
           fontFamily: {
             sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Segoe UI', 'system-ui', 'sans-serif'],
             display: ['Cabinet Grotesk', 'Inter', 'sans-serif'],
-            mono: ['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'monospace'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'monospace'],
           },
           borderRadius: { squircle: '16px' },
         },
@@ -44,7 +44,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
 <style>
   /* ───────────────────────── Design tokens (viaduct Theme.swift) ───────────────────────── */
@@ -57,14 +57,19 @@
     --hair: rgba(0,0,0,.10);  --hair-soft: rgba(0,0,0,.05);  --hair-strong: rgba(0,0,0,.16);
     --glass: rgba(255,255,255,.62);  --glass-brd: rgba(255,255,255,.7);
   }
+  /* Dark is the only mode this page ships. The canvas is a near-black with a
+     trace of green in it, so the teal accent sits on it as a lit thing rather
+     than a sticker on a neutral grey. */
   html.dark {
-    --canvas: #1A1A1C;  --surface: #222225;  --elevated: #2A2A2E;  --card: #323237;
-    --ink: #F5F5F7;     --body: #D4D4D8;     --mute: #98989F;      --ash: #68686E;  --stone: #49494E;
-    --teal: #21AF9F;    --teal-press: #1B958A; --on-teal: #04201C;
-    --wash-a: #5FCEC0;  --wash-b: #1B958A;
+    --canvas: #070908;  --surface: #0E1211;  --elevated: #151A19;  --card: #1B211F;
+    --ink: #ECF2F0;     --body: #9DAAA7;     --mute: #6B7A77;      --ash: #4E5B58;  --stone: #333D3B;
+    --teal: #2DD4BF;    --teal-press: #5FE3D2; --on-teal: #04211D;
+    --wash-a: #5FCEC0;  --wash-b: #12756C;
     --ok: #30D158;  --bad: #FF6369;
-    --hair: rgba(255,255,255,.10); --hair-soft: rgba(255,255,255,.06); --hair-strong: rgba(255,255,255,.18);
-    --glass: rgba(40,40,44,.55);   --glass-brd: rgba(255,255,255,.10);
+    --hair: rgba(255,255,255,.075); --hair-soft: rgba(255,255,255,.045); --hair-strong: rgba(255,255,255,.14);
+    --glass: rgba(20,26,25,.55);   --glass-brd: rgba(255,255,255,.10);
+    /* one shared highlight for every raised edge: light catches the top lip */
+    --lip: inset 0 1px 0 rgba(255,255,255,.055);
   }
 
   * { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -73,11 +78,19 @@
   ::selection { background: var(--teal); color: var(--on-teal); }
 
   h1,h2,h3 { color: var(--ink); letter-spacing: -0.02em; }
-  h1,h2 { font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800 !important; letter-spacing:-0.025em; }
+  h1,h2 { font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800 !important; letter-spacing:-0.025em; line-height:1.06; }
   .ink { color: var(--ink); }
   .mute { color: var(--mute); }
   .body { color: var(--body); }
   .cap { letter-spacing: .03em; }
+
+
+  /* Film grain over the whole page. Keeps the near-black from banding on large
+     gradients and takes the plastic off the flat fills. */
+  body::after {
+    content:""; position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
 
   /* ───────────────────────── Motion gate ─────────────────────────
      Elements opt in via data-mm; hidden only while the GSAP runtime is
@@ -85,57 +98,108 @@
   html.mm [data-mm] { visibility: hidden; }
   html.mm [data-mm-stagger] > * { visibility: hidden; }
 
-  .surface { background: var(--surface); border: 1px solid var(--hair); }
-  .elevated { background: var(--elevated); border: 1px solid var(--hair); }
+  .surface { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); }
+  .elevated { background: var(--elevated); border: 1px solid var(--hair); box-shadow: var(--lip); }
   .hair { border-color: var(--hair); }
 
-  /* No drop shadows anywhere — depth from the surface ladder. (viaduct rule) */
+  /* No cast shadows: on a near-black canvas they read as smudge. Depth comes
+     from the surface ladder plus the --lip highlight on each raised edge. The
+     one exception is the teal CTA, where the glow IS the affordance. */
 
   /* ───────────────────────── Buttons ───────────────────────── */
   .btn-teal {
     background: var(--teal); color: var(--on-teal); font-weight: 600;
-    border-radius: 12px; transition: transform .22s cubic-bezier(.2,.8,.2,1), background .2s, filter .2s;
+    border-radius: 999px; box-shadow: inset 0 1px 0 rgba(255,255,255,.3);
+    transition: transform .22s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .25s;
   }
-  .btn-teal:hover { background: var(--teal-press); transform: translateY(-1px); }
+  .btn-teal:hover {
+    background: var(--teal-press); transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 6px 28px -6px rgba(45,212,191,.55);
+  }
   .btn-teal:active { transform: translateY(0) scale(.99); }
+
+  /* Glass secondary: the Raycast register — a lit pane, not an outline. */
   .btn-ghost {
-    background: transparent; color: var(--ink); border: 1px solid var(--hair-strong);
-    border-radius: 12px; transition: transform .22s, border-color .2s, background .2s;
+    background: rgba(255,255,255,.05); color: var(--ink); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 999px; box-shadow: var(--lip);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    transition: transform .22s cubic-bezier(.2,.8,.2,1), border-color .2s, background .2s;
   }
-  .btn-ghost:hover { border-color: var(--teal); transform: translateY(-1px); }
+  .btn-ghost:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.2); transform: translateY(-1px); }
+  .btn-ghost:active { transform: translateY(0) scale(.99); }
 
-  /* ───────────────────────── Brand band (deep teal, same in both modes) ───────────────────────── */
-  .hero-band { background: linear-gradient(168deg, #0F4D48 0%, #093732 55%, #07302B 100%); }
-  .hero-band h1, .hero-band h2 { color: #F2FBF9; }
-  .hero-band .on-band, .hero-band .body { color: #C6E3DE; }
-  .hero-band .on-band-dim { color: #93C2BB; }
-  .accent-band { color: #6EE0D1; }
-  .code-band { background: rgba(255,255,255,.13); color: #EAF7F4; }
-  .btn-onband { background: #FFFFFF; color: #0B4540; font-weight: 600; border-radius: 12px; transition: transform .22s cubic-bezier(.2,.8,.2,1), background .2s; }
-  .btn-onband:hover { background: #DDF2EE; transform: translateY(-1px); }
-  .btn-onband-ghost { color: #F2FBF9; border: 1px solid rgba(255,255,255,.32); border-radius: 12px; transition: transform .22s, border-color .2s; }
-  .btn-onband-ghost:hover { border-color: rgba(255,255,255,.65); transform: translateY(-1px); }
+  /* The paid tier, everywhere it appears: the brand teal taken deep, so it reads
+     as the same colour family without competing with the bright accent. */
+  .btn-cyan {
+    background: #0B7A70; color: #E8FCF8; font-weight: 600; border-radius: 999px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.16);
+    transition: transform .22s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .25s;
+  }
+  .btn-cyan:hover {
+    background: #0F958A; transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 6px 28px -6px rgba(15,149,138,.6);
+  }
+  .btn-cyan:active { transform: translateY(0) scale(.99); }
 
-  /* Pipeline step numerals */
-  .step-no { font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; font-size:40px; line-height:1; color:var(--teal); margin-bottom:12px; }
+  /* Near-white pill, for the one place a download should outrank everything. */
+  .btn-light {
+    background: #F2F5F4; color: #06110F; font-weight: 600; border-radius: 999px;
+    transition: transform .22s cubic-bezier(.2,.8,.2,1), background .2s;
+  }
+  .btn-light:hover { background: #FFFFFF; transform: translateY(-1px); }
+  .btn-light:active { transform: translateY(0) scale(.99); }
+
+  .accent-band { color: var(--teal); }
+
+  /* ───────────────────────── Hero atmosphere ─────────────────────────
+     Floodlight raking in from off the top-right. Ambient only: the hero
+     carries no illustration of its own. The teal bloom below is used by the
+     lower section, not the hero. */
+  .rays { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 1.2s ease .3s; }
+  .rays.lit { opacity: .82; }
+  @media (prefers-reduced-motion: reduce) { .rays { display: none; } }
+
+  .span-glow {
+    /* Sits clear of the hero's bottom edge, blur included, so nothing clips. */
+    position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%);
+    width: min(1250px, 140%); aspect-ratio: 2.1/1; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(45,212,191,.26), rgba(18,117,108,.12) 45%, transparent 72%);
+    filter: blur(28px);
+  }
+  @media (max-width: 700px) { .span-glow { width: 190%; } }
+
+  /* The hero is overflow-hidden, so any lit layer that reaches the bottom edge
+     gets sliced off and reads as a seam against the section below. Fade the
+     light out well before the boundary and let it land on the page canvas. */
+  .rays {
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 52%, rgba(0,0,0,.5) 78%, transparent 97%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 52%, rgba(0,0,0,.5) 78%, transparent 97%);
+  }
+
   /* Numbered feature rows */
-  .feat-num { font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; font-size:15px; line-height:1.7; color:var(--hair-strong); font-variant-numeric:tabular-nums; transition:color .2s; }
+  .feat-num { font-family:'JetBrains Mono',ui-monospace,monospace; font-weight:500; font-size:13px; line-height:2; color:var(--ash); font-variant-numeric:tabular-nums; transition:color .2s; }
   .feat-row:hover .feat-num { color:var(--teal); }
-  .pro-pill { display:inline-block; margin-left:8px; padding:2px 8px; border-radius:999px; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; vertical-align:middle; color:var(--teal); background:color-mix(in srgb, var(--teal) 14%, transparent); }
+  .pro-pill { display:inline-block; margin-left:8px; padding:2px 8px; border-radius:999px; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; vertical-align:middle; color:#3FD9C8; background:rgba(11,122,112,.28); }
   /* Supported-input format chips */
   /* Input funnel — the formats Viaduct accepts, shown as source tiles */
-  .in-tile { position:relative; display:flex; flex-direction:column; gap:10px; padding:18px; border-radius:16px; border:1px solid var(--hair); background:color-mix(in srgb, var(--ink) 2.5%, transparent); transition:border-color .25s cubic-bezier(.2,.8,.2,1), transform .25s cubic-bezier(.2,.8,.2,1), background .25s; }
-  .in-tile:hover { border-color:color-mix(in srgb, var(--teal) 55%, transparent); transform:translateY(-3px); background:color-mix(in srgb, var(--teal) 5%, transparent); }
+  .in-tile { position:relative; display:flex; flex-direction:column; gap:10px; padding:18px; border-radius:14px; border:1px solid var(--hair); background:var(--surface); box-shadow:var(--lip); transition:border-color .25s cubic-bezier(.2,.8,.2,1), transform .25s cubic-bezier(.2,.8,.2,1), background .25s; }
+  .in-tile:hover { border-color:color-mix(in srgb, var(--teal) 45%, transparent); transform:translateY(-3px); background:var(--elevated); }
   .in-tile .in-ico { width:34px; height:34px; display:grid; place-items:center; border-radius:9px; color:var(--teal); background:color-mix(in srgb, var(--teal) 12%, transparent); }
   .in-tile .in-ico svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.5; }
   .in-name { font-weight:600; color:var(--ink); font-size:15px; line-height:1.15; }
   .in-role { font-size:12.5px; color:var(--mute); line-height:1.35; }
-  .in-name code { font-family:ui-monospace,'SF Mono',monospace; color:var(--teal); font-size:14px; }
-  /* Pro pricing panel: drenched in the brand color */
-  .pro-panel { background: linear-gradient(168deg, #0F4D48, #093732); border: 1px solid rgba(255,255,255,.14); }
-  .pro-panel .ink { color: #F2FBF9; } .pro-panel .mute { color: #93C2BB; } .pro-panel .body { color: #C6E3DE; }
-  .pro-panel .btn-teal { background: #fff; color: #0B4540; }
-  .pro-panel .btn-teal:hover { background: #DDF2EE; }
+  .in-name code { font-family:'JetBrains Mono',ui-monospace,monospace; color:var(--teal); font-size:13.5px; }
+  /* Pro pricing panel: the one card lit from inside by the brand color */
+  .pro-panel {
+    position:relative; background:linear-gradient(168deg, #0C302C 0%, #0A1E1C 58%, #08110F 100%);
+    border:1px solid rgba(45,212,191,.22); box-shadow:inset 0 1px 0 rgba(45,212,191,.16);
+  }
+  .pro-panel::before {
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:radial-gradient(120% 70% at 50% -10%, rgba(45,212,191,.14), transparent 62%);
+  }
+  .pro-panel > * { position:relative; }
+  .pro-panel .ink { color:#EEFBF8; } .pro-panel .mute { color:#7FA39D; } .pro-panel .body { color:#BFDBD5; }
 
   /* ───────────────────────── Compat-layer ledger ───────────────────────── */
   .stat-num { font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; font-size:clamp(64px,9vw,112px); line-height:.95; letter-spacing:-.03em; color:var(--teal); font-variant-numeric:tabular-nums; }
@@ -168,36 +232,83 @@
   .engine-lane .count { margin-left:auto; font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; font-size:15px; color:var(--mute); font-variant-numeric:tabular-nums; white-space:nowrap; }
   .engine-lane.good .count { color:var(--teal); }
 
-  /* ───────────────────────── Pinned pipeline (Apple-style walkthrough) ─────────────────────────
-     Default = static stack (mobile, no-JS, reduced motion). motion.js adds
-     .mm-pin-live on capable viewports and pins the stage while panels crossfade. */
-  .pin-rail { display:none; }
-  .pin-panel { margin:0; }
-  .pin-panel + .pin-panel { margin-top:32px; }
-  .pin-frame { background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:6px; }
-  /* No `display` here: Tailwind's block/hidden classes drive the light/dark swap. */
-  .pin-frame img { border-radius:11px; width:100%; }
-  .pin-cap { margin-top:12px; font-size:14px; color:var(--mute); }
-  .pin-cap b { color:var(--ink); font-weight:600; }
-  @media (min-width:1024px) {
-    .mm-pin-live .pin-stage { height:100dvh; display:flex; align-items:center; }
-    .mm-pin-live .pin-grid { display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:56px; align-items:center; width:100%; }
-    .mm-pin-live .pin-rail { display:block; }
-    .mm-pin-live .pin-rail-item { opacity:.35; transition:opacity .4s ease; padding:24px 0; border-top:1px solid var(--hair-soft); }
-    .mm-pin-live .pin-rail-item:first-child { border-top:none; padding-top:0; }
-    .mm-pin-live .pin-rail-item.is-active { opacity:1; }
-    .mm-pin-live .pin-panels { position:relative; aspect-ratio:1800/1324; }
-    .mm-pin-live .pin-panel { position:absolute; inset:0; }
-    .mm-pin-live .pin-panel + .pin-panel { margin-top:0; }
-    .mm-pin-live .pin-cap { display:none; }
+  /* ───────────────────────── Scroll-scrubbed conversion ─────────────────────────
+     A tall track with a sticky stage inside it. Scroll position through the
+     track maps onto the video's playhead, so the run advances as you read.
+     Without JS (or under reduced motion) it degrades to a normal video. */
+  .scrub { position: relative; height: 300vh; }
+  .scrub-sticky {
+    position: sticky; top: 0; height: 100svh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  }
+  .scrub-frame {
+    /* Third term keeps the frame short enough that its caption still clears the
+       bottom of a short viewport (video is 1138x876, so ~1.3 wide per tall). */
+    width: min(100%, 880px, (100svh - 190px) * 1.3);
+    background: var(--surface); border: 1px solid var(--hair);
+    box-shadow: var(--lip); border-radius: 18px; padding: 8px;
+  }
+  .scrub-frame video { width: 100%; height: auto; display: block; border-radius: 11px; }
+  /* Stage rail: all three steps stay on the page and the one the video is
+     currently on lights up, so you can see where the run is headed. */
+  .scrub-caps { width: min(100%, 620px); }
+  .scrub-cap { padding: 22px 0; border-top: 1px solid var(--hair-soft); opacity: .35; transition: opacity .4s ease; }
+  .scrub-cap:first-child { border-top: none; padding-top: 0; }
+  .scrub-cap.is-on { opacity: 1; }
+  .scrub-step { font-family: 'Cabinet Grotesk', Inter, sans-serif; font-weight: 800; font-size: 34px; line-height: 1; color: var(--teal); margin-bottom: 10px; }
+  .scrub-cap h3 { font-family: 'Cabinet Grotesk', Inter, sans-serif; font-weight: 700; font-size: 19px; color: var(--ink); margin-bottom: 6px; }
+  .scrub-cap p { font-size: 15px; line-height: 1.6; color: var(--body); }
+  /* Wide enough for two columns: rail beside the run instead of under it. */
+  @media (min-width: 940px) {
+    .scrub-sticky {
+      flex-direction: row; align-items: center; justify-content: center;
+      /* Same 72rem measure as the max-w-6xl containers elsewhere on the page,
+         so the rail lines up with the section heading above it. */
+      gap: clamp(32px, 4.5vw, 56px); max-width: 72rem; margin: 0 auto;
+    }
+    .scrub-caps { order: -1; flex: 0 0 33%; width: auto; }
+    .scrub-frame { flex: 1 1 auto; min-width: 0; width: auto; max-width: min(760px, (100svh - 96px) * 1.6); }
+  }
+  /* No track to scroll through if the playhead isn't ours to drive. */
+  html.no-scrub .scrub { height: auto; }
+  html.no-scrub .scrub-sticky { position: static; height: auto; padding: 8px 0 0; flex-direction: column; }
+  /* Nothing lights the rail either, so every step reads at full strength. */
+  html.no-scrub .scrub-caps { order: 0; flex: none; width: min(100%, 880px); margin-top: 10px; }
+  html.no-scrub .scrub-cap { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .scrub { height: auto; }
+    .scrub-sticky { position: static; height: auto; padding: 8px 0 0; }
   }
 
   /* ───────────────────────── App icon ───────────────────────── */
   img[data-icon] { display: block; object-fit: contain; }
 
-  /* nav */
-  .nav-blur { background: color-mix(in srgb, var(--canvas) 72%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-bottom: 1px solid transparent; transition: border-color .3s; }
-  .nav-blur.scrolled { border-color: var(--hair); }
+  /* ───────────────────────── Nav: a floating glass pill ───────────────────────── */
+  .nav-pill {
+    position: relative;
+    background: rgba(14,18,17,.55); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 999px; box-shadow: var(--lip);
+    -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+    transition: background .3s, border-color .3s;
+  }
+  #nav.scrolled .nav-pill { background: rgba(14,18,17,.82); border-color: rgba(255,255,255,.12); }
+  /* Real glass: an SVG displacement map fed to backdrop-filter, so the pill
+     refracts what passes under it and splits colour at its edges. Chromium only,
+     so .glassy is set by script and the blur above stays as the fallback.
+     Blur is kept in the chain (the original drops it) or nav text sits on top of
+     whatever is scrolling past and stops being readable. */
+  .glass-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+  html.glassy .nav-pill {
+    background: rgba(14,18,17,.30);
+    backdrop-filter: url(#nav-glass) blur(9px) saturate(1.5);
+    box-shadow:
+      inset 0 0 2px 1px rgba(255,255,255,.30),
+      inset 0 0 12px 4px rgba(255,255,255,.10),
+      var(--lip);
+  }
+  html.glassy #nav.scrolled .nav-pill { background: rgba(14,18,17,.58); }
+  .nav-link { color: var(--body); transition: color .2s; }
+  .nav-link:hover { color: var(--ink); }
 
   /* faq */
   details { border-bottom: 1px solid var(--hair); }
@@ -205,147 +316,6 @@
   details summary::-webkit-details-marker { display: none; }
   details[open] .chev { transform: rotate(180deg); }
   .chev { transition: transform .3s; }
-
-  /* ───────────────────────── Live hero demo — a web copy of the real Viaduct app ─────────────────────────
-     Mirrors the shipping macOS app's User mode 1:1: the neutral system window,
-     the Liquid-Glass drop-card that morphs empty → ready → converting → done,
-     the phase glyph, the emerald step dots, the glass progress bar. Tokens track
-     the app's Theme.swift (teal #12A594/#2DD4BF, green #1A9D5A/#30D158, SF Pro).
-     Keeps data-mm-tilt / data-mm-scrub from motion.js. */
-  .demo-win {
-    --d-canvas:#F5F5F7; --d-surface:rgba(255,255,255,.7); --d-ink:#1D1D1F; --d-body:#3A3A3C; --d-mute:#6E6E73; --d-stone:#BFBFC4;
-    --d-hair:rgba(0,0,0,.10); --d-hair-strong:rgba(0,0,0,.18); --d-teal:#12A594; --d-green:#1A9D5A;
-    --d-glass:rgba(255,255,255,.55); --d-glass-edge:rgba(255,255,255,.7);
-    background:var(--d-canvas); border:1px solid rgba(255,255,255,.28); border-radius:16px; overflow:hidden;
-    font-family:'Inter',-apple-system,'SF Pro Text',system-ui,sans-serif;
-  }
-  html.dark .demo-win {
-    --d-canvas:#1A1A1C; --d-surface:rgba(40,40,44,.55); --d-ink:#F5F5F7; --d-body:#D4D4D8; --d-mute:#98989F; --d-stone:#49494E;
-    --d-hair:rgba(255,255,255,.10); --d-hair-strong:rgba(255,255,255,.18); --d-teal:#2DD4BF; --d-green:#30D158;
-    --d-glass:rgba(40,40,44,.5); --d-glass-edge:rgba(255,255,255,.12);
-  }
-  /* window title bar */
-  .demo-bar { display:flex; align-items:center; gap:8px; padding:11px 14px; border-bottom:1px solid var(--d-hair); }
-  .demo-dot { width:11px; height:11px; border-radius:50%; }
-  .demo-title { margin-left:6px; font-size:13px; font-weight:600; color:var(--d-body); letter-spacing:-.01em; }
-  .demo-body { padding:26px 24px 28px; }
-  /* brand lockup */
-  .demo-brand { text-align:center; margin-bottom:20px; }
-  .demo-brand-name { font-size:18px; font-weight:600; color:var(--d-ink); letter-spacing:.01em; }
-  .demo-brand-sub { font-size:12px; color:var(--d-mute); letter-spacing:.02em; margin-top:2px; }
-  /* the glass drop-card that morphs through every phase */
-  .demo-card {
-    position:relative; min-height:230px; display:flex; align-items:center; justify-content:center; text-align:center;
-    border-radius:16px; padding:24px; cursor:pointer;
-    background:var(--d-glass); -webkit-backdrop-filter:blur(20px) saturate(140%); backdrop-filter:blur(20px) saturate(140%);
-    box-shadow:inset 0 1px 0 var(--d-glass-edge);
-    transition:transform .25s cubic-bezier(.2,.8,.2,1);
-  }
-  .demo-card::before {
-    content:""; position:absolute; inset:0; border-radius:16px; pointer-events:none;
-    border:1px dashed var(--d-hair-strong); transition:border-color .2s, border-style .2s;
-  }
-  .demo-card.filled::before { border-style:solid; border-color:var(--d-hair); }
-  .demo-card.busy { cursor:default; }
-  .demo-card.dragging { transform:scale(1.02); }
-  .demo-card.dragging::before { border-style:solid; border-color:var(--d-teal); border-width:2px; }
-  .demo-card.dragging::after {
-    content:""; position:absolute; inset:0; border-radius:16px; pointer-events:none;
-    background:color-mix(in srgb, var(--d-teal) 10%, transparent); filter:blur(8px);
-  }
-  /* the content wrapper inside the card; paint() crossfades it between faces */
-  .demo-state { width:100%; will-change:opacity, transform; }
-  /* glass tile shared by the drop glyph, extension icon, and phase glyph */
-  .demo-tile { width:60px; height:60px; margin:0 auto; display:grid; place-items:center; border-radius:10px;
-    background:var(--d-glass); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
-    border:1px solid var(--d-hair); box-shadow:inset 0 1px 0 var(--d-glass-edge); position:relative; }
-  .demo-tile svg { width:26px; height:26px; }
-  .demo-drop-glyph svg { color:var(--d-teal); }
-  .demo-h { font-size:16px; font-weight:500; color:var(--d-ink); margin-top:12px; }
-  .demo-sub { font-size:12px; color:var(--d-mute); letter-spacing:.02em; margin-top:3px; }
-  /* extension-icon tile */
-  .demo-extico { width:60px; height:60px; margin:0 auto; display:grid; place-items:center; border-radius:16px;
-    background:var(--d-glass); border:1px solid var(--d-hair); box-shadow:inset 0 1px 0 var(--d-glass-edge); }
-  .demo-extico svg { width:30px; height:30px; }
-  .demo-name { font-size:18px; font-weight:600; color:var(--d-ink); margin-top:12px; }
-  /* phase glyph — breathing green glow + swapping symbol */
-  .demo-glyph-wrap { position:relative; width:64px; height:64px; margin:0 auto; display:grid; place-items:center; }
-  .demo-glyph-glow { position:absolute; width:64px; height:64px; border-radius:50%; background:color-mix(in srgb, var(--d-green) 18%, transparent);
-    filter:blur(12px); animation:demo-breathe 1.2s ease-in-out infinite alternate; }
-  @keyframes demo-breathe { from { transform:scale(.9); opacity:.5; } to { transform:scale(1.15); opacity:.9; } }
-  .demo-glyph { color:var(--d-ink); }
-  .demo-phase-title { font-size:16px; font-weight:500; color:var(--d-ink); margin-top:12px; }
-  .demo-phase-sub { font-size:12px; color:var(--d-mute); letter-spacing:.02em; margin-top:2px; min-height:15px; }
-  /* step dots — one capsule per track phase, fills emerald, active widens */
-  .demo-dots { display:flex; gap:8px; justify-content:center; margin-top:14px; }
-  .demo-dots i { width:6px; height:6px; border-radius:99px; background:var(--d-stone); transition:width .3s cubic-bezier(.2,.8,.2,1), background .3s; }
-  .demo-dots i.done { background:var(--d-green); }
-  .demo-dots i.active { width:16px; background:var(--d-green); }
-  /* glass progress bar */
-  .demo-prog { width:220px; height:6px; margin:16px auto 0; border-radius:99px; overflow:hidden;
-    background:var(--d-glass); border:1px solid var(--d-hair); position:relative; }
-  .demo-prog-fill { height:100%; border-radius:99px; background:var(--d-green); width:0;
-    transition:width .5s cubic-bezier(.3,.7,.2,1); position:relative; }
-  .demo-prog-fill::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
-    transform:translateX(-100%); animation:demo-shine 1.4s ease-in-out infinite; }
-  @keyframes demo-shine { to { transform:translateX(200%); } }
-  /* done badge */
-  .demo-badge { display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:4px 11px; border-radius:99px;
-    font-size:12px; font-weight:500; color:#fff; background:var(--d-green); }
-  .demo-badge svg { width:14px; height:14px; }
-  /* the morphing CTA below the card */
-  .demo-cta { display:block; width:100%; margin-top:16px; padding:11px; border-radius:8px; border:none; cursor:pointer;
-    font-family:inherit; font-size:13px; font-weight:500; letter-spacing:.01em;
-    background:var(--d-teal); color:#fff;
-    transition:transform .2s cubic-bezier(.2,.8,.2,1), filter .2s ease, background .2s ease, color .2s ease, opacity .2s ease; }
-  /* dark mode: teal fill takes dark text — but NOT the ghost variant, which is
-     transparent and must keep light body text or it vanishes on the canvas */
-  html.dark .demo-cta:not(.ghost) { color:#04201C; }
-  .demo-cta:hover:not(:disabled) { filter:brightness(1.06); }
-  .demo-cta:active:not(:disabled) { transform:scale(.97); }
-  .demo-cta:disabled { cursor:default; opacity:.6; filter:none; }
-  .demo-cta.ghost { background:transparent; color:var(--d-body); border:1px solid var(--d-hair-strong); }
-  html.dark .demo-cta.ghost { color:var(--d-body); }
-  .demo-cta.ghost:hover { filter:none; border-color:var(--d-teal); color:var(--d-teal); }
-  /* sample chips under the window */
-  .demo-samples { display:flex; flex-wrap:wrap; gap:9px; justify-content:center; margin-top:16px; }
-  .demo-chip { display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border-radius:999px; font-size:13px; font-weight:600; color:#DDF2EE;
-    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); cursor:pointer;
-    transition:border-color .2s, background .2s, transform .2s cubic-bezier(.2,.8,.2,1); }
-  .demo-chip:hover { border-color:rgba(110,224,209,.55); background:rgba(110,224,209,.09); transform:translateY(-1px); }
-  .demo-chip:active { transform:translateY(0) scale(.98); }
-  .demo-chip svg { width:15px; height:15px; }
-  @media (prefers-reduced-motion:reduce){
-    .demo-glyph-glow, .demo-prog-fill::after { animation:none; }
-    .demo-prog-fill { transition:none; }
-  }
-
-  /* ───────────────────────── Compat playground (chrome.* API checker) ───────────────────────── */
-  .cx-lab { border:1px solid var(--hair); border-radius:16px; background:color-mix(in srgb, var(--ink) 2.5%, transparent); padding:22px; margin-top:22px; }
-  .cx-lab-h { font-size:13px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--mute); margin-bottom:4px; }
-  .cx-lab-sub { font-size:13.5px; color:var(--body); margin-bottom:16px; }
-  .cx-input-wrap { position:relative; display:flex; align-items:center; }
-  .cx-prefix { position:absolute; left:14px; font-family:ui-monospace,'SF Mono',monospace; font-size:15px; color:var(--mute); pointer-events:none; }
-  .cx-input { width:100%; padding:12px 14px 12px 74px; border-radius:11px; border:1px solid var(--hair-strong); background:var(--surface);
-    font-family:ui-monospace,'SF Mono',monospace; font-size:15px; color:var(--ink); transition:border-color .2s; }
-  .cx-input:focus { outline:none; border-color:var(--teal); }
-  .cx-input::placeholder { color:var(--ash); }
-  .cx-tries { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
-  .cx-try { padding:5px 11px; border-radius:8px; font-family:ui-monospace,'SF Mono',monospace; font-size:12.5px; color:var(--body);
-    background:transparent; border:1px solid var(--hair); cursor:pointer; transition:border-color .2s, color .2s, background .2s; }
-  .cx-try:hover { border-color:var(--teal); color:var(--teal); background:color-mix(in srgb, var(--teal) 6%, transparent); }
-  .cx-result { margin-top:16px; min-height:52px; }
-  .cx-verdict { display:flex; align-items:flex-start; gap:12px; padding:14px 16px; border-radius:12px; border:1px solid var(--hair); background:var(--surface);
-    opacity:0; transform:translateY(6px); transition:opacity .3s, transform .3s; }
-  .cx-verdict.show { opacity:1; transform:none; }
-  .cx-vmark { width:26px; height:26px; flex-shrink:0; display:grid; place-items:center; border-radius:7px; }
-  .cx-vmark svg { width:15px; height:15px; stroke-width:2.4; }
-  .cx-vbody b { display:block; font-size:14.5px; font-weight:700; color:var(--ink); margin-bottom:2px; }
-  .cx-vbody span { font-size:13px; line-height:1.5; color:var(--body); }
-  .cx-v-ok   .cx-vmark { color:var(--ok);  background:color-mix(in srgb, var(--ok) 14%, transparent); }
-  .cx-v-shim .cx-vmark { color:var(--teal);background:color-mix(in srgb, var(--teal) 14%, transparent); }
-  .cx-v-no   .cx-vmark { color:var(--bad); background:color-mix(in srgb, var(--bad) 13%, transparent); }
-  @media (prefers-reduced-motion:reduce){ .cx-verdict{ transition:none; } }
 
   /* sr */
   .sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
@@ -358,104 +328,84 @@
 <body class="font-sans antialiased">
 
 <!-- ════════════════════ NAV ════════════════════ -->
-<header id="nav" class="nav-blur fixed top-0 inset-x-0 z-50">
-  <nav class="max-w-7xl mx-auto px-4 sm:px-5 h-16 flex items-center justify-between" aria-label="Primary">
-    <a href="#top" class="flex items-center gap-1.5 group" aria-label="Viaduct home">
-      <img data-icon class="w-[22px] h-[22px] shrink-0 relative -top-px" src="assets/viaduct-appicon.png" alt="" aria-hidden="true" width="22" height="22" />
-      <span class="font-display font-bold text-[26px] ink tracking-tight leading-none">Viaduct</span>
+<!-- Displacement filter for the nav pill. feImage's href is a data-URI map that
+     script regenerates whenever the pill resizes. -->
+<svg class="glass-defs" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="nav-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feImage id="nav-glass-map" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" />
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="-180" xChannelSelector="R" yChannelSelector="G" result="dRed" />
+      <feColorMatrix in="dRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red" />
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="-170" xChannelSelector="R" yChannelSelector="G" result="dGreen" />
+      <feColorMatrix in="dGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green" />
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="-160" xChannelSelector="R" yChannelSelector="G" result="dBlue" />
+      <feColorMatrix in="dBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue" />
+      <feBlend in="red" in2="green" mode="screen" result="rg" />
+      <feBlend in="rg" in2="blue" mode="screen" result="output" />
+      <feGaussianBlur in="output" stdDeviation="0.7" />
+    </filter>
+  </defs>
+</svg>
+
+<header id="nav" class="fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-5">
+  <nav class="nav-pill max-w-5xl mx-auto pl-4 pr-2 sm:pl-5 sm:pr-2.5 h-[54px] flex items-center justify-between gap-4" aria-label="Primary">
+    <a href="#top" class="flex items-center gap-2 shrink-0" aria-label="Viaduct home">
+      <img data-icon class="w-[21px] h-[21px] shrink-0" src="assets/viaduct-appicon.png" alt="" aria-hidden="true" width="21" height="21" />
+      <span class="font-display font-bold text-[19px] ink tracking-tight leading-none">Viaduct</span>
     </a>
-    <div class="hidden md:flex items-center gap-7 text-[14px] font-medium body">
-      <a href="#how" class="hover:text-[var(--teal)] transition-colors">How it works</a>
-      <a href="#features" class="hover:text-[var(--teal)] transition-colors">Features</a>
-      <a href="#pricing" class="hover:text-[var(--teal)] transition-colors">Pricing</a>
-      <a href="#faq" class="hover:text-[var(--teal)] transition-colors">FAQ</a>
+    <div class="hidden md:flex items-center gap-7 text-[14px] font-medium absolute left-1/2 -translate-x-1/2">
+      <a href="#how" class="nav-link">How it works</a>
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="#faq" class="nav-link">FAQ</a>
     </div>
-    <div class="flex items-center gap-2.5">
-      <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost text-[14px] px-4 py-2 hidden sm:inline-flex items-center" data-mm-magnet>Download</a>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal text-[14px] px-4 py-2 hidden sm:inline-flex items-center" data-mm-magnet>Get Pro</a>
+    <div class="flex items-center gap-2">
+
+      <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost text-[13.5px] px-3.5 py-[7px] hidden sm:inline-flex items-center">Download</a>
+      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-cyan text-[13.5px] px-3.5 py-[7px] inline-flex items-center">Get Pro</a>
     </div>
   </nav>
-  <span class="mm-progress" style="background:var(--teal)" aria-hidden="true"></span>
 </header>
 
 <main id="top">
 
-<!-- ════════════════════ HERO (brand band) ════════════════════ -->
-<section class="hero-band relative pt-24 sm:pt-28 pb-16 sm:pb-20 px-5 sm:px-8 overflow-hidden" data-mm-ambient="teal">
-  <div class="max-w-5xl mx-auto relative z-10">
+<!-- ════════════════════ HERO ════════════════════ -->
+<section class="relative min-h-[100svh] flex items-center pt-28 pb-24 px-5 sm:px-8 overflow-hidden">
 
-    <h1 data-mm="lines" data-mm-load data-mm-delay=".1" class="text-[clamp(2.5rem,6.4vw,4.9rem)] leading-[1.02] mb-6 max-w-4xl">
-      Run <span class="whitespace-nowrap">Chrome extensions</span><br class="hidden sm:block" />
-      in <span class="accent-band">Safari.</span>
+  <!-- Ambient only: light rays, no illustration. -->
+  <canvas class="rays" id="hero-rays" aria-hidden="true"></canvas>
+
+  <div class="max-w-5xl mx-auto relative z-10 text-center w-full">
+
+    <h1 data-mm="lines" data-mm-load data-mm-delay=".1" class="text-[clamp(2.6rem,6.6vw,4.9rem)] leading-[1.02] mb-6">
+      Run Chrome extensions<br class="hidden sm:block" />
+      <span class="whitespace-nowrap">in <span class="accent-band">Safari.</span></span>
     </h1>
 
-    <p data-mm="rise" data-mm-load data-mm-delay=".45" class="text-[clamp(1.05rem,2.4vw,1.3rem)] on-band max-w-2xl mb-10 leading-relaxed">
-      <span data-gumroad-field="name">Viaduct</span> converts any Chrome extension into a native Safari Web Extension.
+    <p data-mm="rise" data-mm-load data-mm-delay=".45" class="text-[clamp(1.05rem,2.2vw,1.25rem)] body max-w-xl mx-auto mb-9 leading-relaxed">
+      <span data-gumroad-field="name">Viaduct</span> converts any Chrome extension into a native Safari Web Extension. You never have to open Xcode or a terminal.
     </p>
 
-    <!-- a working web copy of the Viaduct app's User mode: drop an extension (or pick a sample) and it runs the real conversion flow -->
-    <!-- no data-mm-tilt here: this panel is interactive, and a live 3D tilt warps the
-         buttons' hit-boxes under the cursor, flickering the pointer. Keep it flat. -->
-    <div data-mm="media" data-mm-load data-mm-delay=".55" class="mt-16 relative">
-      <div data-mm-scrub class="demo-win max-w-md mx-auto" id="hero-demo">
-        <div class="demo-bar">
-          <span class="demo-dot" style="background:#FF5F57"></span>
-          <span class="demo-dot" style="background:#FEBC2E"></span>
-          <span class="demo-dot" style="background:#28C840"></span>
-          <span class="demo-title">Viaduct</span>
-        </div>
-        <div class="demo-body">
-          <div class="demo-brand">
-            <div class="demo-brand-name">Viaduct</div>
-            <div class="demo-brand-sub">Convert a Chrome extension and install it in Safari.</div>
-          </div>
-
-          <!-- the one glass card that morphs through every phase; JS swaps its contents -->
-          <div class="demo-card" id="hero-card" role="button" tabindex="0"
-               aria-label="Drop a Chrome extension, or pick a sample below, to run a conversion">
-            <!-- filled by JS; empty state as initial content -->
-            <div class="demo-state">
-              <div class="demo-tile demo-drop-glyph" aria-hidden="true">
-                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M13.5 2a2.5 2.5 0 012.5 2.5V6h2a2 2 0 012 2v3.5h-1.5a2.25 2.25 0 100 4.5H20V19a2 2 0 01-2 2h-3.5v-1.5a2.25 2.25 0 10-4.5 0V21H6a2 2 0 01-2-2v-3.5h1.5a2.25 2.25 0 100-4.5H4V8a2 2 0 012-2h3.5V4.5A2.5 2.5 0 0113.5 2z"/></svg>
-              </div>
-              <div class="demo-h">Drop extension here</div>
-              <div class="demo-sub">or click to browse · .zip, .crx, or folder</div>
-            </div>
-          </div>
-
-          <!-- morphing CTA below the card -->
-          <button class="demo-cta" type="button" id="hero-cta">Choose extension</button>
-
-          <div class="demo-samples">
-            <button class="demo-chip" type="button" data-sample="Claude for Chrome" data-color="#D97757">
-              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M3 12h18M6 6l12 12M18 6L6 18"/></svg>
-              Claude for Chrome
-            </button>
-            <button class="demo-chip" type="button" data-sample="Dark Reader" data-color="#C9A876">
-              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
-              Dark Reader
-            </button>
-            <button class="demo-chip" type="button" data-sample="Grammarly" data-color="#21AF9F">
-              <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7V5a1 1 0 011-1h14a1 1 0 011 1v2M9 20h6M12 4v16"/></svg>
-              Grammarly
-            </button>
-          </div>
-        </div>
-      </div>
+    <div data-mm="rise" data-mm-load data-mm-delay=".55" class="flex flex-wrap items-center justify-center gap-3">
+      <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost text-[15px] px-6 py-3 inline-flex items-center gap-2">
+        Download</a>
+      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-cyan text-[15px] px-6 py-3 inline-flex items-center gap-2">
+        Get Pro
+      </a>
     </div>
+
   </div>
 </section>
 
 <!-- ════════════════════ SUPPORTED INPUTS ════════════════════ -->
-<section class="py-16 sm:py-20 border-y hair px-5 sm:px-8" aria-label="Supported inputs">
+<section class="py-16 sm:py-20 border-b hair px-5 sm:px-8" aria-label="Supported inputs">
   <div class="max-w-6xl mx-auto">
     <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] gap-y-10 gap-x-14 items-center">
 
       <!-- left: pitch -->
       <div>
-        <p data-mm="fade" class="text-[12px] font-semibold uppercase mute mb-4" style="letter-spacing:.14em">One input, any format</p>
         <h2 data-mm="rise" class="text-[clamp(1.7rem,3.6vw,2.5rem)] leading-[1.08] mb-4">Drop in whatever<br>you already have.</h2>
-        <p data-mm="rise" data-mm-delay=".1" class="text-[15px] body max-w-[42ch] leading-relaxed">Five ways in, one way out. Viaduct reads any of these, then hands you a signed Safari extension with no repackaging and no manual steps.</p>
+        <p data-mm="rise" data-mm-delay=".1" class="text-[15px] body max-w-[42ch] leading-relaxed">Viaduct reads any of these and hands back a signed Safari extension. You don't repackage anything yourself.</p>
       </div>
 
       <!-- right: the accepted inputs -->
@@ -492,7 +442,7 @@
     <div class="mb-16">
       <h2 data-mm="lines" class="text-[clamp(1.9rem,4.5vw,3rem)] mb-5 max-w-[22ch]">“Add to Chrome” becomes “Add to Safari.”</h2>
       <p data-mm="rise" class="body text-lg leading-relaxed max-w-2xl">
-        Browse the Chrome Web Store in Safari, and the green button you know installs to Safari instead. One click; Viaduct fetches, converts, signs, and installs.
+        Browse the Chrome Web Store in Safari and the green install button points at Safari instead. Click it once and Viaduct does the rest.
       </p>
     </div>
 
@@ -506,68 +456,52 @@
   </div>
 </section>
 
-<!-- ════════════════════ PINNED PIPELINE ════════════════════ -->
+<!-- ════════════════════ SCROLL-SCRUBBED CONVERSION ════════════════════ -->
 <section class="py-8 sm:py-12 px-5 sm:px-8" aria-label="How a conversion runs">
   <div class="max-w-6xl mx-auto border-t hair pt-12 mb-10">
     <h2 data-mm="lines" class="text-[clamp(1.9rem,4.5vw,3rem)] mb-4">Drop. Convert. Done.</h2>
-    <p data-mm="rise" class="body text-[15px] max-w-xl">The whole Safari packaging dance, the part that normally means wrestling Xcode and Apple's command-line signer, runs behind one button.</p>
+    <p data-mm="rise" class="body text-[15px] max-w-xl">Packaging for Safari normally means wrestling Xcode and Apple's command-line signer. Here it runs behind one button.</p>
   </div>
 
-  <div data-mm-pin>
-    <div data-mm-pin-stage class="pin-stage max-w-6xl mx-auto px-0">
-      <div class="pin-grid">
-
-        <div class="pin-rail" aria-hidden="true">
-          <div data-mm-pin-item class="pin-rail-item">
-            <div class="step-no">1</div>
-            <h3 class="font-display font-bold text-[19px] ink mb-1.5">Drop it in</h3>
-            <p class="text-[14.5px] body leading-relaxed">A <code class="font-mono text-[.85em]">.zip</code>, a <code class="font-mono text-[.85em]">.crx</code>, an unpacked folder, or a Chrome Web Store link.</p>
-          </div>
-          <div data-mm-pin-item class="pin-rail-item">
-            <div class="step-no">2</div>
-            <h3 class="font-display font-bold text-[19px] ink mb-1.5">Converted &amp; signed</h3>
-            <p class="text-[14.5px] body leading-relaxed">Viaduct rebuilds it as a native Safari Web Extension and drives the signing for you. You watch it happen live.</p>
-          </div>
-          <div data-mm-pin-item class="pin-rail-item">
-            <div class="step-no">3</div>
-            <h3 class="font-display font-bold text-[19px] ink mb-1.5">Live in Safari</h3>
-            <p class="text-[14.5px] body leading-relaxed">Installed and ready, running in Safari's own engine. No second Chromium process eating your battery.</p>
-          </div>
+  <!-- The real conversion, scrubbed by scroll: the page owns the playhead, so
+       you move through the run at whatever pace you scroll. -->
+  <div class="scrub" id="convert-scrub">
+    <div class="scrub-sticky">
+      <div class="scrub-frame">
+        <video id="convert-video" class="block" src="assets/viaduct-convert.mp4"
+               poster="assets/viaduct-convert-poster.webp"
+               muted playsinline preload="auto" width="1404" height="1080"
+               aria-label="Screen recording: Viaduct converting the TWP Translate Web Pages extension and installing it into Safari"></video>
+      </div>
+      <!-- The rail lights the step the playhead is on; timings live in the script below. -->
+      <div class="scrub-caps" id="convert-caps">
+        <div class="scrub-cap is-on">
+          <div class="scrub-step">1</div>
+          <h3>Drop it in</h3>
+          <p>A <code class="font-mono text-[.85em]">.zip</code>, a <code class="font-mono text-[.85em]">.crx</code>, an unpacked folder, or a Chrome Web Store link.</p>
         </div>
-
-        <div class="pin-panels">
-          <figure data-mm-pin-panel class="pin-panel">
-            <div class="pin-frame">
-              <img src="assets/viaduct-step-select-dark.webp" alt="Step 1: choosing a Chrome extension file in Viaduct" class="block" loading="lazy" decoding="async" width="1800" height="1324" />
-            </div>
-            <figcaption class="pin-cap"><b>1 · Drop it in.</b> A .zip, a .crx, an unpacked folder, or a Web Store link.</figcaption>
-          </figure>
-          <figure data-mm-pin-panel class="pin-panel">
-            <div class="pin-frame">
-              <img src="assets/viaduct-step-convert-dark.webp" alt="Step 2: Viaduct converting and signing the extension with live progress" class="block" loading="lazy" decoding="async" width="1800" height="1324" />
-            </div>
-            <figcaption class="pin-cap"><b>2 · Converted &amp; signed.</b> Rebuilt as a native Safari extension, signing driven for you.</figcaption>
-          </figure>
-          <figure data-mm-pin-panel class="pin-panel">
-            <div class="pin-frame">
-              <img src="assets/viaduct-step-succeed-dark.webp" alt="Step 3: the extension installed in Safari, with the recently-converted list" class="block" loading="lazy" decoding="async" width="1800" height="1324" />
-            </div>
-            <figcaption class="pin-cap"><b>3 · Live in Safari.</b> Running in Safari's own engine, kind to your battery.</figcaption>
-          </figure>
+        <div class="scrub-cap">
+          <div class="scrub-step">2</div>
+          <h3>Converted &amp; signed</h3>
+          <p>Viaduct rebuilds it as a native Safari Web Extension and drives the signing for you. You watch it happen live.</p>
         </div>
-
+        <div class="scrub-cap">
+          <div class="scrub-step">3</div>
+          <h3>Live in Safari</h3>
+          <p>Installed and ready, running in Safari's own engine. No second Chromium process eating your battery.</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ════════════════════ COMPAT LAYER ════════════════════ -->
-<section class="py-24 sm:py-32 px-5 sm:px-8" aria-label="Runtime compatibility layer" data-mm-replay>
+<section class="pt-24 sm:pt-32 pb-12 sm:pb-16 px-5 sm:px-8" aria-label="Runtime compatibility layer" data-mm-replay>
   <div class="max-w-6xl mx-auto">
     <div class="border-t hair pt-12 mb-14 max-w-3xl">
       <h2 data-mm="lines" class="text-[clamp(1.9rem,4.5vw,3rem)] mb-5">Converting isn't the hard part. Working is.</h2>
       <p data-mm="rise" class="body text-lg leading-relaxed">
-        Safari implements dozens of <code class="font-mono text-[.85em] ink">chrome.*</code> APIs differently, or not at all, so a naively converted extension installs, opens, and quietly breaks. Viaduct ships a runtime layer that fixes those breaks at the source.
+        Safari implements dozens of <code class="font-mono text-[.85em] ink">chrome.*</code> APIs differently, or not at all, so a converted extension installs fine and then quietly stops working. Viaduct ships a runtime layer that patches the gaps.
       </p>
     </div>
 
@@ -575,55 +509,36 @@
       <div class="lg:col-span-4">
         <div class="lg:sticky lg:top-28">
           <p data-mm="rise" class="stat-num"><span data-mm-counter="60" data-mm-counter-suffix="+">60+</span></p>
-          <p data-mm="rise" class="text-[15px] body mt-3 max-w-[26ch]"><code class="font-mono text-[.9em] ink">chrome.*</code> namespaces normalized by the runtime layer. This is the product. The scaffolding around it is table stakes.</p>
-
-          <!-- the same compatibility check the app runs before it converts -->
-          <div class="cx-lab" data-mm="rise" data-mm-delay=".1">
-            <div class="cx-lab-h">Compatibility check</div>
-            <p class="cx-lab-sub">Before it converts, Viaduct reads every <code class="font-mono text-[.9em]">chrome.*</code> call an extension makes. Try one:</p>
-            <div class="cx-input-wrap">
-              <span class="cx-prefix" aria-hidden="true">chrome.</span>
-              <input class="cx-input" id="cx-input" type="text" spellcheck="false" autocomplete="off" autocapitalize="off"
-                placeholder="storage" aria-label="chrome API namespace to check" />
-            </div>
-            <div class="cx-tries" id="cx-tries" aria-hidden="true">
-              <button class="cx-try" type="button" data-api="tabs">tabs</button>
-              <button class="cx-try" type="button" data-api="webRequest">webRequest</button>
-              <button class="cx-try" type="button" data-api="storage">storage</button>
-              <button class="cx-try" type="button" data-api="gcm">gcm</button>
-              <button class="cx-try" type="button" data-api="runtime">runtime</button>
-            </div>
-            <div class="cx-result" id="cx-result" aria-live="polite"></div>
-          </div>
+          <p data-mm="rise" class="text-[15px] body mt-3 max-w-[26ch]"><code class="font-mono text-[.9em] ink">chrome.*</code> namespaces the runtime layer normalizes, so your extension keeps working after the move.</p>
         </div>
       </div>
       <div data-mm-stagger class="lg:col-span-8">
         <div class="fix-row">
           <b>Dark Reader</b>
           <div>
-            <p><span class="fix-lbl brk">Breaks</span>Popup buttons go dead: background ports route by an extension id Safari reports differently.</p>
-            <p><span class="fix-lbl okk">Fixed</span>Viaduct rewrites the id and normalizes the sender, so the popup reaches the background.</p>
+            <p><span class="fix-lbl brk">Breaks</span>Popup buttons go dead. Background ports route by an extension id that Safari reports differently.</p>
+            <p><span class="fix-lbl okk">Fixed</span>Viaduct rewrites the id so the popup reaches the background.</p>
           </div>
         </div>
         <div class="fix-row">
           <b>Grammarly</b>
           <div>
-            <p><span class="fix-lbl brk">Breaks</span>Silent “Load failed” on its own bundled resources: Safari's resource server is case-sensitive.</p>
-            <p><span class="fix-lbl okk">Fixed</span>Viaduct normalizes the casing per call site.</p>
+            <p><span class="fix-lbl brk">Breaks</span>Its own bundled resources fail to load. Safari's resource server is case sensitive.</p>
+            <p><span class="fix-lbl okk">Fixed</span>Viaduct normalizes the casing.</p>
           </div>
         </div>
         <div class="fix-row">
           <b>Service workers</b>
           <div>
-            <p><span class="fix-lbl brk">Breaks</span>Safari omits <code class="font-mono text-[.85em]">onInstalled</code>, the lifecycle enums, and parts of <code class="font-mono text-[.85em]">self.registration</code>, so the worker throws at load and dies.</p>
-            <p><span class="fix-lbl okk">Fixed</span>Viaduct backfills them.</p>
+            <p><span class="fix-lbl brk">Breaks</span>Safari omits <code class="font-mono text-[.85em]">onInstalled</code> and parts of <code class="font-mono text-[.85em]">self.registration</code>, so the worker throws at load.</p>
+            <p><span class="fix-lbl okk">Fixed</span>Viaduct backfills what's missing.</p>
           </div>
         </div>
         <div class="fix-row">
           <b>Frozen namespaces</b>
           <div>
             <p><span class="fix-lbl brk">Breaks</span>Safari exposes <code class="font-mono text-[.85em]">chrome.*</code> as immutable native objects, so extensions that patch them crash at startup.</p>
-            <p><span class="fix-lbl okk">Fixed</span>Viaduct thaws and republishes them.</p>
+            <p><span class="fix-lbl okk">Fixed</span>Viaduct makes them writable again.</p>
           </div>
         </div>
       </div>
@@ -639,9 +554,8 @@
       <!-- sticky section head (left) -->
       <div class="lg:col-span-4">
         <div class="lg:sticky lg:top-28">
-          <p data-mm="fade" class="text-[12px] font-semibold uppercase mute mb-4" style="letter-spacing:.12em">Under the hood</p>
-          <h2 data-mm="lines" class="text-[clamp(1.9rem,4.5vw,3rem)] max-w-[14ch] mb-5">A precision instrument, not a hack.</h2>
-          <p data-mm="rise" class="body text-[15px] leading-relaxed max-w-sm">Native conversion, done properly. No Chromium sidecar, no expiring hacks, no silent failures.</p>
+          <h2 data-mm="lines" class="text-[clamp(1.9rem,4.5vw,3rem)] max-w-[14ch] mb-5">Native conversion, done properly.</h2>
+          <p data-mm="rise" class="body text-[15px] leading-relaxed max-w-sm">The extension runs inside Safari's own engine, with no second browser process riding along behind it.</p>
         </div>
       </div>
 
@@ -668,14 +582,14 @@
         <div class="feat-row group grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-7 py-7 border-t hair" data-mm="rise">
           <span class="feat-num">02</span>
           <div>
-            <h3 class="font-display font-bold text-[19px] ink mb-2 transition-colors group-hover:text-[var(--teal)]">Auto-resign signing<span class="pro-pill">Pro</span></h3>
-            <p class="body text-[15px] leading-relaxed">Free Apple signatures lapse every ~7 days. Pro silently re-signs before they do, so your extensions never vanish.</p>
+            <h3 class="font-display font-bold text-[19px] ink mb-2 transition-colors group-hover:text-[var(--teal)]">Auto-resign signing</h3>
+            <p class="body text-[15px] leading-relaxed">Free Apple signatures lapse every 7 days. Pro silently re-signs before they do, so your extensions never vanish.</p>
             <div class="engine-viz" aria-label="Signature lifetime: without Pro it lapses after about 7 days; Pro re-signs before that">
               <div class="engine-lane">
                 <span class="who">Without</span>
                 <span class="eng extra">Signed</span>
                 <span class="plus">→</span>
-                <span class="eng extra">~7 days</span>
+                <span class="eng extra">7 days</span>
                 <span class="plus">→</span>
                 <span class="eng" style="border-color:var(--bad);color:var(--bad)">Gone</span>
                 <span class="count"></span>
@@ -685,7 +599,6 @@
                 <span class="eng safari">Signed</span>
                 <span class="plus">→</span>
                 <span class="eng safari">Re-signed, day 6</span>
-                <span class="count">Never lapses</span>
               </div>
             </div>
           </div>
@@ -702,8 +615,8 @@
         <div class="feat-row group grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-7 py-7 border-t hair" data-mm="rise">
           <span class="feat-num">04</span>
           <div>
-            <h3 class="font-display font-bold text-[19px] ink mb-2 transition-colors group-hover:text-[var(--teal)]">Auto-updating extensions<span class="pro-pill">Pro</span></h3>
-            <p class="body text-[15px] leading-relaxed">Installed an extension from the Chrome Web Store? When it ships a new version, Pro rebuilds and reinstalls it for you, checked weekly. Off by default.</p>
+            <h3 class="font-display font-bold text-[19px] ink mb-2 transition-colors group-hover:text-[var(--teal)]">Auto-updating extensions</h3>
+            <p class="body text-[15px] leading-relaxed">Installed an extension from the Chrome Web Store? When it ships a new version, Pro rebuilds and reinstalls it for you.</p>
           </div>
         </div>
 
@@ -711,7 +624,7 @@
           <span class="feat-num">05</span>
           <div>
             <h3 class="font-display font-bold text-[19px] ink mb-2 transition-colors group-hover:text-[var(--teal)]">MV2 &amp; MV3 aware</h3>
-            <p class="body text-[15px] leading-relaxed">Detects the manifest version and reports incompatibilities <em>before</em> converting. No silent surprises.</p>
+            <p class="body text-[15px] leading-relaxed">Detects the manifest version and reports incompatibilities before converting.</p>
           </div>
         </div>
 
@@ -728,38 +641,12 @@
   </div>
 </section>
 
-<!-- ════════════════════ TWO MODES (screenshots) ════════════════════ -->
-<section class="py-16 px-5 sm:px-8">
-  <div class="max-w-6xl mx-auto">
-    <div class="border-t hair pt-12 mb-12">
-      <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.6rem)] mb-4 max-w-[22ch]">Simple by default. Deep when you want it.</h2>
-    </div>
-
-    <!-- mode toggle -->
-    <div data-mm="rise" class="flex justify-center mb-8">
-      <div class="elevated rounded-full p-1 inline-flex hair border text-[14px] font-medium" role="tablist" aria-label="App mode">
-        <button class="mode-tab px-5 py-2 rounded-full transition-all" data-mode="user" role="tab" aria-selected="true">User mode</button>
-        <button class="mode-tab px-5 py-2 rounded-full transition-all" data-mode="dev" role="tab" aria-selected="false">Developer mode</button>
-      </div>
-    </div>
-
-    <div data-mm="media" data-mm-tilt class="surface rounded-2xl p-2 max-w-4xl mx-auto">
-      <div data-pane="user">
-        <img src="assets/viaduct-main-dark.webp" alt="User mode: a single drop zone" class="rounded-[12px] w-full block" loading="lazy" decoding="async" width="1800" height="1324" />
-      </div>
-      <div data-pane="dev" class="hidden">
-        <img src="assets/viaduct-developer-dark.webp" alt="Developer mode: every conversion option as a form with a live log pane" class="rounded-[12px] w-full block" loading="lazy" decoding="async" width="1800" height="1431" />
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ════════════════════ PRICING ════════════════════ -->
 <section id="get" class="py-24 sm:py-32 px-5 sm:px-8">
   <div id="pricing" class="max-w-4xl mx-auto">
     <div class="border-t hair pt-12 mb-12">
       <h2 data-mm="lines" class="text-[clamp(1.9rem,4.5vw,3rem)] mb-4">Start free. Go Pro when it sticks.</h2>
-      <p data-mm="rise" class="body text-[15px] max-w-xl">Convert your first two extensions free. Pro lifts the cap and keeps them alive.</p>
+      <p data-mm="rise" class="body text-[15px] max-w-xl">Convert your first two extensions free. Pro removes the cap and keeps them signed.</p>
     </div>
 
     <div data-mm-stagger class="grid md:grid-cols-2 gap-5 items-stretch">
@@ -768,7 +655,6 @@
       <div class="surface rounded-squircle p-7 sm:p-8 flex flex-col" data-mm-spot="teal">
         <div class="flex items-baseline justify-between mb-1">
           <h3 class="text-[20px] font-bold ink">Free</h3>
-          <span class="text-[13px] cap uppercase mute font-semibold">Try it</span>
         </div>
         <div class="flex items-baseline gap-1 mb-1 mt-3">
           <span class="text-[44px] font-display font-extrabold ink leading-none">$0</span>
@@ -776,15 +662,12 @@
         <p class="mute text-[13px] mb-6">Get the app, convert 2 extensions.</p>
 
         <ul class="text-left text-[14px] body space-y-2.5 mb-7 flex-1">
-          <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>The full native macOS app</li>
-          <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span><strong class="ink">Convert up to 2 extensions</strong></span></li>
+          <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span>Convert up to <strong class="ink">2 extensions</strong></span></li>
           <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>“Add to Safari” Web Store button</li>
-          <li class="flex gap-3 mute"><svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg><span>No auto-resigning — extensions lapse in ~7 days</span></li>
         </ul>
 
         <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost text-[16px] w-full py-3.5 mb-2.5 mt-auto inline-flex items-center justify-center gap-2">
-          <span>Download for macOS</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
+          <span>Download</span>
         </a>
       </div>
 
@@ -793,29 +676,28 @@
         <div class="flex flex-col h-full">
           <div class="flex items-baseline justify-between mb-1">
             <h3 class="text-[20px] font-bold ink"><span data-gumroad-field="name">Viaduct</span> Pro</h3>
-            <span class="text-[12px] font-bold uppercase" style="color:#6EE0D1;letter-spacing:.06em">Unlimited</span>
           </div>
           <div class="flex items-baseline gap-2 mb-1 mt-3">
             <span class="text-[44px] font-display font-extrabold ink leading-none"><span data-gumroad-field="price">$19</span></span>
-            <span class="mute text-[14px]">one-time</span>
+            <span class="mute text-[14px]">onetime</span>
           </div>
-          <p class="mute text-[13px] mb-6">One-time. Yours forever, with updates.</p>
+          <p class="mute text-[13px] mb-6">Onetime. Yours forever, with updates.</p>
 
           <ul class="text-left text-[14px] body space-y-2.5 mb-6">
-            <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span><strong class="ink">Unlimited</strong> conversions</span></li>
-            <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span><strong class="ink">Auto-resigning</strong>, so extensions never lapse</span></li>
-            <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Everything in Free, plus all updates</li>
+            <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span>Unlimited</strong> conversions</span></li>
+            <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>“Add to Safari” Web Store button</li>
+            <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span>Auto resigning</strong></span></li>
+            <li class="flex gap-3"><svg class="w-5 h-5 shrink-0" style="color:var(--ok)" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span>Auto updating</strong></span></li>
           </ul>
 
-          <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" data-mm-magnet class="btn-teal text-[16px] w-full py-3.5 mb-2.5 mt-auto inline-flex items-center justify-center gap-2">
-            <span>Get Viaduct Pro for $19</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6l6 6-6 6"/></svg>
+          <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-cyan text-[16px] w-full py-3.5 mb-2.5 mt-auto inline-flex items-center justify-center gap-2">
+            <span>Get Viaduct Pro</span>
           </a>
         </div>
       </div>
 
     </div>
-    <p class="text-center text-[12px] mute mt-6">Requires Xcode for conversion. Node comes bundled in the app. Unsandboxed, notarized direct download.</p>
+    <p class="text-center text-[12px] mute mt-6">Requires Xcode for conversion.</p>
   </div>
 </section>
 
@@ -854,15 +736,19 @@
 </section>
 
 <!-- ════════════════════ FINAL CTA ════════════════════ -->
-<section class="hero-band py-24 sm:py-32 px-5 sm:px-8 overflow-hidden" data-mm-ambient="teal">
-  <div class="max-w-3xl mx-auto text-center" data-mm-parallax=".05">
+<section class="relative py-28 sm:py-36 px-5 sm:px-8 overflow-hidden border-t hair">
+  <!-- one quiet echo of the hero's crossing, no structure this time -->
+  <div class="span-glow" style="bottom:20%;opacity:.7" aria-hidden="true"></div>
+  <div class="max-w-3xl mx-auto text-center relative z-10" data-mm-parallax=".05">
     <div>
-      <h2 data-mm="lines" class="text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[1.05] mb-5">Your extensions.<br />Safari's battery life.</h2>
-      <p data-mm="rise" class="body text-lg mb-9 max-w-lg mx-auto">Stop choosing between the extensions you love and the browser that's kind to your Mac.</p>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" data-mm="rise" data-mm-delay=".1" data-mm-magnet class="btn-onband text-[17px] px-8 py-4 inline-flex items-center gap-2">
-        Get Viaduct Pro · <span data-gumroad-field="price">$19</span>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6l6 6-6 6"/></svg>
-      </a>
+      <h2 data-mm="lines" class="text-[clamp(2rem,5vw,3.4rem)] leading-[1.04] mb-5">Your extensions.<br />Safari's battery life.</h2>
+      <p data-mm="rise" class="body text-lg mb-9 max-w-lg mx-auto">Keep the extensions you rely on without keeping Chrome open for them.</p>
+      <div data-mm="rise" data-mm-delay=".1" class="flex flex-wrap items-center justify-center gap-3">
+        <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost text-[16px] px-7 py-3.5 inline-flex items-center">Download</a>
+        <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-cyan text-[16px] px-7 py-3.5 inline-flex items-center gap-2">
+          Get Viaduct Pro
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -902,337 +788,243 @@
     }
   }
 
-  // ── Mode tabs (User / Developer screenshots) ──
-  var tabs = document.querySelectorAll('.mode-tab');
-  function setMode(mode, animate) {
-    tabs.forEach(function (t) {
-      var on = t.getAttribute('data-mode') === mode;
-      t.setAttribute('aria-selected', on ? 'true' : 'false');
-      t.style.background = on ? 'var(--surface)' : 'transparent';
-      t.style.color = on ? 'var(--ink)' : 'var(--mute)';
-    });
-    document.querySelectorAll('[data-pane]').forEach(function (p) {
-      var show = p.getAttribute('data-pane') === mode;
-      p.classList.toggle('hidden', !show);
-      if (show && animate && window.gsap && !reduce) {
-        gsap.fromTo(p, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' });
-      }
-    });
-  }
-  tabs.forEach(function (t) { t.addEventListener('click', function () { setMode(t.getAttribute('data-mode'), true); }); });
-  setMode('user', false);
-
-  // ── Live hero demo: a working web copy of the Viaduct app's User mode ──
-  // The card morphs empty → ready → converting → done through the app's real
-  // phases (Sources/AppMode.swift ConvertPhase). CTA morphs to match.
+  // ── Scroll-scrubbed conversion video ──
+  // Maps how far you've scrolled through the tall track onto the video's
+  // playhead. currentTime is eased toward the scroll position rather than set
+  // straight from it, so a fast flick doesn't turn into a seek storm. The file
+  // is encoded with a keyframe every 6 frames so each seek decodes almost
+  // nothing. Under reduced motion (or no JS) the track collapses and it plays
+  // as an ordinary looping video.
   (function () {
-    var win = document.getElementById('hero-demo');
-    if (!win) return;
-    var card = document.getElementById('hero-card');
-    var cta  = document.getElementById('hero-cta');
-    var state = card.querySelector('.demo-state');
-    var timers = [];
-    var busy = false;
-    var raf = 0;
-    var picked = null;
+    var track = document.getElementById('convert-scrub');
+    var v = document.getElementById('convert-video');
+    if (!track || !v) return;
 
-    // The six on-screen track phases, verbatim from the shipping app.
-    var PHASES = [
-      { title: 'Unpacking extension',      sub: 'Opening the package',        sym: 'box' },
-      { title: 'Reading manifest',         sub: 'Checking compatibility',     sym: 'doc' },
-      { title: 'Preparing assets',         sub: 'Cleaning and shimming',      sym: 'shield' },
-      { title: 'Generating Safari project',sub: 'Wiring up the Xcode project',sym: 'layers' },
-      { title: 'Building & signing',       sub: 'This is the slow part',      sym: 'hammer' },
-      { title: 'Installing to Safari',     sub: 'Registering with Safari',    sym: 'install' }
-    ];
-    // Clean line icons, one per phase. Kept simple so they read at 26px.
-    var SYM = {
-      box:'<path d="M3.5 7.5L12 3l8.5 4.5v9L12 21l-8.5-4.5v-9z"/><path d="M3.5 7.5L12 12m0 0l8.5-4.5M12 12v9"/>',
-      doc:'<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
-      shield:'<path d="M12 3l7 3v5c0 4.2-3 7.4-7 9-4-1.6-7-4.8-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/>',
-      hammer:'<path d="M14.5 5.5l4 4-2 2-4-4 2-2z"/><path d="M12.5 7.5L4 16v4h4l8.5-8.5"/>',
-      layers:'<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3.5 12L12 16.5 20.5 12M3.5 15.5L12 20l8.5-4.5"/>',
-      install:'<path d="M12 4v10m0 0l-3.5-3.5M12 14l3.5-3.5"/><path d="M5 15v3a2 2 0 002 2h10a2 2 0 002-2v-3"/>'
-    };
-    function glyphSvg(sym) {
-      return '<svg fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' + SYM[sym] + '</svg>';
-    }
-    function extSvg(color) {
-      return '<svg fill="' + color + '" viewBox="0 0 24 24"><path d="M13.5 2a2.5 2.5 0 012.5 2.5V6h2a2 2 0 012 2v3.5h-1.5a2.25 2.25 0 100 4.5H20V19a2 2 0 01-2 2h-3.5v-1.5a2.25 2.25 0 10-4.5 0V21H6a2 2 0 01-2-2v-3.5h1.5a2.25 2.25 0 100-4.5H4V8a2 2 0 012-2h3.5V4.5A2.5 2.5 0 0113.5 2z"/></svg>';
-    }
-
-    function clearTimers() { timers.forEach(clearTimeout); timers = []; if (raf) { cancelAnimationFrame(raf); raf = 0; } }
-    function later(fn, ms) { var id = setTimeout(fn, ms); timers.push(id); return id; }
-    function dots(idx) {
-      var out = '';
-      for (var i = 0; i < PHASES.length; i++) {
-        var cls = i < idx ? 'done' : (i === idx ? 'active' : '');
-        out += '<i class="' + cls + '"></i>';
+    if (reduce) {
+      // Playhead isn't ours, so the captions can't follow it: show all three.
+      document.documentElement.classList.add('no-scrub');
+      v.loop = true; v.controls = true;
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (es) {
+          es[0].isIntersecting ? v.play().catch(function () {}) : v.pause();
+        }, { threshold: 0.35 }).observe(v);
       }
-      return '<div class="demo-dots">' + out + '</div>';
+      return;
     }
 
-    // Swap the card's contents with a short crossfade so phases don't snap.
-    // Only the phase glyph/title/subtitle animate; the progress bar and dots
-    // update in place (they carry continuity, so a fade would fight them).
-    function paint(html) {
-      if (reduce) { state.innerHTML = html; return; }
-      state.style.transition = 'opacity .16s ease, transform .16s ease';
-      state.style.opacity = '0';
-      state.style.transform = 'translateY(4px)';
-      later(function () {
-        state.innerHTML = html;
-        state.style.opacity = '1';
-        state.style.transform = 'none';
-      }, 150);
+    var dur = 0;
+
+    // Seconds at which the recording changes stage: the drop card sits there
+    // until ~1.1s, the build runs to ~9s, then it's installed in Safari.
+    var caps = document.querySelectorAll('#convert-caps .scrub-cap');
+    var capAt = [1.1, 9.0];
+    var curCap = 0;
+
+    function setCap(i) {
+      if (i === curCap || !caps.length) return;
+      caps[curCap].classList.remove('is-on');
+      caps[i].classList.add('is-on');
+      curCap = i;
     }
 
-    // ---- the card faces ----
-    function renderEmpty() {
-      card.classList.remove('filled', 'busy');
-      paint(
-        '<div class="demo-tile demo-drop-glyph" aria-hidden="true">' + extSvg('var(--d-teal)') + '</div>' +
-        '<div class="demo-h">Drop extension here</div>' +
-        '<div class="demo-sub">or click to browse · .zip, .crx, or folder</div>');
-      cta.textContent = 'Choose extension';
-      cta.className = 'demo-cta';
-      cta.disabled = false;
+    function readProgress() {
+      var r = track.getBoundingClientRect();
+      var travel = r.height - window.innerHeight;
+      if (travel <= 0) return 0;
+      return Math.min(1, Math.max(0, -r.top / travel));
     }
-    function renderReady(name, color) {
-      card.classList.add('filled', 'busy');   // card itself isn't clickable here; the CTA drives it
-      paint(
-        '<div class="demo-extico" aria-hidden="true">' + extSvg(color) + '</div>' +
-        '<div class="demo-name">' + name + '</div>' +
-        '<div class="demo-sub">Ready to convert</div>');
-      cta.textContent = 'Convert & Install';
-      cta.className = 'demo-cta';
-      cta.disabled = false;
-    }
-    // Build the converting UI once, then mutate it in place. The progress bar
-    // fills continuously (driven by rAF in convert); the glyph/title/dots only
-    // change when progress crosses a phase boundary, so nothing hops or resets.
-    // Set synchronously (no paint fade) so convert() can grab the live progress
-    // element on the same tick. A quick self-contained fade keeps it smooth.
-    function buildConvertUI() {
-      card.classList.add('filled');
-      state.innerHTML =
-        '<div class="demo-glyph-wrap"><span class="demo-glyph-glow"></span>' +
-          '<span class="demo-tile demo-glyph" aria-hidden="true">' + glyphSvg(PHASES[0].sym) + '</span></div>' +
-        '<div class="demo-phase-title">' + PHASES[0].title + '</div>' +
-        '<div class="demo-phase-sub">' + PHASES[0].sub + '</div>' +
-        dots(0) +
-        '<div class="demo-prog"><div class="demo-prog-fill" style="width:0%;transition:none"></div></div>';
-      if (!reduce) {
-        state.style.transition = 'none';
-        state.style.opacity = '0'; state.style.transform = 'translateY(4px)';
-        requestAnimationFrame(function () {
-          state.style.transition = 'opacity .18s ease, transform .18s ease';
-          state.style.opacity = '1'; state.style.transform = 'none';
-        });
+
+    // Straight from scroll position to playhead, no easing loop. Lenis already
+    // interpolates the scroll, so smoothing here would only add lag, and an
+    // rAF chain is one more thing that can stall.
+    //
+    // Scroll is split evenly between the three stages and each slice is
+    // stretched over that stage's own span of the recording, so the long build
+    // doesn't eat most of the track. Same scroll distance per step; the video
+    // just runs faster through the parts that take longer on screen.
+    function sync() {
+      if (!dur) return;
+      var p = readProgress();
+      var n = capAt.length + 1;
+      var i = Math.min(n - 1, Math.floor(p * n));
+      var lo = i ? capAt[i - 1] : 0;
+      var hi = i < n - 1 ? capAt[i] : dur - 0.05;
+      var t = lo + (p * n - i) * (hi - lo);
+      setCap(i);
+      // A redundant seek still costs a decode, so only move when it matters.
+      if (Math.abs(v.currentTime - t) > 0.02) {
+        try { v.currentTime = t; } catch (e) {}
       }
-      cta.textContent = 'Converting…';
-      cta.className = 'demo-cta';
-      cta.disabled = true;
-    }
-    // Swap the glyph + title + subtitle + active dot for a new phase, crossfading
-    // just the glyph/text so the phase change reads without a hard cut.
-    function updatePhase(idx) {
-      var p = PHASES[idx];
-      var g = state.querySelector('.demo-glyph');
-      var t = state.querySelector('.demo-phase-title');
-      var s = state.querySelector('.demo-phase-sub');
-      var ds = state.querySelectorAll('.demo-dots i');
-      if (!g) return;
-      if (!reduce) {
-        g.style.transition = t.style.transition = s.style.transition = 'opacity .2s ease';
-        g.style.opacity = t.style.opacity = s.style.opacity = '0';
-        later(function () {
-          g.innerHTML = glyphSvg(p.sym); t.textContent = p.title; s.textContent = p.sub;
-          g.style.opacity = t.style.opacity = s.style.opacity = '1';
-        }, 190);
-      } else {
-        g.innerHTML = glyphSvg(p.sym); t.textContent = p.title; s.textContent = p.sub;
-      }
-      ds.forEach(function (d, i) { d.className = i < idx ? 'done' : (i === idx ? 'active' : ''); });
-    }
-    function renderDone(name, color) {
-      card.classList.add('filled');
-      card.classList.remove('busy');
-      paint(
-        '<div class="demo-extico" aria-hidden="true">' + extSvg(color) + '</div>' +
-        '<div class="demo-name">' + name + '</div>' +
-        '<span class="demo-badge"><svg fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>Installed in Safari</span>');
-      cta.textContent = 'Convert another';
-      cta.className = 'demo-cta ghost';
-      cta.disabled = false;
     }
 
-    // ---- flow ----
-    function pick(name, color) {
-      if (busy) return;
-      picked = { name: name, color: color || '#12A594' };
-      renderReady(picked.name, picked.color);
-    }
-    function convert() {
-      if (busy || !picked) return;
-      busy = true;
-      card.classList.add('busy');
-      buildConvertUI();
+    v.addEventListener('loadedmetadata', function () { dur = v.duration || 0; sync(); });
+    if (v.readyState >= 1) dur = v.duration || 0;
 
-      if (reduce) {                       // reduced motion: no animation, just resolve
-        later(function () { renderDone(picked.name, picked.color); busy = false; }, 120);
-        return;
-      }
-
-      var fill = state.querySelector('.demo-prog-fill');
-      var N = PHASES.length;
-      // Each phase is on screen long enough to read; the build step lingers.
-      var DWELL = [900, 850, 850, 900, 1500, 950];   // ms per phase
-      var TOTAL = DWELL.reduce(function (a, b) { return a + b; }, 0);
-      // Cumulative end time for each phase, so we can swap the label on schedule
-      // WITHOUT tying the bar's speed to phase boundaries.
-      var marks = []; (function () { var s = 0; for (var k = 0; k < N; k++) { s += DWELL[k]; marks.push(s); } })();
-      var start = 0, curIdx = -1;
-      // Gentle ease over the WHOLE run (not per phase), so the bar never stutters
-      // at a boundary — one continuous glide from 0 to 100%.
-      function ease(t) { return 1 - Math.pow(1 - t, 1.8); }
-
-      function frame(now) {
-        if (!start) start = now;
-        var elapsed = now - start;
-        var t = Math.min(1, elapsed / TOTAL);
-        fill.style.width = (ease(t) * 100).toFixed(1) + '%';
-        // advance the phase label when we cross each cumulative mark
-        var idx = 0;
-        while (idx < N - 1 && elapsed >= marks[idx]) idx++;
-        if (idx !== curIdx) { curIdx = idx; updatePhase(idx); }
-        if (t < 1) { raf = requestAnimationFrame(frame); }
-        else { later(function () { renderDone(picked.name, picked.color); busy = false; }, 300); }
-      }
-      raf = requestAnimationFrame(frame);
-    }
-    // Sample chips and drops go straight from empty to converting in one move,
-    // so the CTA never flashes "Convert & Install" for something the user didn't click.
-    function run(name, color) {
-      if (busy) return;
-      picked = { name: name, color: color || '#12A594' };
-      convert();
-    }
-    function reset() { clearTimers(); busy = false; picked = null; renderEmpty(); }
-
-    // ---- wiring ----
-    // CTA is the single morphing action: pick → convert → reset.
-    cta.addEventListener('click', function () {
-      if (busy) return;
-      if (!picked) { pickRandom(); }
-      else if (cta.classList.contains('ghost')) { reset(); }
-      else { convert(); }
-    });
-
-    var SAMPLES = [['Claude for Chrome', '#D97757'], ['Dark Reader', '#C9A876'], ['Grammarly', '#21AF9F'], ['Stylus', '#12A594']];
-    function pickRandom() { var s = SAMPLES[Math.floor(Math.random() * SAMPLES.length)]; pick(s[0], s[1]); }
-
-    win.querySelectorAll('.demo-chip').forEach(function (chip) {
-      chip.addEventListener('click', function () {
-        if (busy) return;
-        // one click runs the whole thing for that extension
-        run(chip.getAttribute('data-sample'), chip.getAttribute('data-color'));
-      });
-    });
-
-    // card: click to pick (browse) when idle, or reset once done
-    card.addEventListener('click', function () {
-      if (busy) return;
-      if (!picked) pickRandom();
-      else if (cta.classList.contains('ghost')) reset();
-    });
-    card.addEventListener('keydown', function (e) {
-      if ((e.key === 'Enter' || e.key === ' ') && !busy) { e.preventDefault(); if (!picked) pickRandom(); }
-    });
-    ['dragenter', 'dragover'].forEach(function (ev) {
-      card.addEventListener(ev, function (e) { e.preventDefault(); if (!busy) card.classList.add('dragging'); });
-    });
-    ['dragleave', 'drop'].forEach(function (ev) {
-      card.addEventListener(ev, function (e) { e.preventDefault(); card.classList.remove('dragging'); });
-    });
-    card.addEventListener('drop', function (e) {
-      if (busy) return;
-      var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-      var name = f ? f.name.replace(/\.(crx|zip)$/i, '') : null;
-      run(name || SAMPLES[0][0], '#12A594');
-    });
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
   })();
 
-  // ── Compat playground: check how a chrome.* API fares under conversion ──
+  // ── Glass nav ──
+  // React Bits' GlassSurface, ported: a data-URI SVG acts as the displacement
+  // map (a red horizontal ramp and a blue vertical ramp, difference-blended,
+  // with a soft bright rect inset from the edges). Feeding that to
+  // feDisplacementMap once per colour channel at slightly different scales
+  // bends the backdrop at the pill's edges and splits it into colour fringes.
+  // Only Chromium resolves url() inside backdrop-filter, which the original
+  // component also gates on, so everyone else keeps the plain blur.
   (function () {
-    var input = document.getElementById('cx-input');
-    if (!input) return;
-    var result = document.getElementById('cx-result');
-    var tries = document.getElementById('cx-tries');
+    var pill = document.querySelector('.nav-pill');
+    var map = document.getElementById('nav-glass-map');
+    if (!pill || !map) return;
 
-    // Verdict data. Grounded in how Safari Web Extensions actually differ:
-    // native = works as-is, shim = runtime patches it, no = can't be carried over.
-    var MAP = {
-      tabs:        ['ok',  'Supported natively', 'Runs on the native Safari tabs API with no changes.'],
-      runtime:     ['ok',  'Supported natively', 'Messaging and lifecycle work directly.'],
-      storage:     ['ok',  'Supported natively', 'local, sync, and session all carry over.'],
-      scripting:   ['ok',  'Supported natively', 'Programmatic injection maps cleanly.'],
-      i18n:        ['ok',  'Supported natively', 'Locale files load unchanged.'],
-      action:      ['ok',  'Supported natively', 'Toolbar button and popup carry over.'],
-      alarms:      ['ok',  'Supported natively', 'Scheduled wake-ups work as-is.'],
-      webrequest:  ['shim','Shimmed by the runtime', 'Safari narrows blocking webRequest; Viaduct routes it through declarativeNetRequest where it can and flags the rest.'],
-      declarativenetrequest: ['shim','Shimmed by the runtime', 'Rule limits differ on Safari; Viaduct reconciles the ruleset at build time.'],
-      runtime_connect: ['shim','Shimmed by the runtime', 'Ports route by an id Safari reports differently; Viaduct rewrites it.'],
-      contextmenus:['shim','Shimmed by the runtime', 'Partial on Safari; Viaduct backfills the missing calls.'],
-      notifications:['shim','Shimmed by the runtime', 'Reduced surface on Safari; the runtime normalizes what it can.'],
-      commands:    ['shim','Shimmed by the runtime', 'Keyboard shortcuts are re-registered through the Safari API.'],
-      gcm:         ['no',  'Not portable', 'Google Cloud Messaging has no Safari equivalent. Viaduct flags it before you convert, so nothing breaks silently.'],
-      identity:    ['no',  'Not portable', 'The Chrome OAuth sign-in flow cannot survive conversion. Viaduct warns you up front.'],
-      instanceid:  ['no',  'Not portable', 'Tied to Google Cloud Messaging; flagged before convert.'],
-      gcmessaging: ['no',  'Not portable', 'No Safari counterpart; flagged at check time.']
-    };
-    var ICONS = {
-      ok:   '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>',
-      shim: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16M4 12l4-4M4 12l4 4"/></svg>',
-      no:   '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>'
-    };
-    var CLS = { ok: 'cx-v-ok', shim: 'cx-v-shim', no: 'cx-v-no' };
+    var ua = navigator.userAgent;
+    var probe = document.createElement('div');
+    probe.style.backdropFilter = 'url(#nav-glass)';
+    var supported = probe.style.backdropFilter !== '' &&
+      !(/Safari/.test(ua) && !/Chrome/.test(ua)) && !/Firefox/.test(ua);
+    if (!supported) return;
 
-    function lookup(raw) {
-      var k = raw.toLowerCase().replace(/^chrome\./, '').replace(/[^a-z]/g, '');
-      if (MAP[k]) return MAP[k];
-      // Unknown but plausible namespace: the honest answer is "checked at convert".
-      if (k.length >= 2) return ['shim', 'Checked at conversion', 'Viaduct inspects this namespace when you convert and tells you if any call will not carry over, so nothing fails silently.'];
-      return null;
+    function buildMap() {
+      var r = pill.getBoundingClientRect();
+      var w = Math.round(r.width), h = Math.round(r.height);
+      if (!w || !h) return;
+      var radius = Math.min(999, h / 2);
+      var edge = Math.min(w, h) * 0.035;
+      var svg =
+        '<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">' +
+          '<defs>' +
+            '<linearGradient id="r" x1="100%" y1="0%" x2="0%" y2="0%">' +
+              '<stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="red"/></linearGradient>' +
+            '<linearGradient id="b" x1="0%" y1="0%" x2="0%" y2="100%">' +
+              '<stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="blue"/></linearGradient>' +
+          '</defs>' +
+          '<rect width="' + w + '" height="' + h + '" fill="black"/>' +
+          '<rect width="' + w + '" height="' + h + '" rx="' + radius + '" fill="url(#r)"/>' +
+          '<rect width="' + w + '" height="' + h + '" rx="' + radius + '" fill="url(#b)" style="mix-blend-mode:difference"/>' +
+          '<rect x="' + edge + '" y="' + edge + '" width="' + (w - edge * 2) + '" height="' + (h - edge * 2) + '"' +
+            ' rx="' + radius + '" fill="hsl(0 0% 50% / 0.93)" style="filter:blur(11px)"/>' +
+        '</svg>';
+      map.setAttribute('href', 'data:image/svg+xml,' + encodeURIComponent(svg));
     }
 
-    function render(raw) {
-      var v = lookup(raw);
-      if (!v) { result.innerHTML = ''; return; }
-      result.innerHTML =
-        '<div class="cx-verdict ' + CLS[v[0]] + '">' +
-          '<span class="cx-vmark">' + ICONS[v[0]] + '</span>' +
-          '<span class="cx-vbody"><b>' + v[1] + '</b><span>' + v[2] + '</span></span>' +
-        '</div>';
-      // next frame so the transition fires
-      var card = result.querySelector('.cx-verdict');
-      requestAnimationFrame(function () { card.classList.add('show'); });
-    }
+    buildMap();
+    document.documentElement.classList.add('glassy');
+    if (window.ResizeObserver) new ResizeObserver(buildMap).observe(pill);
+    else window.addEventListener('resize', buildMap);
+  })();
 
-    var debounce;
-    input.addEventListener('input', function () {
-      clearTimeout(debounce);
-      var val = input.value.trim();
-      if (!val) { result.innerHTML = ''; return; }
-      debounce = setTimeout(function () { render(val); }, 160);
-    });
-    tries.querySelectorAll('.cx-try').forEach(function (b) {
-      b.addEventListener('click', function () {
-        input.value = b.getAttribute('data-api');
-        render(input.value);
-        input.focus();
-      });
-    });
+  // ── Hero light rays ──
+  // The SideRays shader from React Bits, lifted off React/ogl onto plain WebGL:
+  // one fullscreen triangle, one fragment program. Origin is fixed to the
+  // top-right and opacity lives in CSS, so those three uniforms are gone.
+  // The loop parks itself whenever the hero is off screen — this page argues
+  // for battery life, so it shouldn't spin the GPU while you read the pricing.
+  (function () {
+    var cv = document.getElementById('hero-rays');
+    if (!cv || reduce) return;
+    var gl = cv.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false, powerPreference: 'low-power' });
+    if (!gl) return;
+
+    var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+    var FRAG = [
+      'precision highp float;',
+      'uniform float iTime, iSpeed, iIntensity, iSpread, iTilt, iSaturation, iBlend, iFalloff;',
+      'uniform vec2 iResolution;',
+      'uniform vec3 iRayColor1, iRayColor2;',
+      'float rayStrength(vec2 src, vec2 dir, vec2 coord, float a, float b, float sp){',
+      '  vec2 d = coord - src;',
+      '  float c = dot(normalize(d), dir);',
+      '  return clamp((0.45 + 0.15 * sin(c * a + iTime * sp)) + (0.3 + 0.2 * cos(-c * b + iTime * sp)), 0.0, 1.0)',
+      '       * clamp((iResolution.x - length(d)) / iResolution.x, 0.5, 1.0);',
+      '}',
+      'void main(){',
+      '  vec2 fc = gl_FragCoord.xy;',
+      '  vec2 coord = vec2(fc.x, iResolution.y - fc.y);',
+      '  vec2 rayPos = vec2(iResolution.x * 1.1, -0.5 * iResolution.y);',
+      '  float t = iTilt * 3.14159265 / 180.0, cs = cos(t), sn = sin(t);',
+      '  vec2 rel = coord - rayPos;',
+      '  vec2 tc = vec2(rel.x * cs - rel.y * sn, rel.x * sn + rel.y * cs) + rayPos;',
+      '  float hs = iSpread * 0.275;',
+      '  vec2 d1 = normalize(vec2(cos(0.785398 + hs), sin(0.785398 + hs)));',
+      '  vec2 d2 = normalize(vec2(cos(0.785398 - hs), sin(0.785398 - hs)));',
+      '  vec4 r1 = vec4(iRayColor1, 1.0) * rayStrength(rayPos, d1, tc, 36.2214, 21.11349, iSpeed);',
+      '  vec4 r2 = vec4(iRayColor2, 1.0) * rayStrength(rayPos, d2, tc, 22.3991, 18.0234, iSpeed * 0.2);',
+      '  vec4 col = r1 * (1.0 - iBlend) * 0.9 + r2 * iBlend * 0.9;',
+      '  float dist = length(fc - vec2(rayPos.x, iResolution.y - rayPos.y)) / iResolution.y;',
+      '  col.rgb *= iIntensity * 0.4 / pow(max(dist, 0.001), iFalloff);',
+      '  float g = dot(col.rgb, vec3(0.299, 0.587, 0.114));',
+      '  col.rgb = clamp(mix(vec3(g), col.rgb, iSaturation), 0.0, 1.0);',
+      '  gl_FragColor = vec4(col.rgb, clamp(max(col.r, max(col.g, col.b)), 0.0, 1.0));',
+      '}'
+    ].join('\n');
+
+    function shader(type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src); gl.compileShader(s);
+      return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+    }
+    var vs = shader(gl.VERTEX_SHADER, VERT), fs = shader(gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return;
+    var prog = gl.createProgram();
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    gl.useProgram(prog);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    var pos = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(pos);
+    gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+
+    function u(name) { return gl.getUniformLocation(prog, name); }
+    // Two teals rather than the stock yellow/blue, tuned down: this is lighting
+    // on the span, not a light show of its own.
+    gl.uniform3f(u('iRayColor1'), 0.176, 0.831, 0.749);  // #2DD4BF
+    gl.uniform3f(u('iRayColor2'), 0.078, 0.514, 0.478);  // #14837A
+    gl.uniform1f(u('iSpeed'), 1.8);
+    gl.uniform1f(u('iIntensity'), 3.4);
+    // Wide spread is what separates the beams. Narrow values collapse them into
+    // a single corner glow, which is what this looked like before.
+    gl.uniform1f(u('iSpread'), 6.5);
+    gl.uniform1f(u('iTilt'), -8.0);
+    gl.uniform1f(u('iSaturation'), 1.2);
+    gl.uniform1f(u('iBlend'), 0.6);
+    // Paired with the intensity above: enough falloff that the corner nearest
+    // the source doesn't clamp to flat white and swallow the banding.
+    gl.uniform1f(u('iFalloff'), 1.2);
+    var uTime = u('iTime'), uRes = u('iResolution');
+
+    // 1.5x is plenty for a soft gradient, and it costs half the fill of 2x.
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    function resize() {
+      var w = Math.max(1, cv.clientWidth), h = Math.max(1, cv.clientHeight);
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      gl.viewport(0, 0, cv.width, cv.height);
+      gl.uniform2f(uRes, cv.width, cv.height);
+    }
+    resize();
+    if (window.ResizeObserver) new ResizeObserver(resize).observe(cv);
+    else window.addEventListener('resize', resize);
+
+    var raf = 0, running = false;
+    function frame(t) {
+      gl.uniform1f(uTime, t * 0.001);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      raf = requestAnimationFrame(frame);
+    }
+    function start() { if (!running) { running = true; raf = requestAnimationFrame(frame); } }
+    function stop() { if (running) { running = false; cancelAnimationFrame(raf); } }
+
+    // Run only when the hero is both on screen and in the foreground tab.
+    var onScreen = true;
+    function sync() { (onScreen && !document.hidden) ? start() : stop(); }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { onScreen = es[0].isIntersecting; sync(); }).observe(cv);
+    }
+    document.addEventListener('visibilitychange', sync);
+    sync();
+    requestAnimationFrame(function () { cv.classList.add('lit'); });
   })();
 
   // ── Forward attribution to Gumroad ──
