@@ -4,16 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Spyglass</title>
-<meta name="description" content="Spyglass gives Google Docs, Sheets, Slides, Drawings, Forms, and Sites real Quick Look previews on macOS. Press Space, see the document, not a blob of JSON." />
+<meta name="description" content="Quick Look previews for Google Docs, Sheets, Slides, Drawings, Forms, and Sites on macOS. Press Space in Finder and see the document." />
 <link rel="canonical" href="https://magicelklabs.com/spyglass/" />
 <meta property="og:title" content="Spyglass" />
-<meta property="og:description" content="Press Space on a Google Drive stub file and see the document, not raw JSON." />
+<meta property="og:description" content="Press Space on a Google Drive stub file and Quick Look shows the document itself." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://magicelklabs.com/spyglass/" />
 <meta property="og:image" content="https://magicelklabs.com/spyglass/assets/spyglass-rendered-dark.webp" />
 <link rel="icon" type="image/png" href="./assets/spyglass-appicon-dark-320.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
 <script>
   // Motion gate: hide [data-mm] only when we intend to animate. If GSAP never
@@ -33,13 +34,12 @@
     theme: {
       extend: {
         colors: {
-          brass: { DEFAULT: '#B8945F', press: '#A47E48' },
-          teal:  { top: '#0B3D3A', bot: '#072826' },
+          brass: { DEFAULT: '#B8945F', press: '#A47E48', d: '#D9B679' },
         },
         fontFamily: {
-          sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'system-ui', 'sans-serif'],
-          display: ['Cabinet Grotesk', '-apple-system', 'sans-serif'],
-          mono: ['ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'monospace'],
+          sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'system-ui', 'sans-serif'],
+          display: ['Cabinet Grotesk', 'Inter', '-apple-system', 'sans-serif'],
+          mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'monospace'],
         },
       },
     },
@@ -51,108 +51,184 @@
     --canvas: #F5F5F7;  --surface: #FFFFFF;  --elevated: #F0F0F2;  --card: #EAEAEC;
     --ink: #1D1D1F;     --body: #3A3A3C;     --mute: #6E6E73;      --stone: #BFBFC4;
     --brass: #B8945F;   --brass-press: #A47E48;  --on-brass: #1A1206;
-    --teal-top: #1C6B60; --teal-bot: #124A42; --on-teal: #FFFFFF;
     --wash-a: #D8B889;  --ok: #1A9D5A;  --bad: #E5484D;
     --hair: rgba(0,0,0,.10);  --hair-soft: rgba(0,0,0,.05);  --hair-strong: rgba(0,0,0,.16);
     --glass: rgba(255,255,255,.62);  --glass-brd: rgba(255,255,255,.7);
   }
+  /* Dark is the only mode this page ships. The canvas is a near-black carrying a
+     trace of brown, so the brass reads as lit metal rather than a yellow sticker
+     on neutral grey. */
   html.dark {
-    --canvas: #0F1514;  --surface: #1A2120;  --elevated: #212927;  --card: #2C3634;
-    --ink: #F5F5F7;     --body: #D4D4D8;     --mute: #A1A1A6;      --stone: #49494E;
-    --brass: #C9A876;   --brass-press: #B8945F;  --on-brass: #1A1206;
-    --teal-top: #0B3D3A; --teal-bot: #072826; --on-teal: #FFFFFF;
+    --canvas: #0A0908;  --surface: #12100E;  --elevated: #191614;  --card: #201C19;
+    --ink: #F2EEE6;     --body: #A99E8E;     --mute: #7C7263;      --ash: #574F45;  --stone: #3A342D;
+    --brass: #D9B679;   --brass-press: #EBCE9C;  --on-brass: #1A1206;
     --wash-a: #C9A876;  --ok: #30D158;  --bad: #FF6369;
-    --hair: rgba(255,255,255,.10); --hair-soft: rgba(255,255,255,.06); --hair-strong: rgba(255,255,255,.18);
-    --glass: rgba(26,33,32,.55);   --glass-brd: rgba(255,255,255,.10);
+    --hair: rgba(255,255,255,.075); --hair-soft: rgba(255,255,255,.045); --hair-strong: rgba(255,255,255,.14);
+    --glass: rgba(18,16,14,.55);   --glass-brd: rgba(255,255,255,.10);
+    /* one shared highlight for every raised edge: light catches the top lip */
+    --lip: inset 0 1px 0 rgba(255,255,255,.055);
   }
 
   * { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
   html, body { background: var(--canvas); color: var(--body); }
-  body { overflow-x: hidden; }
+  body { font-feature-settings: 'cv11','ss01'; overflow-x: hidden; }
   ::selection { background: var(--brass); color: var(--on-brass); }
 
   h1,h2,h3 { color: var(--ink); letter-spacing: -0.02em; }
   /* Display: Cabinet Grotesk for page-level headings, sans stays for UI. */
-  h1,h2 { font-family:'Cabinet Grotesk','-apple-system',sans-serif; font-weight:800 !important; letter-spacing:-0.025em; }
-  header h1, header p { color: #fff; }
+  h1,h2 { font-family:'Cabinet Grotesk',Inter,'-apple-system',sans-serif; font-weight:800 !important; letter-spacing:-0.025em; line-height:1.06; }
   .ink { color: var(--ink); }
   .mute { color: var(--mute); }
   .body { color: var(--body); }
   .cap { letter-spacing: .04em; }
+  /* Used inline on the stub-file extensions and the JSON sample. */
+  .mono { font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace; }
+
+  /* Film grain over the whole page. Keeps the near-black from banding under the
+     hero's fluid and takes the plastic off the flat fills. */
+  body::after {
+    content:""; position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
 
   /* Motion gate: elements opt in via data-mm; hidden only while the GSAP
      runtime is expected. assets/motion.js reveals them. */
   html.mm [data-mm] { visibility: hidden; }
   html.mm [data-mm-stagger] > * { visibility: hidden; }
 
-  /* Glass material, no shadows */
-  .glass {
-    background: var(--glass);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    backdrop-filter: blur(20px) saturate(1.4);
-    border: 1px solid var(--glass-brd);
-  }
-  .surface { background: var(--surface); border: 1px solid var(--hair); }
-  .elevated { background: var(--elevated); border: 1px solid var(--hair); }
+  /* Corner radius runs tighter here than on the sibling product pages. Brass is
+     a machined-instrument feel, so panels read crisper and more rectilinear —
+     one scale, two steps: --r-card for panels, --r-inner for media inside them.
+     Override Tailwind's rounded-* on the CDN build since we can't retheme those. */
+  :root { --r-card: 9px; --r-inner: 6px; --r-pill: 11px; }
+  .rounded-2xl { border-radius: var(--r-card) !important; }
+  .rounded-xl { border-radius: var(--r-inner) !important; }
+
+  /* No cast shadows: on a near-black canvas they read as smudge. Depth comes
+     from the surface ladder plus the --lip highlight on each raised edge. */
+  .surface { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); }
+  .elevated { background: var(--elevated); border: 1px solid var(--hair); box-shadow: var(--lip); }
   .hair { border-color: var(--hair); }
 
-  /* Buttons */
+  /* ───────────────────────── Buttons ───────────────────────── */
   .btn-brass {
     background: var(--brass); color: var(--on-brass); font-weight: 600;
-    border-radius: 12px; transition: transform .22s cubic-bezier(.2,.8,.2,1), background .2s;
+    border-radius: var(--r-pill); box-shadow: inset 0 1px 0 rgba(255,255,255,.3);
+    transition: transform .22s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .25s;
   }
-  .btn-brass:hover { background: var(--brass-press); transform: translateY(-1px); }
+  .btn-brass:hover {
+    background: var(--brass-press); transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 6px 28px -6px rgba(217,182,121,.5);
+  }
   .btn-brass:active { transform: translateY(0) scale(.99); }
+
+  /* Glass secondary: a lit pane, not an outline. */
   .btn-ghost {
-    background: transparent; color: var(--ink); border: 1px solid var(--hair-strong);
-    border-radius: 12px; transition: transform .22s, border-color .2s, background .2s;
+    background: rgba(255,255,255,.05); color: var(--ink); border: 1px solid rgba(255,255,255,.12);
+    border-radius: var(--r-pill); box-shadow: var(--lip);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    transition: transform .22s cubic-bezier(.2,.8,.2,1), border-color .2s, background .2s;
   }
-  .btn-ghost:hover { border-color: var(--brass); transform: translateY(-1px); }
+  .btn-ghost:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.2); transform: translateY(-1px); }
+  .btn-ghost:active { transform: translateY(0) scale(.99); }
   a.gumroad-button { display: inline-flex !important; background-image: none !important; }
 
-  .btn-teal-ghost {
-    background: rgba(255,255,255,.10); color: #fff; border: 1px solid rgba(255,255,255,.28);
-    border-radius: 12px; transition: transform .22s, background .2s;
+  /* ───────────────────────── Hero atmosphere ─────────────────────────
+     A ferrofluid field, brass-lit, drifting down behind the type. The hero
+     carries no illustration of its own; the demo gets its own section below. */
+  .ferro { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 1.2s ease .3s; }
+  .ferro.lit { opacity: .88; }
+  @media (prefers-reduced-motion: reduce) { .ferro { display: none; } }
+  /* Two masks, intersected. The ellipse holds the middle of the frame open so
+     the headline sits on black and the fluid reads as something seen through a
+     barrel; the linear ramp keeps the light off the section boundary, which the
+     hero's overflow-hidden would otherwise slice into a seam. */
+  .ferro {
+    -webkit-mask-image:
+      radial-gradient(ellipse 52% 46% at 50% 46%, transparent 0%, rgba(0,0,0,.3) 60%, #000 100%),
+      linear-gradient(to bottom, #000 0%, #000 48%, rgba(0,0,0,.45) 76%, transparent 96%);
+    mask-image:
+      radial-gradient(ellipse 52% 46% at 50% 46%, transparent 0%, rgba(0,0,0,.3) 60%, #000 100%),
+      linear-gradient(to bottom, #000 0%, #000 48%, rgba(0,0,0,.45) 76%, transparent 96%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
   }
-  .btn-teal-ghost:hover { background: rgba(255,255,255,.18); transform: translateY(-1px); }
 
-  /* Teal band for the closing CTA (mirrors the hero band) */
-  .band-teal { background: linear-gradient(160deg, var(--teal-top), var(--teal-bot)); }
-  .band-teal h2 { color: #fff; }
-  .band-teal .body { color: rgba(255,255,255,.78); }
+  /* One quiet brass bloom, used by the closing CTA. */
+  .brass-glow {
+    position: absolute; left: 50%; bottom: 18%; transform: translateX(-50%);
+    width: min(1150px, 140%); aspect-ratio: 2.1/1; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(217,182,121,.20), rgba(140,105,52,.09) 45%, transparent 72%);
+    filter: blur(30px);
+  }
+  @media (max-width: 700px) { .brass-glow { width: 190%; } }
 
-  /* ───────── Pinned file-type showcase ─────────
-     Default = static stack (mobile, no-JS, reduced motion). motion.js adds
-     .mm-pin-live on capable viewports and pins the stage while panels crossfade. */
-  .pin-rail { display:none; }
-  .pin-panel { margin:0; }
-  .pin-panel + .pin-panel { margin-top:32px; }
-  .pin-frame { background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:6px; }
+  /* ───────────────────────── Nav: a floating glass pill ───────────────────────── */
+  .nav-pill {
+    position: relative;
+    background: rgba(18,16,14,.55); border: 1px solid rgba(255,255,255,.08);
+    /* A soft-cornered bar, not the full lozenge the sibling pages run. */
+    border-radius: 16px; box-shadow: var(--lip);
+    -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+    transition: background .3s, border-color .3s;
+  }
+  #nav.scrolled .nav-pill { background: rgba(18,16,14,.82); border-color: rgba(255,255,255,.12); }
+  /* Real glass: an SVG displacement map fed to backdrop-filter, so the pill
+     refracts what passes under it and splits colour at its edges. Chromium only,
+     so .glassy is set by script and the blur above stays as the fallback.
+     Blur stays in the chain or nav text sits on whatever is scrolling past. */
+  .glass-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+  html.glassy .nav-pill {
+    background: rgba(18,16,14,.30);
+    backdrop-filter: url(#nav-glass) blur(9px) saturate(1.5);
+    box-shadow:
+      inset 0 0 2px 1px rgba(255,255,255,.30),
+      inset 0 0 12px 4px rgba(255,255,255,.10),
+      var(--lip);
+  }
+  html.glassy #nav.scrolled .nav-pill { background: rgba(18,16,14,.58); }
+  .nav-link { color: var(--body); transition: color .2s; }
+  .nav-link:hover { color: var(--ink); }
+
+  /* Shared media frame: hero demo, the stub-file shot, the menu-bar panel. */
+  .pin-frame { background:var(--surface); border:1px solid var(--hair); box-shadow:var(--lip); border-radius:var(--r-card); padding:6px; }
   /* No `display` here: Tailwind's block/hidden classes drive the light/dark swap. */
-  .pin-frame img { border-radius:11px; width:100%; }
+  .pin-frame img { border-radius:var(--r-inner); width:100%; }
   .pin-cap { margin-top:12px; font-size:14px; color:var(--mute); }
   .pin-cap b { color:var(--ink); font-weight:600; }
-  .type-name { font-family:'Cabinet Grotesk','-apple-system',sans-serif; font-weight:800; font-size:clamp(22px,2.4vw,30px); color:var(--ink); letter-spacing:-.02em; }
-  @media (min-width:1024px) {
-    .mm-pin-live .pin-stage { height:100dvh; display:flex; align-items:center; }
-    .mm-pin-live .pin-grid { display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:56px; align-items:center; width:100%; }
-    .mm-pin-live .pin-rail { display:block; }
-    .mm-pin-live .pin-rail-item { opacity:.32; transition:opacity .4s ease; padding:20px 0; border-top:1px solid var(--hair-soft); }
-    .mm-pin-live .pin-rail-item:first-child { border-top:none; padding-top:0; }
-    .mm-pin-live .pin-rail-item.is-active { opacity:1; }
-    .mm-pin-live .pin-panels { position:relative; aspect-ratio:1800/1474; }
-    .mm-pin-live .pin-panel { position:absolute; inset:0; }
-    .mm-pin-live .pin-panel + .pin-panel { margin-top:0; }
-    .mm-pin-live .pin-cap { display:none; }
-  }
 
-  /* File-type coverage matrix */
-  .type-chip { display:flex; align-items:center; gap:10px; padding:12px 14px; border:1px solid var(--hair); border-radius:12px; background:var(--surface); }
-  .type-chip code { font-family:ui-monospace,SFMono-Regular,monospace; font-size:13px; color:var(--brass); }
-  .type-chip .tname { font-weight:600; font-size:14px; color:var(--ink); margin-right:auto; }
-  .type-chip .tier { font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; padding:3px 8px; border-radius:999px; white-space:nowrap; }
-  .type-chip .tier.render { color:var(--brass); border:1px solid var(--brass); }
-  .type-chip .tier.info { color:var(--mute); border:1px solid var(--hair-strong); }
+  /* ───────── Format reel ─────────
+     Four Quick Look shots on a ribbon that drifts left without stopping. The
+     strip is cloned, so script can wrap the scroll position by exactly one
+     strip width and the seam never lands anywhere you can see it. No snapping:
+     a card parked dead centre would give the drift somewhere to stutter.
+     Cards run as large as the viewport allows — the vh cap leaves room for the
+     heading above, so a whole card and its neighbours read on one screen. */
+  .hl { --hl-h: min(680px, 70vh, 63vw); --hl-w: calc(var(--hl-h) * 1.45); }
+  .hl-track {
+    display: flex; gap: 20px; overflow-x: auto; overscroll-behavior-x: contain;
+    padding: 4px 0; scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .hl-track::-webkit-scrollbar { display: none; }
+  .hl-card {
+    flex: none; width: var(--hl-w); height: var(--hl-h);
+    display: flex; flex-direction: column; gap: 16px; padding: 26px 26px 0; overflow: hidden;
+    background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip);
+    border-radius: var(--r-card);
+  }
+  /* The shots carry their own window chrome on transparency, so they sit on the
+     card surface and run off its bottom lip instead of being framed again. The
+     card is wider than the shot, so fill it and let the crop take the bottom of
+     the window, which is empty page on every format. */
+  .hl-card img { flex: 1; min-height: 0; width: 100%; object-fit: cover; object-position: center 14%; }
+  .hl-name { display:flex; align-items:baseline; gap:9px; }
+  .hl-name b { font-family:'Cabinet Grotesk','-apple-system',sans-serif; font-weight:800; font-size:clamp(19px,2vw,25px); color:var(--ink); letter-spacing:-.02em; line-height:1; }
+  .hl-name span { font-family:'JetBrains Mono',ui-monospace,monospace; font-size:12.5px; color:var(--mute); }
+
+  /* The track takes focus so it can be scrolled from the keyboard. */
+  .hl-track:focus-visible { outline: 2px solid var(--brass); outline-offset: 4px; }
+  @media (prefers-reduced-motion: reduce) { .hl-track { scroll-behavior: auto; } }
+
 
   /* Why-Google-access ledger rows */
   .why-row { display:grid; grid-template-columns:220px 1fr; gap:24px; padding:20px 0; border-top:1px solid var(--hair-soft); }
@@ -174,86 +250,101 @@
     outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 6px;
   }
 
-  .cmp td, .cmp th { border-color: var(--hair); }
-  /* Paid column carries the accent: tinted wash so it reads as the upgrade. */
-  .cmp .paid { background: color-mix(in srgb, var(--brass) 8%, transparent); }
-  .cmp .ok-cell { color: var(--ok); }
+  /* ───────────────────────── Pricing ─────────────────────────
+     One product, one unlock, so there is no tier ladder to compare. The paid
+     panel is the anchor and free sits beside it, narrower and unlit. */
+  .price-lit { position: relative; overflow: hidden;
+    background: linear-gradient(168deg, color-mix(in srgb, var(--brass) 10%, var(--surface)), var(--surface) 58%);
+    border: 1px solid color-mix(in srgb, var(--brass) 26%, transparent);
+    box-shadow: var(--lip);
+  }
+  /* Same brass bloom as the closing CTA, tucked into the top corner. */
+  .price-lit::after {
+    content:""; position:absolute; top:-45%; right:-25%; width:75%; aspect-ratio:1; pointer-events:none;
+    background: radial-gradient(circle, rgba(217,182,121,.17), transparent 68%); filter: blur(26px);
+  }
+  .price-num { font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; letter-spacing:-.035em; line-height:1; color:var(--ink); }
+  .p-row { display:flex; gap:11px; align-items:baseline; padding:11px 0; border-top:1px solid var(--hair-soft); font-size:14.5px; line-height:1.55; color:var(--body); }
+  .p-row:first-child { border-top:none; }
+  .p-row::before { content:"✓"; flex:none; font-size:13px; color:var(--brass); }
+  .p-row b { color:var(--ink); font-weight:600; }
+  .p-list-free .p-row::before { color: var(--mute); }
+  .p-note { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 20px; font-size:13px; color:var(--mute); }
 </style>
 </head>
 <body class="font-sans antialiased">
 
 <!-- NAV -->
-<nav id="nav" class="sticky top-0 z-50 transition-colors">
-  <span class="mm-progress" style="background:var(--brass)" aria-hidden="true"></span>
-  <div class="max-w-7xl mx-auto px-4 sm:px-5 h-16 flex items-center justify-between relative">
-    <a href="#top" class="flex items-center gap-1.5">
-      <img data-icon class="w-[26px] h-[26px] shrink-0" alt="Spyglass app icon" width="26" height="26" src="./assets/spyglass-mark.png" />
-      <span class="font-display font-bold ink text-[26px] tracking-tight leading-none">Spyglass</span>
+<!-- Displacement filter for the nav pill. feImage's href is a data-URI map that
+     script regenerates whenever the pill resizes. -->
+<svg class="glass-defs" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="nav-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feImage id="nav-glass-map" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" />
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="-180" xChannelSelector="R" yChannelSelector="G" result="dRed" />
+      <feColorMatrix in="dRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red" />
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="-170" xChannelSelector="R" yChannelSelector="G" result="dGreen" />
+      <feColorMatrix in="dGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green" />
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="-160" xChannelSelector="R" yChannelSelector="G" result="dBlue" />
+      <feColorMatrix in="dBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue" />
+      <feBlend in="red" in2="green" mode="screen" result="rg" />
+      <feBlend in="rg" in2="blue" mode="screen" result="output" />
+      <feGaussianBlur in="output" stdDeviation="0.7" />
+    </filter>
+  </defs>
+</svg>
+
+<header id="nav" class="fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-5">
+  <nav class="nav-pill max-w-5xl mx-auto pl-4 pr-2 sm:pl-5 sm:pr-2.5 h-[54px] flex items-center justify-between gap-4" aria-label="Primary">
+    <a href="#top" class="flex items-center gap-2 shrink-0" aria-label="Spyglass home">
+      <img data-icon class="w-[21px] h-[21px] shrink-0" alt="" aria-hidden="true" width="21" height="21" src="./assets/spyglass-mark.png" />
+      <span class="font-display font-bold ink text-[19px] tracking-tight leading-none">Spyglass</span>
     </a>
-    <div class="hidden md:flex items-center gap-7 text-[14px] absolute left-1/2 -translate-x-1/2">
-      <a href="#free-paid" class="mute hover:text-[var(--brass)] transition-colors">Free vs Paid</a>
-      <a href="#faq" class="mute hover:text-[var(--brass)] transition-colors">FAQ</a>
+    <div class="hidden md:flex items-center gap-7 text-[14px] font-medium absolute left-1/2 -translate-x-1/2">
+      <a href="#what" class="nav-link">What it does</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="#faq" class="nav-link">FAQ</a>
     </div>
-    <div class="flex items-center gap-2 sm:gap-3">
-      <a href="https://github.com/magicelk235/Spyglass/releases" class="btn-ghost text-[14px] px-4 py-2 hidden sm:inline-flex items-center" data-mm-magnet>Download free</a>
-      <a data-mm-magnet href="https://magicelk235.gumroad.com/l/spyglass?wanted=true" class="btn-brass text-[14px] px-4 py-2 hidden sm:inline-flex items-center">Buy · $9</a>
+    <div class="flex items-center gap-2">
+      <a href="https://github.com/magicelk235/Spyglass/releases" class="btn-ghost text-[13.5px] px-3.5 py-[7px] hidden sm:inline-flex items-center">Download</a>
+      <a href="https://magicelk235.gumroad.com/l/spyglass?wanted=true" class="btn-brass text-[13.5px] px-3.5 py-[7px] inline-flex items-center">Buy</a>
     </div>
-  </div>
-</nav>
+  </nav>
+</header>
 
 <main id="top">
 
 <!-- HERO -->
-<header class="relative overflow-hidden text-center text-white" style="background:linear-gradient(160deg,var(--teal-top),var(--teal-bot));border-radius:0 0 40px 40px;" data-mm-ambient="teal">
-  <div class="relative z-10 max-w-3xl mx-auto px-5 sm:px-8 pt-20 pb-14">
-    <h1 data-mm="lines" data-mm-load data-mm-delay=".12" class="text-[clamp(2.4rem,6.5vw,4.2rem)] leading-[1.08] mb-4 pb-1">Press Space.<br /><span style="color:var(--wash-a)">See the document.</span></h1>
-    <p data-mm="rise" data-mm-load data-mm-delay=".5" class="text-[clamp(1.05rem,2.4vw,1.35rem)] mx-auto max-w-[34ch]" style="color:rgba(255,255,255,.74)">Real Quick Look previews for Google Workspace files on macOS.</p>
-  </div>
-  <div class="relative z-10 max-w-4xl mx-auto px-5 sm:px-8 pb-16">
-    <div data-mm="media" data-mm-load data-mm-delay=".55" data-mm-tilt>
-    <div data-mm-scrub class="rounded-2xl overflow-hidden" style="border:1px solid rgba(255,255,255,.28)">
-      <video id="sg-demo" class="w-full block" src="./assets/spyglass-demo.mp4" poster="./assets/spyglass-demo-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Screen recording: pressing Space on Google Drive stub files in Finder shows the real documents"></video>
-    </div>
-    </div>
-  </div>
-</header>
+<section class="relative min-h-[100svh] flex items-center pt-28 pb-24 px-5 sm:px-8 overflow-hidden">
 
-<!-- THE PROBLEM -->
-<section id="problem" class="py-20 px-5 sm:px-8">
-  <div class="max-w-5xl mx-auto">
-    <div class="max-w-2xl mb-12 border-t pt-10" style="border-color:var(--hair)">
-      <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-3">Google Drive turns your files into blobs</h2>
-      <p data-mm="rise" class="body text-[17px] leading-relaxed">When you sync Google Drive to a Mac, Workspace files download as tiny stub files that hold only a document ID. Press Space in Finder and macOS shows you the raw JSON inside. Spyglass shows the real document instead.</p>
+  <!-- Ambient only: a brass ferrofluid field, no illustration. -->
+  <canvas class="ferro" id="hero-ferro" aria-hidden="true"></canvas>
+
+  <div class="max-w-5xl mx-auto relative z-10 text-center w-full">
+
+    <h1 data-mm="lines" data-mm-load data-mm-delay=".1" class="text-[clamp(2.6rem,6.6vw,4.9rem)] leading-[1.02] mb-6">
+      Press Space.<br />
+      <span style="color:var(--brass)">See the document.</span>
+    </h1>
+
+    <p data-mm="rise" data-mm-load data-mm-delay=".45" class="text-[clamp(1.05rem,2.2vw,1.25rem)] body max-w-xl mx-auto mb-9 leading-relaxed">
+      Quick Look previews for Google Workspace files on macOS.
+    </p>
+
+    <div data-mm="rise" data-mm-load data-mm-delay=".55" class="flex flex-wrap items-center justify-center gap-3">
+      <a href="https://github.com/magicelk235/Spyglass/releases" class="btn-ghost text-[15px] px-6 py-3 inline-flex items-center justify-center">Download</a>
+      <a href="https://magicelk235.gumroad.com/l/spyglass?wanted=true" class="btn-brass text-[15px] px-6 py-3 inline-flex items-center justify-center">Buy</a>
     </div>
-    <div data-mm-stagger class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-w-4xl mb-4">
-      <div class="type-chip"><code>.gdoc</code><span class="tname">Docs</span><span class="tier render">Rendered</span></div>
-      <div class="type-chip"><code>.gsheet</code><span class="tname">Sheets</span><span class="tier render">Rendered</span></div>
-      <div class="type-chip"><code>.gslides</code><span class="tname">Slides</span><span class="tier render">Rendered</span></div>
-      <div class="type-chip"><code>.gdraw</code><span class="tname">Drawings</span><span class="tier render">Rendered</span></div>
-      <div class="type-chip"><code>.gform</code><span class="tname">Forms</span><span class="tier info">Info card</span></div>
-      <div class="type-chip"><code>.gsite</code><span class="tname">Sites</span><span class="tier info">Info card</span></div>
-    </div>
-    <div data-mm-stagger class="grid md:grid-cols-2 gap-5 items-stretch">
-      <div class="surface rounded-2xl p-6" data-mm-spot="brass">
-        <div class="flex items-center gap-2 mb-4">
-          <span class="w-2.5 h-2.5 rounded-full" style="background:var(--bad)"></span>
-          <span class="cap text-[12px] font-semibold mute uppercase">Before · what macOS shows</span>
-        </div>
-        <pre class="mono text-[13px] leading-relaxed overflow-x-auto rounded-xl p-4" style="background:var(--elevated);color:var(--body);border:1px solid var(--hair)"><code>{
-  "url": "https://docs.google.com/document/d/1AbC.../edit",
-  "doc_id": "1AbC2dEfGh3IjKlMnOpQrStUvWxYz",
-  "email": "you@gmail.com",
-  "resource_key": ""
-}</code></pre>
-      </div>
-      <div class="surface rounded-2xl p-6" data-mm-spot="brass">
-        <div class="flex items-center gap-2 mb-4">
-          <span class="w-2.5 h-2.5 rounded-full" style="background:var(--ok)"></span>
-          <span class="cap text-[12px] font-semibold uppercase" style="color:var(--brass)">After · what Spyglass shows</span>
-        </div>
-        <div class="rounded-xl overflow-hidden" style="border:1px solid var(--hair)">
-          <img src="./assets/spyglass-rendered-dark.webp" alt="Quick Look showing the real first page of a Google Doc" class="w-full block" loading="lazy" decoding="async" width="1200" height="983" />
-        </div>
+
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo" class="pb-16 sm:pb-24 px-5 sm:px-8" aria-label="Spyglass in Finder">
+  <div class="max-w-4xl mx-auto">
+    <div data-mm="media" data-mm-tilt>
+      <div class="pin-frame" data-mm-scrub>
+        <video id="sg-demo" class="w-full block rounded-xl" src="./assets/spyglass-demo.mp4" poster="./assets/spyglass-demo-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Screen recording: pressing Space on Google Drive stub files in Finder shows the real documents"></video>
       </div>
     </div>
   </div>
@@ -264,85 +355,57 @@
   <div class="max-w-5xl mx-auto">
     <div class="max-w-2xl mb-12">
       <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-3">What Spyglass does</h2>
-      <p data-mm="rise" class="body text-[17px] leading-relaxed">Spyglass is a Quick Look extension plus a small menu-bar app for macOS 14 and later. It plugs into the same Space-bar preview you already use in Finder. No new app to open, no window to manage. Select a stub file, press Space, and see the document.</p>
+      <p data-mm="rise" class="body text-[17px] leading-relaxed">A Quick Look extension and a small menu-bar app. It hooks into the Space bar preview you already use. Select a stub file, press Space, the document is there.</p>
     </div>
     <div data-mm-stagger class="grid md:grid-cols-2 gap-5">
       <div class="elevated rounded-2xl p-6">
         <div class="flex items-center gap-2.5 mb-2">
-          <span class="cap text-[12px] font-semibold uppercase px-2.5 py-1 rounded-full" style="color:var(--brass);border:1px solid var(--brass)">Free</span>
           <h3 class="text-[18px] font-semibold">No sign-in</h3>
         </div>
-        <p class="body text-[15px] leading-relaxed">A branded info card for all six file types. Document icon, title, owner, and a link to open it on Google. Instant, offline, no account. This is the whole free app, not a trial.</p>
+        <p class="body text-[15px] leading-relaxed">A branded info card for all six file types: icon, title, owner, and a link to open it on Google. Instant, offline, no account. The whole free app, not a trial.</p>
         <img src="./assets/spyglass-infocard-dark.webp" alt="The free tier's info card preview" class="rounded-xl w-full mt-5 block" loading="lazy" decoding="async" width="1200" height="1036" style="border:1px solid var(--hair)" />
       </div>
-      <div class="elevated rounded-2xl p-6">
+      <div class="price-lit rounded-2xl p-6">
         <div class="flex items-center gap-2.5 mb-2">
-          <span class="cap text-[12px] font-semibold uppercase px-2.5 py-1 rounded-full" style="color:var(--on-brass);background:var(--brass)">Paid · $9</span>
           <h3 class="text-[18px] font-semibold">Rendered previews</h3>
         </div>
-        <p class="body text-[15px] leading-relaxed">Rendered first-page previews for Docs, Sheets, Slides, and Drawings. Spyglass fetches the document's export from Google Drive and draws it. If you are not signed in or the network is slow, it falls back to the free info card. Never blank, never hangs.</p>
+        <p class="body text-[15px] leading-relaxed">The real first page for Docs, Sheets, Slides, and Drawings, fetched from your Drive and drawn on the spot. Signed out or slow network? It falls back to the info card, so nothing hangs.</p>
         <img src="./assets/spyglass-rendered-sheets-dark.webp" alt="A rendered Google Sheet preview" class="rounded-xl w-full mt-5 block" loading="lazy" decoding="async" width="1200" height="1036" style="border:1px solid var(--hair)" />
       </div>
     </div>
   </div>
 </section>
 
-<!-- PINNED SHOWCASE: the four rendered types -->
-<section class="py-20 sm:py-24 px-5 sm:px-8" aria-label="Rendered preview gallery">
-  <div class="max-w-6xl mx-auto border-t pt-10 mb-10" style="border-color:var(--hair)">
-    <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-3 max-w-[24ch]">Every format, the real thing.</h2>
-    <p data-mm="rise" class="body text-[16px] max-w-2xl">The paid tier renders the actual first page, fetched straight from your Drive. Not an icon, not metadata. The document.</p>
-  </div>
-
-  <div data-mm-pin>
-    <div data-mm-pin-stage class="pin-stage max-w-6xl mx-auto">
-      <div class="pin-grid">
-
-        <div class="pin-rail" aria-hidden="true">
-          <div data-mm-pin-item class="pin-rail-item">
-            <p class="type-name">Docs</p>
-          </div>
-          <div data-mm-pin-item class="pin-rail-item">
-            <p class="type-name">Sheets</p>
-          </div>
-          <div data-mm-pin-item class="pin-rail-item">
-            <p class="type-name">Slides</p>
-          </div>
-          <div data-mm-pin-item class="pin-rail-item">
-            <p class="type-name">Drawings</p>
-          </div>
-        </div>
-
-        <div class="pin-panels">
-          <figure data-mm-pin-panel class="pin-panel">
-            <div class="pin-frame">
-              <img src="./assets/spyglass-shot-docs-dark.webp" alt="Quick Look rendering the first page of a Google Doc" class="block" loading="lazy" decoding="async" width="1800" height="1474" />
-            </div>
-            <figcaption class="pin-cap"><b>Docs</b></figcaption>
-          </figure>
-          <figure data-mm-pin-panel class="pin-panel">
-            <div class="pin-frame">
-              <img src="./assets/spyglass-shot-sheets-dark.webp" alt="Quick Look rendering a Google Sheet as a grid" class="block" loading="lazy" decoding="async" width="1800" height="1474" />
-            </div>
-            <figcaption class="pin-cap"><b>Sheets</b></figcaption>
-          </figure>
-          <figure data-mm-pin-panel class="pin-panel">
-            <div class="pin-frame">
-              <img src="./assets/spyglass-shot-slides-dark.webp" alt="Quick Look rendering the title slide of a Google Slides deck" class="block" loading="lazy" decoding="async" width="1800" height="1474" />
-            </div>
-            <figcaption class="pin-cap"><b>Slides</b></figcaption>
-          </figure>
-          <figure data-mm-pin-panel class="pin-panel">
-            <div class="pin-frame">
-              <img src="./assets/spyglass-shot-drawings-dark.webp" alt="Quick Look rendering a Google Drawing" class="block" loading="lazy" decoding="async" width="1800" height="1474" />
-            </div>
-            <figcaption class="pin-cap"><b>Drawings</b></figcaption>
-          </figure>
-        </div>
-
+<!-- FORMAT REEL: the four rendered types -->
+<section class="hl py-20 sm:py-24" aria-label="Rendered preview gallery" data-hl>
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <div class="border-t pt-10 mb-10 flex flex-wrap items-end justify-between gap-x-8 gap-y-4" style="border-color:var(--hair)">
+      <div>
+        <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-3 max-w-[24ch]">The actual first page, in every format.</h2>
+        <p data-mm="rise" class="body text-[16px] max-w-2xl">The paid tier draws the real first page, straight from your Drive.</p>
       </div>
     </div>
   </div>
+
+  <div class="hl-track" tabindex="0" role="group" aria-label="Quick Look previews by file type">
+    <figure class="hl-card">
+      <figcaption class="hl-name"><b>Docs</b><span>.gdoc</span></figcaption>
+      <img src="./assets/spyglass-shot-docs-dark.webp" alt="Quick Look rendering the first page of a Google Doc" loading="lazy" decoding="async" width="1000" height="800" />
+    </figure>
+    <figure class="hl-card">
+      <figcaption class="hl-name"><b>Sheets</b><span>.gsheet</span></figcaption>
+      <img src="./assets/spyglass-shot-sheets-dark.webp" alt="Quick Look rendering a Google Sheet as a grid" loading="lazy" decoding="async" width="1000" height="800" />
+    </figure>
+    <figure class="hl-card">
+      <figcaption class="hl-name"><b>Slides</b><span>.gslides</span></figcaption>
+      <img src="./assets/spyglass-shot-slides-dark.webp" alt="Quick Look rendering the title slide of a Google Slides deck" loading="lazy" decoding="async" width="1000" height="800" />
+    </figure>
+    <figure class="hl-card">
+      <figcaption class="hl-name"><b>Drawings</b><span>.gdraw</span></figcaption>
+      <img src="./assets/spyglass-shot-drawings-dark.webp" alt="Quick Look rendering a Google Drawing" loading="lazy" decoding="async" width="1000" height="800" />
+    </figure>
+  </div>
+
 </section>
 
 <!-- MENU BAR APP -->
@@ -350,7 +413,7 @@
   <div class="max-w-5xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
     <div>
       <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-4 max-w-[16ch]">The whole app fits in your menu bar.</h2>
-      <p data-mm="rise" class="body text-[16px] leading-relaxed mb-4 max-w-[52ch]">No dock icon, no windows to manage. The menu-bar panel is where you paste your license key, sign in with Google, and see which tier is active. That's the entire surface area.</p>
+      <p data-mm="rise" class="body text-[16px] leading-relaxed mb-4 max-w-[52ch]">Paste your license key, sign in with Google, check which tier is active. No dock icon, no windows. That's the whole app.</p>
     </div>
     <div data-mm="media" class="max-w-[380px] w-full mx-auto lg:ml-auto">
       <div class="pin-frame" data-mm-tilt>
@@ -360,56 +423,58 @@
   </div>
 </section>
 
-<!-- FREE VS PAID -->
-<section id="free-paid" class="py-20 px-5 sm:px-8">
-  <div class="max-w-3xl mx-auto">
-    <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] border-t pt-10 mb-10" style="border-color:var(--hair)">Free vs Paid</h2>
-    <div data-mm="media" class="surface rounded-2xl overflow-hidden">
-      <table class="cmp w-full text-[14px] sm:text-[15px] border-collapse">
-        <thead>
-          <tr>
-            <th class="text-left ink font-semibold p-4 border-b" scope="col">Feature</th>
-            <th class="text-center ink font-semibold p-4 border-b border-l" scope="col">Free</th>
-            <th class="text-center font-semibold p-4 border-b border-l paid" scope="col" style="color:var(--brass)">Paid · $9</th>
-          </tr>
-        </thead>
-        <tbody class="body">
-          <tr>
-            <th class="text-left font-medium ink p-4 border-b" scope="row">Rendered previews</th>
-            <td class="text-center p-4 border-b border-l mute">Info card</td>
-            <td class="text-center p-4 border-b border-l paid font-medium" style="color:var(--brass)"><span aria-hidden="true">✓</span> Docs, Sheets, Slides, Drawings</td>
-          </tr>
-          <tr>
-            <th class="text-left font-medium ink p-4 border-b" scope="row">Info card, all six types</th>
-            <td class="text-center p-4 border-b border-l ok-cell"><span aria-hidden="true">✓</span> Included</td>
-            <td class="text-center p-4 border-b border-l paid ok-cell"><span aria-hidden="true">✓</span> Included</td>
-          </tr>
-          <tr>
-            <th class="text-left font-medium ink p-4 border-b" scope="row">Works offline</th>
-            <td class="text-center p-4 border-b border-l ok-cell"><span aria-hidden="true">✓</span> Yes</td>
-            <td class="text-center p-4 border-b border-l paid ok-cell"><span aria-hidden="true">✓</span> Yes, renders when online</td>
-          </tr>
-          <tr>
-            <th class="text-left font-medium ink p-4 border-b" scope="row">Google sign-in</th>
-            <td class="text-center p-4 border-b border-l">Not needed</td>
-            <td class="text-center p-4 border-b border-l paid">Only to render previews</td>
-          </tr>
-          <tr>
-            <th class="text-left font-medium ink p-4 border-b" scope="row">Price</th>
-            <td class="text-center p-4 border-b border-l">$0</td>
-            <td class="text-center p-4 border-b border-l paid ink font-semibold">$9 once, yours forever</td>
-          </tr>
-          <tr>
-            <th class="text-left font-medium ink p-4" scope="row">Delivery</th>
-            <td class="text-center p-4 border-l">Direct download</td>
-            <td class="text-center p-4 border-l paid">License key on Gumroad</td>
-          </tr>
-        </tbody>
-      </table>
+<!-- PRICING -->
+<section id="pricing" class="py-20 px-5 sm:px-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="border-t pt-10 mb-10" style="border-color:var(--hair)">
+      <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-3">Free to try. $12 to see the page.</h2>
     </div>
-    <div data-mm="rise" class="flex flex-wrap gap-3 justify-center mt-8">
-      <a class="btn-brass text-[16px] px-7 py-3.5 items-center gap-2" href="https://magicelk235.gumroad.com/l/spyglass?wanted=true">Buy · $9</a>
-      <a class="btn-ghost text-[16px] px-7 py-3.5 inline-flex items-center gap-2" href="https://github.com/magicelk235/Spyglass/releases">Download free</a>
+
+    <div data-mm-stagger class="grid md:grid-cols-[.88fr_1.12fr] gap-5 items-stretch">
+
+      <!-- FREE -->
+      <div class="surface rounded-2xl p-7 sm:p-8 flex flex-col">
+        <h3 class="text-[19px] font-bold ink mb-5">Info card</h3>
+        <div class="flex items-baseline gap-2 mb-1">
+          <span class="price-num text-[52px]">$0</span>
+        </div>
+
+        <div class="p-list-free mb-7 flex-1">
+          <div class="p-row"><span>Name, owner, type and last edit, for all six types</span></div>
+          <div class="p-row"><span>No Google sign in</span></div>
+          <div class="p-row"><span>Works offline</span></div>
+        </div>
+
+        <a class="btn-ghost text-[16px] w-full py-3.5 mt-auto inline-flex items-center justify-center gap-2" href="https://github.com/magicelk235/Spyglass/releases">Download</a>
+      </div>
+
+      <!-- PAID -->
+      <div class="price-lit rounded-2xl p-7 sm:p-8 flex flex-col">
+        <div class="relative flex flex-col h-full">
+          <div class="flex items-center gap-3 mb-5">
+            <h3 class="text-[19px] font-bold ink">Rendered previews</h3>
+          </div>
+          <div class="flex items-baseline gap-2 mb-1">
+            <span class="price-num text-[52px]">$12</span>
+            <span class="mute text-[14px]">once</span>
+          </div>
+
+          <div class="mb-7 flex-1">
+            <div class="p-row"><span>The real first page for <b>Docs, Sheets, Slides, Drawings</b></span></div>
+            <div class="p-row"><span>Info card for all six types</span></div>
+            <div class="p-row"><span>Previews cache on your Mac, so the second look is instant</span></div>
+            <div class="p-row"><span>Google sign-in used only to fetch the page</span></div>
+            <div class="p-row"><span>Updates included</span></div>
+          </div>
+
+          <a class="btn-brass text-[16px] w-full py-3.5 mt-auto inline-flex items-center justify-center gap-2" href="https://magicelk235.gumroad.com/l/spyglass?wanted=true">Buy</a>
+        </div>
+      </div>
+
+
+
+    </div>
+    <div data-mm="rise" class="p-note mt-7">
     </div>
   </div>
 </section>
@@ -419,57 +484,33 @@
   <div class="max-w-3xl mx-auto">
     <div class="max-w-2xl mb-10">
       <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-3">Why Spyglass needs Google access</h2>
-      <p data-mm="rise" class="body text-[17px] leading-relaxed">Rendered previews need to read the document from your Google Drive. That is the only reason Spyglass asks to sign in. Here is exactly what it does and does not do.</p>
+      <p data-mm="rise" class="body text-[17px] leading-relaxed">Rendered previews have to read the document out of your Drive. That is the only reason Spyglass asks you to sign in.</p>
     </div>
     <div data-mm-stagger>
       <div class="why-row">
         <b>Read-only</b>
-        <p>Spyglass uses the <code class="mono ink text-[.9em]">drive.readonly</code> scope. It cannot edit, delete, or share your files. It can only read them to draw the preview.</p>
+        <p>Spyglass uses the <code class="mono ink text-[.9em]">drive.readonly</code> scope. It can read your files to draw the preview, and it cannot edit, delete, or share them.</p>
       </div>
       <div class="why-row">
         <b>Previews only</b>
-        <p>Access is used for one thing: fetching the document export so Spyglass can show the first page. Nothing else.</p>
+        <p>One use only: fetching the document export to draw the first page.</p>
       </div>
       <div class="why-row">
         <b>Stays on your Mac</b>
-        <p>Previews are cached locally on your machine. There is no Spyglass server. Your documents are never uploaded to us or to any third party.</p>
+        <p>Previews cache on your machine. There is no Spyglass server, and your documents never reach us or any third party.</p>
       </div>
       <div class="why-row">
         <b>Email, only to display</b>
-        <p>Your email is used only to show which Google account is signed in. It is not sent anywhere.</p>
+        <p>Shown so you know which Google account is signed in. Spyglass never sends it anywhere.</p>
       </div>
       <div class="why-row">
         <b>Reversible</b>
-        <p>Sign out at any time. Doing so clears the stored tokens and revokes the grant at Google.</p>
+        <p>Sign out anytime. That clears the stored tokens and revokes the grant at Google.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SPECS -->
-<section id="specs" class="py-20 px-5 sm:px-8">
-  <div class="max-w-4xl mx-auto">
-    <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] border-t pt-10 mb-12" style="border-color:var(--hair)">Specs</h2>
-    <div data-mm-stagger class="grid grid-cols-2 md:grid-cols-4 border-t border-b" style="border-color:var(--hair)">
-      <div class="py-7 pr-6">
-        <p class="cap text-[12px] font-semibold uppercase mute mb-1">Requires</p>
-        <p class="ink font-display font-bold text-[22px]">macOS 14+</p>
-      </div>
-      <div class="py-7 px-6 border-l" style="border-color:var(--hair)">
-        <p class="cap text-[12px] font-semibold uppercase mute mb-1">Price</p>
-        <p class="ink font-display font-bold text-[22px]">$9 one-time</p>
-      </div>
-      <div class="py-7 px-6 md:border-l" style="border-color:var(--hair)">
-        <p class="cap text-[12px] font-semibold uppercase mute mb-1">Subscription</p>
-        <p class="ink font-display font-bold text-[22px]">None</p>
-      </div>
-      <div class="py-7 px-6 border-l" style="border-color:var(--hair)">
-        <p class="cap text-[12px] font-semibold uppercase mute mb-1">Free tier</p>
-        <p class="ink font-display font-bold text-[22px]">Included</p>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- FAQ -->
 <section id="faq" class="py-20 px-5 sm:px-8">
@@ -479,41 +520,42 @@
       <details class="py-5">
         <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">Is my data safe?
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body text-[14px] leading-relaxed mt-3">Yes. Spyglass requests read-only access with the <code class="mono text-[.85em]">drive.readonly</code> scope, so it can never edit, delete, or share anything. Previews are cached only on your Mac. There is no server and your documents are never uploaded to us or any third party. See the full <a href="./privacy.html" class="font-medium" style="color:var(--brass)">Privacy Policy</a> for details.</p>
+        <p class="body text-[14px] leading-relaxed mt-3">Yes. Spyglass requests the read-only <code class="mono text-[.85em]">drive.readonly</code> scope, so it can never edit, delete, or share anything. Previews cache only on your Mac. No server, no uploads to us or anyone else. See the full <a href="./privacy.html" class="font-medium" style="color:var(--brass)">Privacy Policy</a> for details.</p>
       </details>
       <details class="py-5">
         <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">What do I get for free?
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body text-[14px] leading-relaxed mt-3">The free tier shows a branded info card for all six stub types. You get the document icon, title, owner, and a link to open it on Google. It works instantly, offline, with no sign-in. It is a complete app, not a trial.</p>
+        <p class="body text-[14px] leading-relaxed mt-3">A branded info card for all six stub types: icon, title, owner, and a link to open it on Google. Works offline, no sign-in. A complete app, not a trial.</p>
       </details>
       <details class="py-5">
         <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">How do I unlock the paid features?
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body text-[14px] leading-relaxed mt-3">Buy Spyglass on Gumroad for $9. You get a license key by email. Paste the key into the Spyglass menu-bar app and sign in with Google, and rendered previews turn on. One payment, no subscription.</p>
+        <p class="body text-[14px] leading-relaxed mt-3">Buy on Gumroad for $12 and a license key arrives by email. Paste it into the menu-bar app, sign in with Google, and rendered previews turn on. One payment, no subscription.</p>
       </details>
       <details class="py-5">
         <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">Which file types work?
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body text-[14px] leading-relaxed mt-3">All six Google Drive stub types: <code class="mono text-[.85em]">.gdoc</code>, <code class="mono text-[.85em]">.gsheet</code>, <code class="mono text-[.85em]">.gslides</code>, <code class="mono text-[.85em]">.gdraw</code>, <code class="mono text-[.85em]">.gform</code>, and <code class="mono text-[.85em]">.gsite</code>. Rendered previews cover Docs, Sheets, Slides, and Drawings. Forms and Sites cannot be exported by Google, so they always show the info card.</p>
+        <p class="body text-[14px] leading-relaxed mt-3">All six Google Drive stub types: <code class="mono text-[.85em]">.gdoc</code>, <code class="mono text-[.85em]">.gsheet</code>, <code class="mono text-[.85em]">.gslides</code>, <code class="mono text-[.85em]">.gdraw</code>, <code class="mono text-[.85em]">.gform</code>, and <code class="mono text-[.85em]">.gsite</code>. Rendered previews cover Docs, Sheets, Slides, and Drawings. Google has no export for Forms and Sites, so they always show the info card.</p>
       </details>
       <details class="py-5">
         <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">Does it work offline?
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body text-[14px] leading-relaxed mt-3">The free info card works fully offline. Rendered previews need a connection to fetch the document from Google Drive. If you are offline or the network is slow, Spyglass falls back to the info card, so a preview never hangs or comes up blank.</p>
+        <p class="body text-[14px] leading-relaxed mt-3">The info card works fully offline. Rendered previews need a connection to fetch the document from Drive, and if the network is down or slow, Spyglass falls back to the info card so nothing hangs or comes up blank.</p>
       </details>
     </div>
   </div>
 </section>
 
 <!-- FINAL CTA -->
-<section class="band-teal py-24 sm:py-28 px-5 sm:px-8 overflow-hidden" data-mm-ambient="teal">
-  <div class="max-w-3xl mx-auto text-center relative" data-mm-parallax=".05">
-    <div class="relative z-10">
-      <h2 data-mm="lines" class="text-[clamp(2rem,5vw,3.4rem)] font-extrabold leading-[1.05] mb-5">Stop previewing JSON.<br />Start seeing your documents.</h2>
-      <p data-mm="rise" class="body text-lg mb-9 max-w-lg mx-auto">Free to start. $9 once to unlock rendered previews for Docs, Sheets, Slides, and Drawings.</p>
-      <div data-mm="rise" data-mm-delay=".1" class="flex flex-wrap gap-3 justify-center">
-        <a class="btn-brass text-[17px] px-8 py-4 items-center gap-2" data-mm-magnet href="https://magicelk235.gumroad.com/l/spyglass?wanted=true">Buy · $9</a>
-        <a class="btn-teal-ghost text-[17px] px-8 py-4 inline-flex items-center gap-2" data-mm-magnet href="https://github.com/magicelk235/Spyglass/releases">Download free</a>
+<section class="relative py-28 sm:py-36 px-5 sm:px-8 overflow-hidden border-t hair">
+  <!-- one quiet echo of the hero's light, no structure this time -->
+  <div class="brass-glow" aria-hidden="true"></div>
+  <div class="max-w-3xl mx-auto text-center relative z-10" data-mm-parallax=".05">
+    <div>
+      <h2 data-mm="lines" class="text-[clamp(2rem,5vw,3.4rem)] leading-[1.04] mb-5">Make the Space bar<br />work on Drive files.</h2>
+      <div data-mm="rise" data-mm-delay=".1" class="flex flex-wrap items-center gap-3 justify-center">
+        <a class="btn-ghost text-[16px] px-7 py-3.5 inline-flex items-center justify-center" href="https://github.com/magicelk235/Spyglass/releases">Download</a>
+        <a class="btn-brass text-[16px] px-7 py-3.5 inline-flex items-center justify-center" href="https://magicelk235.gumroad.com/l/spyglass?wanted=true">Buy</a>
       </div>
     </div>
   </div>
@@ -527,20 +569,328 @@
 
 <script>
 (function () {
-  var nav = document.getElementById('nav');
-  var onScroll = function () {
-    if (!nav) return;
-    if (window.scrollY > 12) nav.classList.add('glass', 'border-b', 'hair');
-    else nav.classList.remove('glass', 'border-b', 'hair');
-  };
-  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+  'use strict';
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── Nav weight on scroll ──
+  var nav = document.getElementById('nav');
+  var onScroll = function () { if (nav) nav.classList.toggle('scrolled', window.scrollY > 12); };
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+  // ── Demo video: controls instead of autoplay under reduced motion ──
   var demo = document.getElementById('sg-demo');
   if (demo && reduce) {
     demo.removeAttribute('autoplay'); demo.removeAttribute('loop');
     demo.controls = true; demo.pause();
   }
+
+  // ── Glass nav ──
+  // React Bits' GlassSurface, ported: a data-URI SVG acts as the displacement
+  // map (a red horizontal ramp and a blue vertical ramp, difference-blended,
+  // with a soft bright rect inset from the edges). Feeding that to
+  // feDisplacementMap once per colour channel at slightly different scales
+  // bends the backdrop at the pill's edges and splits it into colour fringes.
+  // Only Chromium resolves url() inside backdrop-filter, so everyone else
+  // keeps the plain blur.
+  (function () {
+    var pill = document.querySelector('.nav-pill');
+    var map = document.getElementById('nav-glass-map');
+    if (!pill || !map) return;
+
+    var ua = navigator.userAgent;
+    var probe = document.createElement('div');
+    probe.style.backdropFilter = 'url(#nav-glass)';
+    var supported = probe.style.backdropFilter !== '' &&
+      !(/Safari/.test(ua) && !/Chrome/.test(ua)) && !/Firefox/.test(ua);
+    if (!supported) return;
+
+    function buildMap() {
+      var r = pill.getBoundingClientRect();
+      var w = Math.round(r.width), h = Math.round(r.height);
+      if (!w || !h) return;
+      // Match the pill's CSS radius so the refraction map's rounded edge lands
+      // on the real corner instead of a full lozenge.
+      var radius = 16;
+      var edge = Math.min(w, h) * 0.035;
+      var svg =
+        '<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">' +
+          '<defs>' +
+            '<linearGradient id="r" x1="100%" y1="0%" x2="0%" y2="0%">' +
+              '<stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="red"/></linearGradient>' +
+            '<linearGradient id="b" x1="0%" y1="0%" x2="0%" y2="100%">' +
+              '<stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="blue"/></linearGradient>' +
+          '</defs>' +
+          '<rect width="' + w + '" height="' + h + '" fill="black"/>' +
+          '<rect width="' + w + '" height="' + h + '" rx="' + radius + '" fill="url(#r)"/>' +
+          '<rect width="' + w + '" height="' + h + '" rx="' + radius + '" fill="url(#b)" style="mix-blend-mode:difference"/>' +
+          '<rect x="' + edge + '" y="' + edge + '" width="' + (w - edge * 2) + '" height="' + (h - edge * 2) + '"' +
+            ' rx="' + radius + '" fill="hsl(0 0% 50% / 0.93)" style="filter:blur(11px)"/>' +
+        '</svg>';
+      map.setAttribute('href', 'data:image/svg+xml,' + encodeURIComponent(svg));
+    }
+
+    buildMap();
+    document.documentElement.classList.add('glassy');
+    if (window.ResizeObserver) new ResizeObserver(buildMap).observe(pill);
+    else window.addEventListener('resize', buildMap);
+  })();
+
+  // ── Hero ferrofluid ──
+  // The Ferrofluid shader from React Bits, lifted off React/ogl onto plain
+  // WebGL: one fullscreen triangle, one fragment program. The palette is fixed
+  // to three brass tones, flow is fixed downward, and opacity lives in CSS, so
+  // those uniforms are gone. The pointer pushes the fluid apart where it lands,
+  // which is the one interactive thing on the page: you look, it opens.
+  // The loop parks itself whenever the hero is off screen or the tab is hidden.
+  (function () {
+    var cv = document.getElementById('hero-ferro');
+    if (!cv || reduce) return;
+    var gl = cv.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false, powerPreference: 'low-power' });
+    if (!gl) return;
+
+    var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+    var FRAG = [
+      'precision highp float;',
+      '#define PI 3.14159265',
+      'uniform vec2 iResolution, iMouse;',
+      'uniform float iTime, uSpeed, uScale, uTurbulence, uFluidity, uRimWidth, uSharpness, uShimmer, uGlow, uMouseStrength, uMouseRadius;',
+      'uniform vec3 uColor0, uColor1, uColor2;',
+      'vec3 palette(float h){',
+      '  int idx = int(floor(clamp(h, 0.0, 0.999999) * 3.0));',
+      '  if (idx <= 0) return uColor0;',
+      '  if (idx == 1) return uColor1;',
+      '  return uColor2;',
+      '}',
+      'float hash(vec3 p3){ p3 = fract(p3 * 0.1031); p3 += dot(p3, p3.zyx + 33.33); return fract((p3.x + p3.y) * p3.z); }',
+      'float smin(float a, float b, float k){ return -k * log2(exp2(-a / k) + exp2(-b / k)); }',
+      'float sinlerp(float a, float b, float w){ return mix(a, b, (sin(w * PI - PI / 2.0) + 1.0) / 2.0); }',
+      // Value noise on a square lattice, corners eased with a sine ramp.
+      'float vn(vec2 p, float s, float seed){',
+      '  vec2 c = floor(p / s), r = mod(p, s);',
+      '  float g1 = hash(vec3(c, seed));',
+      '  float g2 = hash(vec3(c.x + 1.0, c.y, seed));',
+      '  float g3 = hash(vec3(c.x + 1.0, c.y + 1.0, seed));',
+      '  float g4 = hash(vec3(c.x, c.y + 1.0, seed));',
+      '  return sinlerp(sinlerp(g1, g2, r.x / s), sinlerp(g4, g3, r.x / s), r.y / s);',
+      '}',
+      // Five offset octaves of the same lattice, weighted: the fluid body.
+      'float dbn(vec2 p, float s, float seed){',
+      '  float o = s / 2.0;',
+      '  return (2.0 * vn(p, s, seed)',
+      '        + 1.5 * vn(p + vec2(o, o), s, seed + 0.1)',
+      '        + 1.25 * vn(p + vec2(-o, o), s, seed + 0.2)',
+      '        + 1.125 * vn(p + vec2(o, -o), s, seed + 0.3)',
+      '        + vn(p + vec2(-o, -o), s, seed + 0.4)) / 7.0;',
+      '}',
+      'void main(){',
+      '  float ref = 700.0 / uScale;',
+      '  vec2 p = gl_FragCoord.xy / iResolution.y * ref;',
+      '  float spd = 200.0 * uSpeed, t = iTime;',
+      '  vec2 dir = vec2(0.0, -1.0), perp = vec2(1.0, 0.0);',
+      '  float d1 = vn(p + perp * (t * spd), 60.0, 10.0) * 50.0 * uTurbulence;',
+      '  float d2 = vn(p - perp * (t * spd), 120.0, 15.0) * 100.0 * uTurbulence;',
+      '  float a = dbn(p + d1 + dir * (t * spd * 0.5), 40.0, 1.0);',
+      '  float b = dbn(p + d2 - dir * (t * spd * 0.5), 40.0, 0.0);',
+      '  float body = smin(a, b, uFluidity);',
+      // The rim is a thin band either side of the surface; that band is all we draw.
+      '  float band = (uRimWidth - abs((body - 0.4) * 2.0)) * 5.0;',
+      '  float lit = clamp(band - vn(p + dir * (t * spd * 0.5), 60.0, 12.0) * uShimmer, 0.0, 1.0);',
+      '  lit = pow(lit, uSharpness) * uGlow;',
+      // Pointer opens an aperture: kill the rim where the cursor is.
+      '  float md = length(p - iMouse / iResolution.y * ref) / ref;',
+      '  lit *= clamp(1.0 - exp(-md * md / (uMouseRadius * uMouseRadius)) * uMouseStrength, 0.0, 1.0);',
+      '  vec3 col = palette(clamp(0.5 + (a - b) * 0.8, 0.0, 1.0)) * lit;',
+      '  gl_FragColor = vec4(col, clamp(max(col.r, max(col.g, col.b)), 0.0, 1.0));',
+      '}'
+    ].join('\n');
+
+    function shader(type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src); gl.compileShader(s);
+      return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+    }
+    var vs = shader(gl.VERTEX_SHADER, VERT), fs = shader(gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return;
+    var prog = gl.createProgram();
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    gl.useProgram(prog);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    var pos = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(pos);
+    gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+
+    function u(name) { return gl.getUniformLocation(prog, name); }
+    // Three brass tones instead of the stock white: shadowed bronze, the brand
+    // brass, and a pale highlight where the rim catches the most light.
+    gl.uniform3f(u('uColor0'), 0.431, 0.322, 0.137);  // #6E5223
+    gl.uniform3f(u('uColor1'), 0.788, 0.659, 0.463);  // #C9A876
+    gl.uniform3f(u('uColor2'), 0.965, 0.902, 0.769);  // #F6E6C4
+    // Slower than the component default: this is atmosphere behind a headline,
+    // not the demo. Everything else is the stock look.
+    gl.uniform1f(u('uSpeed'), 0.26);
+    // Coarser than the component default. At the stock scale the rims are dense
+    // enough to run straight through the headline.
+    gl.uniform1f(u('uScale'), 2.2);
+    gl.uniform1f(u('uTurbulence'), 1.0);
+    gl.uniform1f(u('uFluidity'), 0.1);
+    gl.uniform1f(u('uRimWidth'), 0.22);
+    gl.uniform1f(u('uSharpness'), 2.5);
+    gl.uniform1f(u('uShimmer'), 1.5);
+    gl.uniform1f(u('uGlow'), 2.2);
+    gl.uniform1f(u('uMouseStrength'), 1.0);
+    gl.uniform1f(u('uMouseRadius'), 0.3);
+    var uTime = u('iTime'), uRes = u('iResolution'), uMouse = u('iMouse');
+
+    // The field is low frequency, so 1.25x carries it and costs a third less
+    // fill than 2x. This page argues for a Mac staying quiet; it should too.
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+    function resize() {
+      var w = Math.max(1, cv.clientWidth), h = Math.max(1, cv.clientHeight);
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      gl.viewport(0, 0, cv.width, cv.height);
+      gl.uniform2f(uRes, cv.width, cv.height);
+    }
+    resize();
+    if (window.ResizeObserver) new ResizeObserver(resize).observe(cv);
+    else window.addEventListener('resize', resize);
+
+    // Parked far off the canvas until the pointer actually moves, so the page
+    // doesn't load with an aperture punched in the bottom-left corner.
+    var mx = -1e6, my = -1e6, tx = -1e6, ty = -1e6;
+    gl.uniform2f(uMouse, mx, my);
+    // The canvas is pointer-events:none (the hero copy sits on top of it), so
+    // track on the window and map into canvas space by hand.
+    window.addEventListener('pointermove', function (e) {
+      var r = cv.getBoundingClientRect();
+      tx = (e.clientX - r.left) * dpr;
+      ty = (r.height - (e.clientY - r.top)) * dpr;
+    }, { passive: true });
+
+    var raf = 0, running = false;
+    function frame(t) {
+      // Trail the pointer instead of snapping to it: the fluid has weight.
+      mx += (tx - mx) * 0.08; my += (ty - my) * 0.08;
+      gl.uniform2f(uMouse, mx, my);
+      gl.uniform1f(uTime, t * 0.001);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      raf = requestAnimationFrame(frame);
+    }
+    function start() { if (!running) { running = true; raf = requestAnimationFrame(frame); } }
+    function stop() { if (running) { running = false; cancelAnimationFrame(raf); } }
+
+    // Run only when the hero is both on screen and in the foreground tab.
+    var onScreen = true;
+    function sync() { (onScreen && !document.hidden) ? start() : stop(); }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { onScreen = es[0].isIntersecting; sync(); }).observe(cv);
+    }
+    document.addEventListener('visibilitychange', sync);
+    sync();
+    requestAnimationFrame(function () { cv.classList.add('lit'); });
+  })();
+})();
+</script>
+
+<script>
+/* Format reel. Native snap scrolling does the moving; this only decides when to
+   step to the next card. Runs when the reel is on screen, the tab is in front,
+   and the visitor hasn't asked for less motion. */
+(function () {
+  var reel = document.querySelector('[data-hl]');
+  if (!reel) return;
+  var track = reel.querySelector('.hl-track');
+  var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var strip = Array.prototype.slice.call(track.children);
+  var n = strip.length;
+  // glide is the fallback wait for a step to land where scrollend is missing, so
+  // it has to stay well under dwell.
+  var ends = 'onscrollend' in window;
+  var dwell = 2600, glide = 900, timer = 0, settle = 0, onScreen = false;
+
+  // A copy of the strip either side of the real one. Two jobs: a card always
+  // bleeds off both edges, and the reel can keep stepping the same direction
+  // for ever — see recentre().
+  function copy() {
+    return strip.map(function (c) {
+      var d = c.cloneNode(true);
+      d.setAttribute('aria-hidden', 'true');
+      d.querySelectorAll('img').forEach(function (img) { img.alt = ''; });
+      return d;
+    });
+  }
+  copy().forEach(function (d) { track.appendChild(d); });
+  copy().reverse().forEach(function (d) { track.insertBefore(d, track.firstChild); });
+  var cards = Array.prototype.slice.call(track.children);
+  var i = n; // sit in the middle copy
+
+  function center(k, jump) {
+    var c = cards[k];
+    track.scrollTo({ left: c.offsetLeft + c.offsetWidth / 2 - track.clientWidth / 2,
+                     behavior: (jump || still) ? 'auto' : 'smooth' });
+  }
+  function slot(k) { return ((k % n) + n) % n; }
+  // Step the strip back to the middle copy once the reel has come to rest. The
+  // copies are identical, so nothing moves on screen and the next step has a
+  // full strip of runway ahead of it again.
+  function recentre() {
+    if (i >= n && i < 2 * n) return;
+    i = n + slot(i);
+    center(i, true);
+  }
+  function tick() {
+    clearTimeout(timer);
+    if (still || !onScreen || document.hidden) return;
+    timer = setTimeout(function () {
+      i += 1; center(i);
+      // Recentre only once the step has landed: cutting a smooth scroll short
+      // leaves it animating towards a card that is no longer the target.
+      if (ends) track.addEventListener('scrollend', recentre, { once: true });
+      else setTimeout(recentre, glide);
+      tick();
+    }, dwell);
+  }
+
+  // Sideways wheel deltas belong to the strip, so keep them from reaching Lenis,
+  // which preventDefaults every wheel event for its own easing. Vertical deltas
+  // bubble on through and the page keeps scrolling smoothly past the reel.
+  track.addEventListener('wheel', function (e) {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation();
+  }, { passive: true });
+
+  // A swipe or a keyboard scroll wins: take the card nearest the middle and
+  // give it a full dwell before moving on.
+  track.addEventListener('scroll', function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () {
+      var mid = track.scrollLeft + track.clientWidth / 2, best = 0, near = Infinity;
+      cards.forEach(function (c, k) {
+        var d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid);
+        if (d < near) { near = d; best = k; }
+      });
+      if (best !== i) { i = best; tick(); }
+      recentre();
+    }, 140);
+  }, { passive: true });
+
+  // Card width tracks the viewport, so a resize moves every snap point. Wait for
+  // it to settle, then pin the current card back to the middle copy: the scroll
+  // events a resize throws would otherwise leave the index on whatever card the
+  // half-updated layout put nearest the middle.
+  var rz = 0;
+  addEventListener('resize', function () {
+    clearTimeout(rz);
+    rz = setTimeout(function () { clearTimeout(settle); i = n + slot(i); center(i, true); }, 150);
+  }, { passive: true });
+
+  center(i, true);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { onScreen = es[0].isIntersecting; tick(); }, { threshold: .3 }).observe(track);
+  } else { onScreen = true; tick(); }
+  document.addEventListener('visibilitychange', tick);
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
