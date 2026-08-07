@@ -3,9 +3,10 @@
  * One footer for every page. Drop this near the end of <body>:
  *   <script src="/assets/footer.js"></script>
  *
- * Renders: brand + copyright on the left, links on the right — matching the
- * root/about footer. Uses the site's existing CSS vars (--ink, --mute,
- * --brass, --hair), so it inherits light/dark and each page's theme.
+ * Renders: brand + copyright on the left, links on the right. Uses the site's
+ * existing CSS vars (--ink, --mute, --hair), and picks up whichever accent the
+ * host page defines: --accent on the house pages, --brass on Spyglass,
+ * --teal on Viaduct.
  *
  * Defaults to Contact + GitHub. To add page-specific links (e.g. Privacy /
  * Terms on a product page), set data-links on the script tag as a
@@ -56,7 +57,7 @@
       ".mel-footer .mel-mark .mel-year{color:var(--mute);font-family:Inter,sans-serif;font-size:13px}",
       ".mel-footer .mel-links{display:flex;gap:20px;flex-wrap:wrap}",
       ".mel-footer .mel-links a{color:var(--mute);font-weight:500;text-decoration:none;transition:color .15s}",
-      ".mel-footer .mel-links a:hover{color:var(--brass)}"
+      ".mel-footer .mel-links a:hover{color:var(--accent,var(--brass,var(--teal,inherit)))}"
     ].join("");
     document.head.appendChild(css);
   }
