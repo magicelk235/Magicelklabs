@@ -91,11 +91,11 @@ html.glassy #nav.scrolled .nav-pill { background:rgba(14,18,17,.58); }
 .nav-actions { display:flex; align-items:center; gap:8px; }
 .nav-dl { display:none; }
 @media (min-width:640px) { .nav-dl { display:inline-flex; } }
-.btn-teal, .btn-ghost, .btn-cyan, .btn-light {
+.btn-teal, .btn-ghost, .btn-cyan {
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
   font-size:15px; padding:11px 22px; text-decoration:none;
 }
-.btn-teal:hover, .btn-ghost:hover, .btn-cyan:hover, .btn-light:hover { text-decoration:none; }
+.btn-teal:hover, .btn-ghost:hover, .btn-cyan:hover { text-decoration:none; }
 .btn-teal { background:var(--teal); color:var(--on-teal); font-weight:600; border-radius:999px; box-shadow:inset 0 1px 0 rgba(255,255,255,.3); transition:transform .22s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .25s; }
 .btn-teal:hover { background:var(--teal-press); transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 6px 28px -6px rgba(45,212,191,.55); }
 .btn-teal:active { transform:translateY(0) scale(.99); }
@@ -105,9 +105,6 @@ html.glassy #nav.scrolled .nav-pill { background:rgba(14,18,17,.58); }
 .btn-cyan { background:#0B7A70; color:#E8FCF8; font-weight:600; border-radius:999px; box-shadow:inset 0 1px 0 rgba(255,255,255,.16); transition:transform .22s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .25s; }
 .btn-cyan:hover { background:#0F958A; transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 6px 28px -6px rgba(15,149,138,.6); }
 .btn-cyan:active { transform:translateY(0) scale(.99); }
-.btn-light { background:#F2F5F4; color:#06110F; font-weight:600; border-radius:999px; transition:transform .22s cubic-bezier(.2,.8,.2,1), background .2s; }
-.btn-light:hover { background:#fff; transform:translateY(-1px); }
-.btn-light:active { transform:translateY(0) scale(.99); }
 .crumb { font-size:13px; color:var(--mute); margin:0 0 14px; }
 .crumb a { color:var(--mute); }
 .hero h1 { font-size:clamp(2.2rem,5.5vw,3.4rem); margin:0 0 16px; text-wrap:balance; }
@@ -128,11 +125,6 @@ details { border-bottom:1px solid var(--hair); padding:14px 0; }
 details summary { cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
 details summary::-webkit-details-marker { display:none; }
 details p { margin:10px 0 0; font-size:15px; }
-.cta { text-align:center; padding:56px 24px; border-radius:18px;
-  background:linear-gradient(168deg,#0C302C 0%,#0A1E1C 58%,#08110F 100%);
-  border:1px solid rgba(45,212,191,.22); box-shadow:inset 0 1px 0 rgba(45,212,191,.16); }
-.cta h2 { margin-bottom:8px; color:#EEFBF8; }
-.cta p { margin:0 0 22px; color:#7FA39D; }
 footer { border-top:1px solid var(--hair); margin-top:72px; padding:32px 0 48px; font-size:13px; color:var(--mute); }
 footer .links { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:16px; }
 footer .links a { color:var(--mute); }
@@ -255,13 +247,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <details><summary>What does Viaduct cost?</summary>
     <p>Free for your first 2 conversions. Pro is $19 one-time: unlimited conversions
     plus auto-re-signing. The conversion engine is source-available (PolyForm Shield).</p></details>
-</section>
-<section>
-  <div class="cta">
-    <h2>Dark Reader in Safari, two minutes from now.</h2>
-    <p>Free for your first 2 conversions · Pro $19 one-time · macOS 13+</p>
-    <a class="btn-light" href="/viaduct/">Get Viaduct</a>
-  </div>
 </section>
 </main>
 <p class="legal">All extension names are trademarks of their respective owners. Viaduct is not
