@@ -434,7 +434,7 @@ ${officialBlock}
 <section>
   <div class="cta">
     <h2>${esc(x.name)} in Safari, two minutes from now.</h2>
-    <p>Free for your first 2 conversions · Pro $19 one-time · macOS 13+, Apple Silicon or Intel</p>
+    <p>Free for your first 2 conversions · Pro $19 one-time · macOS 13+</p>
     <a class="btn-light" href="/viaduct/">Get Viaduct</a>
   </div>
 </section>`);
