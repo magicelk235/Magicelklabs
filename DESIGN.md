@@ -41,7 +41,7 @@ The house page carries no accent at all, and that is the point. It is a shelf:
 every app already has cover art, the covers hold all the colour, and the room
 around them stays out of the way. Grey-black canvas `#0B0B0C`, surface
 `#131315`, ivory `#F5F5F4`, hairlines at 8% white, and nothing else. Links,
-buttons, and the favicon M are ivory. Adding an app adds a cover, so it adds
+buttons, and the mark are ivory. Adding an app adds a cover, so it adds
 colour without touching the theme.
 
 **Committed color, not timid accents.** Viaduct's brand surfaces are drenched
@@ -185,6 +185,25 @@ conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
 - `assets/spyglass-cover.webp` and `assets/viaduct-cover.webp` (1200×630) are
   the shelf covers on the root page, encoded from the media-kit social cards
   with `cwebp -q 86`. A new app needs one at the same size.
+- **The mark** is an elk rack rising from a single stem: two beams sweeping up
+  and outward, five prongs a side, joined at one point above a short stem. No
+  letterform, deliberately. An `M` sitting 9px from the word "Magicelk Labs"
+  says the same thing twice; a crest beside the wordmark is a lockup. It ships
+  as a 44-vertex polygon, mirror-symmetric to the coordinate, and carries no
+  rounded-tile container anywhere we draw one.
+  - `assets/mark.svg` — ivory, containerless. The nav pill and any in-page use.
+  - `assets/favicon.svg` — same path, but the fill flips on
+    `prefers-color-scheme`: near-black on a light tab bar, ivory on a dark one.
+    For `<link rel="icon">` **only**. An `<img>` resolves that media query
+    against the OS rather than the page, so using this file in the nav renders
+    it near-black on our dark pill and it vanishes on a light-mode Mac.
+  - `assets/touch-icon.svg` → `assets/favicon.png` (512×512) for
+    `apple-touch-icon`. Full bleed with square corners and the rack inset to
+    76%: iOS applies its own rounded mask, so drawing one here double-rounds it,
+    and PNG cannot follow the colour scheme so the field is baked in.
+  - The rack needs roughly 28px to read. That is why the nav glyph is 28 and not
+    the 22 it was built at. At 16px it is a texture rather than a legible rack,
+    which is true of any mark at that size.
 - Use the light icon on dark surfaces and the dark icon on light surfaces.
 - Media-kit screenshots (source: Google Drive → "My Drive/media kits", mounted
   locally) converted with `cwebp -q 82 -resize 1800 0`:

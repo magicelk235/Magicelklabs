@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Source for favicon.png (apple-touch-icon). Full bleed with square corners:
+       iOS applies its own rounded mask, and drawing one here double-rounds it.
+       PNG cannot adapt to colour scheme, so the field is baked in. -->
+  <rect width="128" height="128" fill="#0B0B0C"/>
+  <g transform="translate(15.36 15.36) scale(0.76)">
+    <path d="M64 99.6 60 94.6 41.4 53.1 53.8 34.1 48.4 29.2 37.4 44.5 29.4 26.5 35.5 10.6 26.3 10.6 18.9 28.9 45 88.4 41.8 87.3 12 44.3 5 49.1 27.8 82.5 16.9 78.6 14.2 86.8 49.6 99.3 53.9 103 56.2 106.3 58.5 112.2 59.2 117.4 64 117.4 68.8 117.4 69.5 112.2 71.8 106.3 74.1 103 78.4 99.3 113.8 86.8 111.1 78.6 100.2 82.5 123 49.1 116 44.3 86.2 87.3 83 88.4 109.1 28.9 101.7 10.6 92.5 10.6 98.6 26.5 90.6 44.5 79.6 29.2 74.2 34.1 86.6 53.1 68 94.6Z" fill="#F5F5F4"/>
+  </g>
+</svg>
