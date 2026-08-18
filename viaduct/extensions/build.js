@@ -466,7 +466,6 @@ fs.writeFileSync(path.join(__dirname, 'index.html'), hubPage());
 // sitemap for the whole viaduct section
 const urls = [
   `${SITE}/`,
-  `${SITE}/about/`,
   `${SITE}/spyglass/`,
   `${SITE}/viaduct/`,
   `${SITE}/viaduct/extensions/`,

@@ -18,7 +18,7 @@ Individual apps keep their own casing: **Spyglass**, **Viaduct**.
   `-.025em`. No italics anywhere (the family has none; synthesized italics are
   banned).
 - **Body / UI:** Inter on the root page, Viaduct, and the extensions pages;
-  system stack (SF Pro) on Spyglass and about. h3 and smaller stay in the body
+  system stack (SF Pro) on Spyglass. h3 and smaller stay in the body
   family unless explicitly `font-display`.
 - **Small caps / numerals / labels:** JetBrains Mono at 11–13px with
   `letter-spacing:.06em`–`.16em` for section labels, list numbers, and file
@@ -95,13 +95,12 @@ gone.
 
 ## Layout
 
-- Content column: `max-width:1120px` (root), `1080px` (about and the legal
-  pages), or `max-w-6xl` (product pages); 24px side padding.
+- Content column: `max-width:1120px` (root), `1080px` (the legal pages), or
+  `max-w-6xl` (product pages); 24px side padding.
 - Root: a headline, one line under it, and the shelf. Nothing else. Every
   other block that has been tried here (stat ledger, fact rail, tenet list,
   approach paragraph, closing CTA band) restated the pricing or the pitch a
   second time and was cut. The whole page is 84 words.
-- About: left-aligned hero, 4fr/8fr side-label grid, hairline-ruled rows.
 - Section headers: left-aligned h2, optional hairline `border-top` rule above.
   Centered composition is reserved for band CTAs on the product pages.
 

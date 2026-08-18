@@ -12,7 +12,6 @@ The site is static: hand-written HTML with Tailwind loaded from a CDN. No framew
 ## Structure
 
 - `index.html` is the studio landing page.
-- `about/` is the about page.
 - `spyglass/` holds the Spyglass product page and its legal pages (privacy, terms, license, security).
 - `viaduct/` holds the Viaduct product page, its legal pages, and `viaduct/extensions/`, a set of SEO guide pages with a hub index (one page per popular Chrome extension).
 - `assets/` holds the shared scripts (`motion.js`, `footer.js`) and favicons.

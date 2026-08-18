@@ -10,7 +10,7 @@ zero build step except `viaduct/extensions/build.js`.
 
 Brand / marketing. Design IS the product here: the site must sell $9–$19
 one-time utilities to design-conscious Mac users. Pages: studio landing (`/`),
-about, two product pages (`/spyglass/`, `/viaduct/`), 20 SEO extension guides
+two product pages (`/spyglass/`, `/viaduct/`), 20 SEO extension guides
 + hub (`/viaduct/extensions/`), privacy pages.
 
 ## Audience
