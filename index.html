@@ -56,7 +56,10 @@
 
 *{box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 html,body{margin:0}
-html{scroll-behavior:smooth}
+/* The header floats over the page, so an anchor has to stop clear of it.
+   motion.js reads this value for its own scrolling, so a jump lands in the
+   same place whether the smooth scroller is running or the browser does it. */
+html{scroll-behavior:smooth;scroll-padding-top:86px}
 body{
   font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:var(--canvas);color:var(--body);line-height:1.6;overflow-x:hidden

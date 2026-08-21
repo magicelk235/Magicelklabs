@@ -100,7 +100,10 @@
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
     gsap.ticker.lagSmoothing(0);
-    // Anchor navigation goes through Lenis so it keeps the same easing.
+    // Anchor navigation goes through Lenis so it keeps the same easing. Lenis
+    // does its own maths and ignores scroll-padding-top, so read the page's
+    // value and land where a plain browser jump would.
+    var headroom = parseFloat(getComputedStyle(docEl).scrollPaddingTop) || 0;
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a[href^="#"]');
       if (!a) return;
@@ -109,7 +112,7 @@
       var target = document.querySelector(id);
       if (!target) return;
       e.preventDefault();
-      lenis.scrollTo(target, { offset: -72, duration: 1.2 });
+      lenis.scrollTo(target, { offset: -headroom, duration: 1.2 });
       history.pushState(null, '', id);
     });
   }

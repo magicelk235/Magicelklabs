@@ -74,6 +74,10 @@
 
   * { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
   html, body { background: var(--canvas); color: var(--body); }
+  /* The header floats over the page, so an anchor has to stop clear of it.
+     motion.js reads this value for its own scrolling, so a jump lands in the
+     same place whether the smooth scroller is running or the browser does it. */
+  html { scroll-padding-top: 86px; }
   body { font-feature-settings: 'cv11','ss01'; overflow-x: hidden; }
   ::selection { background: var(--teal); color: var(--on-teal); }
 
@@ -231,6 +235,13 @@
   .engine-lane .plus { color:var(--mute); font-size:14px; }
   .engine-lane .count { margin-left:auto; font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; font-size:15px; color:var(--mute); font-variant-numeric:tabular-nums; white-space:nowrap; }
   .engine-lane.good .count { color:var(--teal); }
+  /* A phone can't hold the label and the whole chain on one line, so the row
+     wraps mid-sequence and leaves an arrow hanging off the end. Give the label
+     its own line and the chain gets the full width to itself. */
+  @media (max-width:560px) {
+    .engine-lane { row-gap:6px; }
+    .engine-lane .who { width:100%; }
+  }
 
   /* ───────────────────────── Scroll-scrubbed conversion ─────────────────────────
      A tall track with a sticky stage inside it. Scroll position through the
@@ -275,7 +286,10 @@
   /* Nothing lights the rail either, so every step reads at full strength. */
   html.no-scrub .scrub-caps { order: 0; flex: none; width: min(100%, 880px); margin-top: 10px; }
   html.no-scrub .scrub-cap { opacity: 1; }
-  @media (prefers-reduced-motion: reduce) {
+  /* The rail on its own is over 500px tall, so a viewport this short cannot
+     hold the stage: pin it and the last step sits under the fold with no way
+     to scroll down to it. Every phone lands here, portrait or landscape. */
+  @media (prefers-reduced-motion: reduce), (max-height: 859px) {
     .scrub { height: auto; }
     .scrub-sticky { position: static; height: auto; padding: 8px 0 0; }
   }
@@ -794,15 +808,21 @@
   // playhead. currentTime is eased toward the scroll position rather than set
   // straight from it, so a fast flick doesn't turn into a seek storm. The file
   // is encoded with a keyframe every 6 frames so each seek decodes almost
-  // nothing. Under reduced motion (or no JS) the track collapses and it plays
-  // as an ordinary looping video.
+  // nothing. Under reduced motion, on a viewport too short to hold the stage,
+  // or with no JS, the track collapses and it plays as an ordinary looping
+  // video.
   (function () {
     var track = document.getElementById('convert-scrub');
     var v = document.getElementById('convert-video');
     if (!track || !v) return;
 
-    if (reduce) {
-      // Playhead isn't ours, so the captions can't follow it: show all three.
+    // The stage is a frame plus a three-step rail, and the rail alone runs past
+    // 500px, so anything shorter than this has nowhere to put the last step.
+    // Phones are all under it, in both orientations.
+    function tooShort() { return window.innerHeight < 860; }
+
+    // Playhead isn't ours, so the captions can't follow it: show all three.
+    function plainVideo() {
       document.documentElement.classList.add('no-scrub');
       v.loop = true; v.controls = true;
       if ('IntersectionObserver' in window) {
@@ -810,7 +830,33 @@
           es[0].isIntersecting ? v.play().catch(function () {}) : v.pause();
         }, { threshold: 0.35 }).observe(v);
       }
-      return;
+    }
+
+    if (reduce || tooShort()) { plainVideo(); return; }
+
+    // Rotating a tall phone into landscape collapses the track under us, and a
+    // collapsed track has no travel to read a playhead off, so hand over to the
+    // plain video instead of leaving it frozen on the first frame.
+    var handedOver = false;
+    addEventListener('resize', function () {
+      if (handedOver || !tooShort()) return;
+      handedOver = true;
+      plainVideo();
+    }, { passive: true });
+
+    // Seeking on a metadata-only video stalls, so buy the whole file a screen
+    // early. No observer available means we just fetch it up front.
+    if ('IntersectionObserver' in window) {
+      var pre = new IntersectionObserver(function (es) {
+        if (!es[0].isIntersecting) return;
+        v.preload = 'auto';
+        v.load();
+        pre.disconnect();
+      }, { rootMargin: '100% 0px' });
+      pre.observe(track);
+    } else {
+      v.preload = 'auto';
+      v.load();
     }
 
     var dur = 0;
@@ -844,7 +890,7 @@
     // doesn't eat most of the track. Same scroll distance per step; the video
     // just runs faster through the parts that take longer on screen.
     function sync() {
-      if (!dur) return;
+      if (handedOver || !dur) return;
       var p = readProgress();
       var n = capAt.length + 1;
       var i = Math.min(n - 1, Math.floor(p * n));
