@@ -2,15 +2,29 @@
 <html lang="en" class="dark">
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Chrome extensions you can run in Safari · Viaduct</title>
 <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
+<link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png" />
+<link rel="manifest" href="/viaduct/assets/viaduct.webmanifest" />
+<meta name="theme-color" content="#070908" />
 <meta name="description" content="Per-extension guides for running popular Chrome extensions natively in Safari with Viaduct: uBlock Origin, Tampermonkey, MetaMask, SponsorBlock, and more." />
 <link rel="canonical" href="https://magicelklabs.com/viaduct/extensions/" />
+<meta property="og:site_name" content="Magicelk Labs" />
+<meta property="og:locale" content="en_US" />
 <meta property="og:title" content="Chrome extensions you can run in Safari · Viaduct" />
 <meta property="og:description" content="Per-extension guides for running popular Chrome extensions natively in Safari with Viaduct: uBlock Origin, Tampermonkey, MetaMask, SponsorBlock, and more." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://magicelklabs.com/viaduct/extensions/" />
+<meta property="og:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="The Viaduct app window on macOS, its drop target ready to convert a Chrome extension into a native Safari extension" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Chrome extensions you can run in Safari · Viaduct" />
+<meta name="twitter:description" content="Per-extension guides for running popular Chrome extensions natively in Safari with Viaduct: uBlock Origin, Tampermonkey, MetaMask, SponsorBlock, and more." />
+<meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -142,6 +156,154 @@ footer .links a:hover { color:var(--teal); }
 .tag { display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--teal); margin-bottom:8px; }
 a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--teal); outline-offset:3px; border-radius:6px; }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Chrome extensions you can run in Safari · Viaduct",
+  "description": "Per-extension guides for running popular Chrome extensions natively in Safari with Viaduct: uBlock Origin, Tampermonkey, MetaMask, SponsorBlock, and more.",
+  "url": "https://magicelklabs.com/viaduct/extensions/",
+  "inLanguage": "en-US",
+  "image": "https://magicelklabs.com/viaduct/assets/viaduct-og.jpg",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Magicelk Labs",
+    "url": "https://magicelklabs.com"
+  },
+  "mainEntity": {
+    "@type": "ItemList",
+    "numberOfItems": 21,
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Run Claude in Chrome in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/claude-in-chrome/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Run uBlock Origin in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/ublock-origin/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Run Tampermonkey in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/tampermonkey/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": "Run Violentmonkey in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/violentmonkey/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "name": "Run MetaMask in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/metamask/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "name": "Run Return YouTube Dislike in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/return-youtube-dislike/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 7,
+        "name": "Run SponsorBlock in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/sponsorblock/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 8,
+        "name": "Run Stylus in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/stylus/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 9,
+        "name": "Run Dark Reader in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/dark-reader/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 10,
+        "name": "Run ClearURLs in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/clearurls/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 11,
+        "name": "Run Decentraleyes in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/decentraleyes/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 12,
+        "name": "Run I still don't care about cookies in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/i-still-dont-care-about-cookies/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 13,
+        "name": "Run Video Speed Controller in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/video-speed-controller/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 14,
+        "name": "Run Augmented Steam in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/augmented-steam/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 15,
+        "name": "Run Reddit Enhancement Suite in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/reddit-enhancement-suite/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 16,
+        "name": "Run Refined GitHub in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/refined-github/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 17,
+        "name": "Run Zotero Connector in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/zotero-connector/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 18,
+        "name": "Run uBlacklist in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/ublacklist/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 19,
+        "name": "Run Web Archives in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/web-archives/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 20,
+        "name": "Run User-Agent Switcher and Manager in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/user-agent-switcher/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 21,
+        "name": "Run xBrowserSync in Safari",
+        "url": "https://magicelklabs.com/viaduct/extensions/xbrowsersync/"
+      }
+    ]
+  }
+}
+</script>
 </head>
 <body>
 <svg class="glass-defs" aria-hidden="true" focusable="false">
@@ -222,6 +384,20 @@ affiliated with or endorsed by the developers of the extensions listed here, nor
 Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
 <div id="site-footer"></div>
 <script src="/assets/footer.js" data-product="Viaduct" data-links-only="1" data-links="Viaduct|/viaduct/, All extensions|/viaduct/extensions/, How it works|/viaduct/#how, Privacy|/viaduct/privacy.html, Terms|/viaduct/terms.html"></script>
+<noscript>
+  <footer style="border-top:1px solid var(--hair);padding:40px 0 56px;font-size:14px;color:var(--mute)">
+    <div style="max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px">
+      <span style="font-family:'Cabinet Grotesk','Inter',sans-serif;font-size:16px;color:var(--ink)">Magicelk Labs · Viaduct <span style="color:var(--mute);font-family:Inter,sans-serif;font-size:13px">· © 2026</span></span>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <a href="/viaduct/" style="color:var(--mute);font-weight:500;text-decoration:none">Viaduct</a>
+        <a href="/viaduct/extensions/" style="color:var(--mute);font-weight:500;text-decoration:none">All extensions</a>
+        <a href="/viaduct/#how" style="color:var(--mute);font-weight:500;text-decoration:none">How it works</a>
+        <a href="/viaduct/privacy.html" style="color:var(--mute);font-weight:500;text-decoration:none">Privacy</a>
+        <a href="/viaduct/terms.html" style="color:var(--mute);font-weight:500;text-decoration:none">Terms</a>
+      </div>
+    </div>
+  </footer>
+</noscript>
 <script>
 (function(){
   'use strict';

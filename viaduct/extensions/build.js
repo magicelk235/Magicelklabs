@@ -7,6 +7,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { execFileSync } = require('child_process');
 
 const SITE = 'https://magicelklabs.com';
 const STORE = (id) => `https://chromewebstore.google.com/detail/${id}`;
@@ -196,25 +197,60 @@ footer .links a:hover { color:var(--teal); }
 a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--teal); outline-offset:3px; border-radius:6px; }
 `;
 
-function head({ title, description, canonical }) {
+// These pages load no third-party JavaScript: the only external script is the
+// first-party /assets/footer.js, and the nav behaviour is inlined. So the policy
+// can keep script-src to 'self' plus 'unsafe-inline' for those inline blocks.
+// frame-ancestors is ignored when a policy arrives via <meta>, so framing is not
+// covered here.
+const CSP = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests";
+
+// Social card: one image for the whole section, cropped to the 1.91:1 the
+// scrapers want. JPEG rather than the .webp hero because several scrapers still
+// refuse to render WebP cards.
+const OG_IMAGE = `${SITE}/viaduct/assets/viaduct-og.jpg`;
+const OG_IMAGE_W = 1200;
+const OG_IMAGE_H = 630;
+
+// Escaping "<" keeps a stray "</script>" inside any interpolated string from
+// closing the block early.
+const ldjson = (obj) => JSON.stringify(obj, null, 2).replace(/</g, '\\u003c');
+
+function head({ title, description, canonical, imageAlt, jsonld }) {
   return `<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="${CSP}" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${esc(title)}</title>
 <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
+<link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png" />
+<link rel="manifest" href="/viaduct/assets/viaduct.webmanifest" />
+<meta name="theme-color" content="#070908" />
 <meta name="description" content="${esc(description)}" />
 <link rel="canonical" href="${canonical}" />
+<meta property="og:site_name" content="Magicelk Labs" />
+<meta property="og:locale" content="en_US" />
 <meta property="og:title" content="${esc(title)}" />
 <meta property="og:description" content="${esc(description)}" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="${canonical}" />
+<meta property="og:image" content="${OG_IMAGE}" />
+<meta property="og:image:width" content="${OG_IMAGE_W}" />
+<meta property="og:image:height" content="${OG_IMAGE_H}" />
+<meta property="og:image:alt" content="${esc(imageAlt)}" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="${esc(title)}" />
+<meta name="twitter:description" content="${esc(description)}" />
+<meta name="twitter:image" content="${OG_IMAGE}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
 <style>${CSS}</style>
+<script type="application/ld+json">
+${ldjson(jsonld)}
+</script>
 </head>`;
 }
 
@@ -333,6 +369,20 @@ affiliated with or endorsed by the developers of the extensions listed here, nor
 Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
 <div id="site-footer"></div>
 <script src="/assets/footer.js" data-product="Viaduct" data-links-only="1" data-links="Viaduct|/viaduct/, All extensions|/viaduct/extensions/, How it works|/viaduct/#how, Privacy|/viaduct/privacy.html, Terms|/viaduct/terms.html"></script>
+<noscript>
+  <footer style="border-top:1px solid var(--hair);padding:40px 0 56px;font-size:14px;color:var(--mute)">
+    <div style="max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px">
+      <span style="font-family:'Cabinet Grotesk','Inter',sans-serif;font-size:16px;color:var(--ink)">Magicelk Labs · Viaduct <span style="color:var(--mute);font-family:Inter,sans-serif;font-size:13px">· © 2026</span></span>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <a href="/viaduct/" style="color:var(--mute);font-weight:500;text-decoration:none">Viaduct</a>
+        <a href="/viaduct/extensions/" style="color:var(--mute);font-weight:500;text-decoration:none">All extensions</a>
+        <a href="/viaduct/#how" style="color:var(--mute);font-weight:500;text-decoration:none">How it works</a>
+        <a href="/viaduct/privacy.html" style="color:var(--mute);font-weight:500;text-decoration:none">Privacy</a>
+        <a href="/viaduct/terms.html" style="color:var(--mute);font-weight:500;text-decoration:none">Terms</a>
+      </div>
+    </div>
+  </footer>
+</noscript>
 <script>${NAV_JS}</script>
 </body>
 </html>`;
@@ -345,6 +395,31 @@ function extensionPage(x) {
   const description = x.official
     ? `${x.name} on Safari: what the official option covers, and how to run the Chrome version natively in Safari with Viaduct.`
     : `${x.name} has no Safari version. Viaduct converts the real Chrome extension into a native Safari extension. One click, no terminal.`;
+
+  // The card image is Viaduct's own window, so the alt describes that, but names
+  // the extension this page is about so no two pages ship the same string.
+  const imageAlt = `The Viaduct app window on macOS, its drop target ready to convert the ${x.name} Chrome extension into a native Safari extension`;
+
+  // TechArticle: this page is a how-to for one extension. No dates, no author
+  // names, and no ratings, because nothing on the page sources them.
+  const jsonld = {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: title,
+    description,
+    url: canonical,
+    inLanguage: 'en-US',
+    image: OG_IMAGE,
+    author: { '@type': 'Organization', name: 'Magicelk Labs', url: SITE },
+    publisher: { '@type': 'Organization', name: 'Magicelk Labs', url: SITE },
+    about: {
+      '@type': 'SoftwareApplication',
+      name: x.name,
+      description: x.desc.charAt(0).toUpperCase() + x.desc.slice(1),
+      applicationCategory: 'BrowserApplication',
+      url: store,
+    },
+  };
 
   const officialBlock = x.official ? `
 <section>
@@ -363,7 +438,7 @@ function extensionPage(x) {
        extensions: it uses its own native <code>.appex</code> format that must be built,
        code-signed, and registered with macOS. Viaduct does all of that for you.`;
 
-  return head({ title, description, canonical }) + chrome(`
+  return head({ title, description, canonical, imageAlt, jsonld }) + chrome(`
 <div class="crumb"><a href="/viaduct/extensions/">Extensions</a> / ${esc(x.name)}</div>
 <div class="hero">
   <span class="tag">${esc(x.category)}</span>
@@ -430,10 +505,35 @@ function hubPage() {
   const tiles = EXTENSIONS.map((x) =>
     `<a class="row" href="/viaduct/extensions/${x.slug}/"><b>${esc(x.name)}</b><span class="d">${esc(x.desc.charAt(0).toUpperCase() + x.desc.slice(1))}</span><span class="c">${esc(x.category)}</span></a>`
   ).join('\n    ');
+  const title = 'Chrome extensions you can run in Safari · Viaduct';
+  const description = 'Per-extension guides for running popular Chrome extensions natively in Safari with Viaduct: uBlock Origin, Tampermonkey, MetaMask, SponsorBlock, and more.';
   return head({
-    title: 'Chrome extensions you can run in Safari · Viaduct',
-    description: 'Per-extension guides for running popular Chrome extensions natively in Safari with Viaduct: uBlock Origin, Tampermonkey, MetaMask, SponsorBlock, and more.',
+    title,
+    description,
     canonical,
+    imageAlt: 'The Viaduct app window on macOS, its drop target ready to convert a Chrome extension into a native Safari extension',
+    // The hub is an index, not a guide, so it describes itself as a collection and
+    // lists the guides it links to rather than claiming to be one of them.
+    jsonld: {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: title,
+      description,
+      url: canonical,
+      inLanguage: 'en-US',
+      image: OG_IMAGE,
+      publisher: { '@type': 'Organization', name: 'Magicelk Labs', url: SITE },
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: EXTENSIONS.length,
+        itemListElement: EXTENSIONS.map((x, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: `Run ${x.name} in Safari`,
+          url: `${SITE}/viaduct/extensions/${x.slug}/`,
+        })),
+      },
+    },
   }) + chrome(`
 <div class="hero">
   <h1>Chrome extensions,<br />running in Safari</h1>
@@ -463,18 +563,38 @@ for (const x of EXTENSIONS) {
 }
 fs.writeFileSync(path.join(__dirname, 'index.html'), hubPage());
 
-// sitemap for the whole viaduct section
+// Sitemap for the whole site, not just the viaduct section. This is the only
+// generator that writes it, so anything added here by hand gets overwritten on
+// the next run.
+const LEGAL = ['privacy', 'terms', 'license', 'security'];
 const urls = [
   `${SITE}/`,
   `${SITE}/spyglass/`,
+  ...LEGAL.map((p) => `${SITE}/spyglass/${p}.html`),
   `${SITE}/viaduct/`,
+  ...LEGAL.map((p) => `${SITE}/viaduct/${p}.html`),
   `${SITE}/viaduct/extensions/`,
   ...EXTENSIONS.map((x) => `${SITE}/viaduct/extensions/${x.slug}/`),
 ];
+
+// lastmod comes from the last commit that touched the page, not from mtime, so
+// regenerating these files doesn't tell crawlers the content changed.
+const ROOT = path.join(__dirname, '..', '..');
+function lastmod(url) {
+  let rel = url.slice(`${SITE}/`.length);
+  if (rel === '' || rel.endsWith('/')) rel += 'index.html';
+  const date = execFileSync('git', ['log', '-1', '--format=%cs', '--', rel], {
+    cwd: ROOT,
+    encoding: 'utf8',
+  }).trim();
+  // Uncommitted page: fall back to today rather than emitting an empty element.
+  return date || new Date().toISOString().slice(0, 10);
+}
+
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n')}
+${urls.map((u) => `  <url><loc>${u}</loc><lastmod>${lastmod(u)}</lastmod></url>`).join('\n')}
 </urlset>\n`;
-fs.writeFileSync(path.join(__dirname, '..', '..', 'sitemap.xml'), sitemap);
+fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemap);
 
 console.log(`${count} extension pages + hub + sitemap.xml written.`);
