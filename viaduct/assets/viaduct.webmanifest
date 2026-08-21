@@ -1,0 +1,17 @@
+{
+  "name": "Viaduct",
+  "short_name": "Viaduct",
+  "description": "Convert any Chrome extension into a native Safari Web Extension.",
+  "start_url": "/viaduct/",
+  "scope": "/viaduct/",
+  "display": "browser",
+  "theme_color": "#070908",
+  "background_color": "#070908",
+  "icons": [
+    {
+      "src": "/viaduct/assets/viaduct-icon-dark.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    }
+  ]
+}

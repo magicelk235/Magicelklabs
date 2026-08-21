@@ -1,0 +1,17 @@
+{
+  "name": "Spyglass",
+  "short_name": "Spyglass",
+  "description": "Real Quick Look previews for Google Workspace files on macOS.",
+  "start_url": "/spyglass/",
+  "scope": "/spyglass/",
+  "display": "browser",
+  "theme_color": "#0A0908",
+  "background_color": "#0A0908",
+  "icons": [
+    {
+      "src": "/spyglass/assets/spyglass-appicon-dark-320.png",
+      "type": "image/png",
+      "sizes": "320x320"
+    }
+  ]
+}

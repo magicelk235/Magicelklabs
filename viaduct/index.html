@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth dark">
 <head>
-  <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Viaduct</title>
   <meta name="description" content="Viaduct converts any Chrome extension into a native Safari Web Extension. One click. No terminal, no Xcode." />
@@ -11,7 +11,22 @@
   <meta property="og:description" content="Drop in a .zip, a .crx, or a Chrome Web Store link. Viaduct converts, signs, and installs it into Safari for you." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://magicelklabs.com/viaduct/" />
-  <meta property="og:image" content="https://magicelklabs.com/viaduct/assets/viaduct-main-dark.webp" />
+  <meta property="og:site_name" content="Magicelk Labs" />
+  <meta property="og:locale" content="en_US" />
+  <!-- Social card is a 1200x630 JPEG on purpose: the on-page heroes are WebP at
+       the wrong aspect ratio, and several scrapers still won't render WebP. -->
+  <meta property="og:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="The Viaduct app window on a near-black canvas: a dashed drop zone reading Drop extension here, with a teal Choose extension button beneath it." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Viaduct: run Chrome extensions in Safari" />
+  <meta name="twitter:description" content="Drop in a .zip, a .crx, or a Chrome Web Store link. Viaduct converts, signs, and installs it into Safari for you." />
+  <meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
+  <meta name="theme-color" content="#070908" />
+  <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
+  <link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png" />
+  <link rel="manifest" href="/viaduct/assets/viaduct.webmanifest" />
   <script>
     // Motion gate: hide [data-mm] only when we intend to animate. If GSAP never
     // arrives, strip the class after 2s so content is never lost.
@@ -21,26 +36,6 @@
         setTimeout(function(){if(!window.__mmReady)document.documentElement.classList.remove('mm');},2000);
       }
     }catch(e){}})();
-  </script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            teal: { DEFAULT: '#16746F', press: '#0F5551', d: '#21AF9F', dpress: '#1B958A' },
-            ok:   { DEFAULT: '#1A9D5A', d: '#30D158' },
-          },
-          fontFamily: {
-            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Segoe UI', 'system-ui', 'sans-serif'],
-            display: ['Cabinet Grotesk', 'Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'monospace'],
-          },
-          borderRadius: { squircle: '16px' },
-        },
-      },
-    };
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -337,6 +332,46 @@
     outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 6px;
   }
 </style>
+  <!-- Tailwind is compiled ahead of time into assets/tailwind.css by
+       assets/tailwind/viaduct.config.js. It used to be the Play CDN, which
+       meant 450 KB of blocking script building the stylesheet in the browser
+       on every visit, from an origin that can't be integrity-pinned. See the
+       README for the rebuild command; re-run it after adding a utility. -->
+  <link rel="stylesheet" href="./assets/tailwind.css" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Viaduct",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "macOS 13.0 or later",
+  "url": "https://magicelklabs.com/viaduct/",
+  "downloadUrl": "https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg",
+  "description": "Viaduct converts any Chrome extension into a native Safari Web Extension. One click. No terminal, no Xcode.",
+  "image": "https://magicelklabs.com/viaduct/assets/viaduct-og.jpg",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Magicelk Labs",
+    "url": "https://magicelklabs.com/"
+  },
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Free",
+      "price": "0",
+      "priceCurrency": "USD",
+      "url": "https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg"
+    },
+    {
+      "@type": "Offer",
+      "name": "Viaduct Pro",
+      "price": "19",
+      "priceCurrency": "USD",
+      "url": "https://gumroad.com/l/viaduct"
+    }
+  ]
+}
+</script>
 </head>
 
 <body class="font-sans antialiased">
@@ -463,7 +498,9 @@
     <!-- the real thing: full screen capture of a store install -->
     <div data-mm="media" class="max-w-4xl mx-auto">
       <div class="surface rounded-2xl p-1.5 sm:p-2" data-mm-tilt>
-        <video id="store-demo" class="rounded-[14px] w-full block" src="assets/viaduct-store-install.mp4" poster="assets/viaduct-store-install-poster.webp" muted loop playsinline preload="metadata" width="1056" height="720" aria-label="Screen recording: installing the Dark Reader Chrome extension into Safari from the Chrome Web Store with Viaduct"></video>
+        <!-- width/height are the file's own 900x614, not the poster's 1056x720,
+             so the box the poster reserves is the box the video ends up in. -->
+        <video id="store-demo" class="rounded-[14px] w-full block" src="assets/viaduct-store-install.mp4" poster="assets/viaduct-store-install-poster.webp" muted loop playsinline preload="metadata" width="900" height="614" aria-label="Screen recording: installing the Dark Reader Chrome extension into Safari from the Chrome Web Store with Viaduct"></video>
       </div>
     </div>
   </div>
@@ -481,9 +518,12 @@
   <div class="scrub" id="convert-scrub">
     <div class="scrub-sticky">
       <div class="scrub-frame">
+        <!-- preload starts at metadata so 785 KB doesn't compete with the hero;
+             the scrub upgrades it to auto once the track is within a screen of
+             the viewport, because seeking needs the frames already buffered. -->
         <video id="convert-video" class="block" src="assets/viaduct-convert.mp4"
                poster="assets/viaduct-convert-poster.webp"
-               muted playsinline preload="auto" width="1404" height="1080"
+               muted playsinline preload="metadata" width="1404" height="1080"
                aria-label="Screen recording: Viaduct converting the TWP Translate Web Pages extension and installing it into Safari"></video>
       </div>
       <!-- The rail lights the step the playhead is on; timings live in the script below. -->
@@ -773,6 +813,23 @@
 <!-- ════════════════════ FOOTER ════════════════════ -->
 <div id="site-footer"></div>
 <script src="/assets/footer.js" data-product="Viaduct" data-links-only="1" data-links="How it works|/viaduct/#how, Features|/viaduct/#features, Extensions|/viaduct/extensions/, Get it|https://gumroad.com/l/viaduct, Privacy|/viaduct/privacy.html, Terms|/viaduct/terms.html, Security|/viaduct/security.html, License|/viaduct/license.html"></script>
+<noscript>
+  <footer style="border-top:1px solid var(--hair);padding:40px 0 56px;font-size:14px;color:var(--mute)">
+    <div style="max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px">
+      <span style="font-family:'Cabinet Grotesk','Inter',sans-serif;font-size:16px;color:var(--ink)">Magicelk Labs · Viaduct <span style="color:var(--mute);font-family:Inter,sans-serif;font-size:13px">· © 2026</span></span>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <a href="/viaduct/#how" style="color:var(--mute);font-weight:500;text-decoration:none">How it works</a>
+        <a href="/viaduct/#features" style="color:var(--mute);font-weight:500;text-decoration:none">Features</a>
+        <a href="/viaduct/extensions/" style="color:var(--mute);font-weight:500;text-decoration:none">Extensions</a>
+        <a href="https://gumroad.com/l/viaduct" style="color:var(--mute);font-weight:500;text-decoration:none">Get it</a>
+        <a href="/viaduct/privacy.html" style="color:var(--mute);font-weight:500;text-decoration:none">Privacy</a>
+        <a href="/viaduct/terms.html" style="color:var(--mute);font-weight:500;text-decoration:none">Terms</a>
+        <a href="/viaduct/security.html" style="color:var(--mute);font-weight:500;text-decoration:none">Security</a>
+        <a href="/viaduct/license.html" style="color:var(--mute);font-weight:500;text-decoration:none">License</a>
+      </div>
+    </div>
+  </footer>
+</noscript>
 
 <script>
 (function () {
@@ -1095,10 +1152,10 @@
 
 })();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js" integrity="sha384-FKTX0CNJ8ngN1oGMBReVu7mvjTJyjFiD5etb1NKnYxc+8eFI2O0KWnksTN+oTFcu" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" integrity="sha384-xb96EMJeax+NLXMC88ZBa1xAeAW+kn+horHh/zFlbMLG2UPWhMJJSlv7fi57hS+Q" crossorigin="anonymous"></script>
 <script src="/assets/motion.js"></script>
 
 </body>

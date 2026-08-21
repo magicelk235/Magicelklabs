@@ -2,16 +2,43 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- CSP arrives as a meta tag because Pages serves static files and gives us no
+     header control. frame-ancestors is ignored in meta form, so framing is not
+     covered here; everything else is. Charset stays above it so the declaration
+     lands inside the 1024-byte sniffing window. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Page not found, Magicelk Labs</title>
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/assets/site.webmanifest">
+<meta name="theme-color" content="#0B0B0C">
+<meta property="og:title" content="Page not found, Magicelk Labs">
+<meta property="og:description" content="That page isn't here. It may have moved, or the link was wrong.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Magicelk Labs">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://magicelklabs.com/assets/og-home.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Magicelk Labs elk mark above the Spyglass and Viaduct app covers on a black canvas">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Page not found, Magicelk Labs">
+<meta name="twitter:description" content="That page isn't here. It may have moved, or the link was wrong.">
+<meta name="twitter:image" content="https://magicelklabs.com/assets/og-home.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+<!-- Font CSS loads async (media=print swap) so first paint isn't blocked on
+     two third-party stylesheets; display=swap shows fallback text meanwhile. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+</noscript>
 <style>
 :root{
   color-scheme:dark;

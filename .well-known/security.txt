@@ -1,0 +1,6 @@
+Contact: mailto:support@magicelklabs.com
+Expires: 2027-08-21T00:00:00Z
+Preferred-Languages: en
+Canonical: https://magicelklabs.com/.well-known/security.txt
+Policy: https://magicelklabs.com/spyglass/security.html
+Policy: https://magicelklabs.com/viaduct/security.html
