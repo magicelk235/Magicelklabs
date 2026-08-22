@@ -130,8 +130,8 @@ main.wrap { padding-top:110px; padding-bottom:24px; }
 .glass-defs { position:absolute; width:0; height:0; overflow:hidden; }
 html.glassy .nav-pill {
   background:rgba(14,18,17,.30);
-  backdrop-filter:url(#nav-glass) blur(9px) saturate(1.5);
-  box-shadow:inset 0 0 2px 1px rgba(255,255,255,.30), inset 0 0 12px 4px rgba(255,255,255,.10), var(--lip);
+  backdrop-filter:url(#nav-glass) blur(9px) saturate(1.25);
+  box-shadow:inset 0 0 1px 0 rgba(255,255,255,.20), inset 0 0 7px 2px rgba(255,255,255,.06), var(--lip);
 }
 html.glassy #nav.scrolled .nav-pill { background:rgba(14,18,17,.58); }
 .nav-link { color:var(--body); transition:color .2s; text-decoration:none; }
@@ -331,11 +331,11 @@ function chrome(inner) {
   <defs>
     <filter id="nav-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
       <feImage id="nav-glass-map" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" />
-      <feDisplacementMap in="SourceGraphic" in2="map" scale="-180" xChannelSelector="R" yChannelSelector="G" result="dRed" />
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="-92" xChannelSelector="R" yChannelSelector="G" result="dRed" />
       <feColorMatrix in="dRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red" />
-      <feDisplacementMap in="SourceGraphic" in2="map" scale="-170" xChannelSelector="R" yChannelSelector="G" result="dGreen" />
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="-88" xChannelSelector="R" yChannelSelector="G" result="dGreen" />
       <feColorMatrix in="dGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green" />
-      <feDisplacementMap in="SourceGraphic" in2="map" scale="-160" xChannelSelector="R" yChannelSelector="G" result="dBlue" />
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="-84" xChannelSelector="R" yChannelSelector="G" result="dBlue" />
       <feColorMatrix in="dBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue" />
       <feBlend in="red" in2="green" mode="screen" result="rg" />
       <feBlend in="rg" in2="blue" mode="screen" result="output" />
