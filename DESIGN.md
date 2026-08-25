@@ -173,7 +173,7 @@ offline, no sign-in. Paid: $12 one-time, rendered first-page previews.
 macOS 14+.
 
 **Viaduct** — Run Chrome extensions in Safari, natively. Drop in a `.zip`,
-`.crx`, or Chrome Web Store link; Viaduct converts, signs, and installs it into
+`.crx`, or unpacked folder; Viaduct converts, signs, and installs it into
 Safari. Runs in Safari's own engine (keeps battery life). Free for 2
 conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
 
@@ -210,6 +210,9 @@ conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
     (1800×1474) and `spyglass-menubar-{light,dark}.webp` (1400×1567).
   - `viaduct/assets/viaduct-{main,developer}-{light,dark}.webp` and
     `viaduct-step-{select,convert,succeed}-{light,dark}.webp` (1800×1324).
+    `viaduct-main-dark.webp` is the exception: re-encoded at 1400×848, cropped
+    to the window rect and trimmed below the Choose extension button, because
+    the app's own empty space below it was half the height of the slot.
   - `viaduct/assets/viaduct-store-install.mp4` (1600w, ~1.9 MB) + poster: the
     full uncut Chrome-Web-Store-to-Safari install capture.
 - Light/dark image pairs swap via Tailwind `block dark:hidden` /

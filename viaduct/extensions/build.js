@@ -549,7 +549,7 @@ function hubPage() {
 <section>
   <p class="lede" style="font-size:15px;color:var(--mute)">Missing one? Viaduct isn't
   limited to this list. It converts any extension from a <code>.zip</code>,
-  <code>.crx</code>, or Chrome Web Store link. <a href="/viaduct/">See how it works →</a></p>
+  <code>.crx</code>, or unpacked folder. <a href="/viaduct/">See how it works →</a></p>
 </section>`);
 }
 

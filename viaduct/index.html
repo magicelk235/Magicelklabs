@@ -8,7 +8,7 @@
   <meta name="description" content="Viaduct converts any Chrome extension into a native Safari Web Extension. One click. No terminal, no Xcode." />
   <link rel="canonical" href="https://magicelklabs.com/viaduct/" />
   <meta property="og:title" content="Viaduct: run Chrome extensions in Safari" />
-  <meta property="og:description" content="Drop in a .zip, a .crx, or a Chrome Web Store link. Viaduct converts, signs, and installs it into Safari for you." />
+  <meta property="og:description" content="Drop in a .zip, a .crx, or an unpacked folder. Viaduct converts, signs, and installs it into Safari for you." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://magicelklabs.com/viaduct/" />
   <meta property="og:site_name" content="Magicelk Labs" />
@@ -18,10 +18,10 @@
   <meta property="og:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="The Viaduct app window on a near-black canvas: a dashed drop zone reading Drop extension here, with a teal Choose extension button beneath it." />
+  <meta property="og:image:alt" content="The words Run any Chrome extension, now native in Safari, beside the Viaduct app window with its drop zone ready." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Viaduct: run Chrome extensions in Safari" />
-  <meta name="twitter:description" content="Drop in a .zip, a .crx, or a Chrome Web Store link. Viaduct converts, signs, and installs it into Safari for you." />
+  <meta name="twitter:description" content="Drop in a .zip, a .crx, or an unpacked folder. Viaduct converts, signs, and installs it into Safari for you." />
   <meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
   <meta name="theme-color" content="#070908" />
   <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
@@ -179,7 +179,6 @@
   .feat-num { font-family:'JetBrains Mono',ui-monospace,monospace; font-weight:500; font-size:13px; line-height:2; color:var(--ash); font-variant-numeric:tabular-nums; transition:color .2s; }
   .feat-row:hover .feat-num { color:var(--teal); }
   .pro-pill { display:inline-block; margin-left:8px; padding:2px 8px; border-radius:999px; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; vertical-align:middle; color:#3FD9C8; background:rgba(11,122,112,.28); }
-  /* Supported-input format chips */
   /* Input funnel — the formats Viaduct accepts, shown as source tiles */
   .in-tile { position:relative; display:flex; flex-direction:column; gap:10px; padding:18px; border-radius:14px; border:1px solid var(--hair); background:var(--surface); box-shadow:var(--lip); transition:border-color .25s cubic-bezier(.2,.8,.2,1), transform .25s cubic-bezier(.2,.8,.2,1), background .25s; }
   .in-tile:hover { border-color:color-mix(in srgb, var(--teal) 45%, transparent); transform:translateY(-3px); background:var(--elevated); }
@@ -477,7 +476,7 @@
       </div>
 
       <!-- right: the accepted inputs -->
-      <div data-mm-stagger class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div data-mm-stagger class="grid grid-cols-2 gap-3">
         <div class="in-tile">
           <span class="in-ico"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4 8 4 8-4z"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10l8 4 8-4V7"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 11v10"/></svg></span>
           <div><div class="in-name"><code>.crx</code></div><div class="in-role">Packed Chrome build</div></div>
@@ -491,10 +490,6 @@
           <div><div class="in-name">Unpacked folder</div><div class="in-role">Straight from source</div></div>
         </div>
         <div class="in-tile">
-          <span class="in-ico"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.5 1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.5-1.5"/></svg></span>
-          <div><div class="in-name">Web Store link</div><div class="in-role">Paste the URL</div></div>
-        </div>
-        <div class="in-tile col-span-2 sm:col-span-1">
           <span class="in-ico"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5h16M4 12h16M4 19h16"/></svg></span>
           <div><div class="in-name">Manifest <span class="text-[var(--teal)]">V2</span> &amp; <span class="text-[var(--teal)]">V3</span></div><div class="in-role">Both handled</div></div>
         </div>
@@ -553,7 +548,7 @@
         <div class="scrub-cap is-on">
           <div class="scrub-step">1</div>
           <h3>Drop it in</h3>
-          <p>A <code class="font-mono text-[.85em]">.zip</code>, a <code class="font-mono text-[.85em]">.crx</code>, an unpacked folder, or a Chrome Web Store link.</p>
+          <p>Viaduct reads the manifest and shows the extension's own name and icon before anything runs.</p>
         </div>
         <div class="scrub-cap">
           <div class="scrub-step">2</div>
