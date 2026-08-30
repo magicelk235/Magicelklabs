@@ -5,12 +5,10 @@
 //     -i assets/tailwind/input.css -o spyglass/assets/tailwind.css --minify
 module.exports = {
   content: ['./spyglass/index.html'],
-  darkMode: 'class',
   theme: {
     extend: {
-      colors: {
-        brass: { DEFAULT: '#B8945F', press: '#A47E48', d: '#D9B679' },
-      },
+      // Colour lives in the page's CSS custom properties, not here: the palette
+      // is dark-only and the utilities never referenced it.
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'system-ui', 'sans-serif'],
         display: ['Cabinet Grotesk', 'Inter', '-apple-system', 'sans-serif'],

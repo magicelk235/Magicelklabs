@@ -46,14 +46,16 @@ colour without touching the theme.
 
 **Committed color, not timid accents.** Viaduct's brand surfaces are drenched
 in deep teal (`linear-gradient(168deg,#0F4D48,#093732)` — the `.hero-band` /
-`.pro-panel` / `.cta` gradient), identical in light and dark mode. It carries
-the hero, the Pro pricing panel, and the closing CTA. Spyglass keeps its own
-teal band (`--teal-top`/`--teal-bot`) with brass CTAs. On-band text: near-white
-ink `#F2FBF9`, body `#C6E3DE`, dim `#93C2BB`, bright accent `#6EE0D1`; on-band
+`.pro-panel` / `.cta` gradient). It carries the hero, the Pro pricing panel,
+and the closing CTA. Spyglass keeps its own teal band
+(`--teal-top`/`--teal-bot`) with brass CTAs. On-band text: near-white ink
+`#F2FBF9`, body `#C6E3DE`, dim `#93C2BB`, bright accent `#6EE0D1`; on-band
 primary buttons are white with dark-teal text.
 
-One accent per page. Every page ships dark only; the old light-mode toggles are
-gone.
+One accent per page. Dark is the only mode the site has: tokens are declared
+once in `:root` with `color-scheme:dark`, there is no light palette to override
+and no `.dark` class to gate it. Anything that adapts to the reader's colour
+scheme is a bug.
 
 ## Signature moves
 
@@ -179,8 +181,8 @@ conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
 
 ## Assets
 
-- `spyglass/assets/spyglass-appicon-{light,dark}-1024.png` — Spyglass icon.
-- `viaduct/assets/viaduct-icon-{light,dark}.png` — Viaduct icon (256px, web).
+- `spyglass/assets/spyglass-appicon-dark-320.png` — Spyglass icon.
+- `viaduct/assets/viaduct-icon-dark.png` — Viaduct icon (256px, web).
 - `assets/spyglass-cover.webp` and `assets/viaduct-cover.webp` (1200×630) are
   the shelf covers on the root page, encoded from the media-kit social cards
   with `cwebp -q 86`. A new app needs one at the same size.
@@ -191,33 +193,35 @@ conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
   as a 44-vertex polygon, mirror-symmetric to the coordinate, and carries no
   rounded-tile container anywhere we draw one.
   - `assets/mark.svg` — ivory, containerless. The nav pill and any in-page use.
-  - `assets/favicon.svg` — same path, but the fill flips on
-    `prefers-color-scheme`: near-black on a light tab bar, ivory on a dark one.
-    For `<link rel="icon">` **only**. An `<img>` resolves that media query
-    against the OS rather than the page, so using this file in the nav renders
-    it near-black on our dark pill and it vanishes on a light-mode Mac.
+  - `assets/favicon.svg` — same path over the page canvas baked in as a field,
+    so the icon still reads on a light tab bar. For `<link rel="icon">`
+    **only**: in a page the field would sit as a square behind the nav pill.
   - `assets/touch-icon.svg` → `assets/favicon.png` (512×512) for
     `apple-touch-icon`. Full bleed with square corners and the rack inset to
     76%: iOS applies its own rounded mask, so drawing one here double-rounds it,
-    and PNG cannot follow the colour scheme so the field is baked in.
+    and the field is baked in the same way.
   - The rack needs roughly 28px to read. That is why the nav glyph is 28 and not
     the 22 it was built at. At 16px it is a texture rather than a legible rack,
     which is true of any mark at that size.
-- Use the light icon on dark surfaces and the dark icon on light surfaces.
 - Media-kit screenshots (source: Google Drive → "My Drive/media kits", mounted
-  locally) converted with `cwebp -q 82 -resize 1800 0`:
-  - `spyglass/assets/spyglass-shot-{docs,sheets,slides,drawings}-{light,dark}.webp`
-    (1800×1474) and `spyglass-menubar-{light,dark}.webp` (1400×1567).
-  - `viaduct/assets/viaduct-{main,developer}-{light,dark}.webp` and
-    `viaduct-step-{select,convert,succeed}-{light,dark}.webp` (1800×1324).
+  locally) converted with `cwebp -q 82 -resize 1800 0`. Every shot is captured
+  with the app in dark mode; the `-dark` suffix is history, there is no second
+  variant to swap to.
+  - `spyglass/assets/spyglass-shot-{docs,sheets,slides,drawings}-dark.webp`
+    (1800×1474) and `spyglass-menubar-dark.webp` (1400×1567).
+  - `viaduct/assets/viaduct-{main,developer}-dark.webp` and
+    `viaduct-step-{select,convert,succeed}-dark.webp` (1800×1324).
     `viaduct-main-dark.webp` is the exception: re-encoded at 1400×848, cropped
     to the window rect and trimmed below the Choose extension button, because
     the app's own empty space below it was half the height of the slot.
   - `viaduct/assets/viaduct-store-install.mp4` (1600w, ~1.9 MB) + poster: the
     full uncut Chrome-Web-Store-to-Safari install capture.
-- Light/dark image pairs swap via Tailwind `block dark:hidden` /
-  `hidden dark:block`; never add a bare `display:block` CSS rule on those imgs
-  (it outranks Tailwind's `.hidden` and shows both variants at once).
+  - `spyglass/assets/spyglass-demo-1440.{webm,mp4}` (1440×1060) is the Finder
+    screen recording. Cut its poster straight out of the encode at the same
+    size — `ffmpeg -ss 3 -i spyglass-demo-1440.mp4 -frames:v 1 frame.png`, then
+    `cwebp -q 82` — so the tile and the first played frame share one ratio and
+    one composition. A poster from another capture, or trimmed to a different
+    height, shows up as a cropped still that jumps the moment playback starts.
 
 ## Build
 

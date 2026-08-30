@@ -70,18 +70,10 @@ const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, 
 
 // Shared page chrome. Tokens are lifted from ../index.html (the Theme.swift palette).
 const CSS = `
-:root {
-  --canvas:#F5F5F7; --surface:#FFFFFF; --elevated:#F0F0F2; --card:#EAEAEC;
-  --ink:#1D1D1F; --body:#3A3A3C; --mute:#6E6E73; --ash:#9A9AA0; --stone:#BFBFC4;
-  --teal:#16746F; --teal-press:#0F5551; --on-teal:#FFFFFF;
-  --ok:#1A9D5A; --bad:#E5484D;
-  --hair:rgba(0,0,0,.10); --hair-soft:rgba(0,0,0,.05); --hair-strong:rgba(0,0,0,.16);
-  --glow:rgba(22,116,111,.10); --brass:var(--teal);
-  --lip:inset 0 1px 0 rgba(255,255,255,.6);
-}
 /* The pages only ship dark. The canvas is a near-black with a trace of green in
    it, so the teal accent sits on it like something lit, not a sticker on grey. */
-html.dark {
+:root {
+  color-scheme:dark;
   --canvas:#070908; --surface:#0E1211; --elevated:#151A19; --card:#1B211F;
   --ink:#ECF2F0; --body:#9DAAA7; --mute:#6B7A77; --ash:#4E5B58; --stone:#333D3B;
   --teal:#2DD4BF; --teal-press:#5FE3D2; --on-teal:#04211D;
@@ -217,7 +209,7 @@ const ldjson = (obj) => JSON.stringify(obj, null, 2).replace(/</g, '\\u003c');
 
 function head({ title, description, canonical, imageAlt, jsonld }) {
   return `<!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="${CSP}" />

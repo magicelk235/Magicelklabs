@@ -5,13 +5,10 @@
 //     -i assets/tailwind/input.css -o viaduct/assets/tailwind.css --minify
 module.exports = {
   content: ['./viaduct/index.html'],
-  darkMode: 'class',
   theme: {
     extend: {
-      colors: {
-        teal: { DEFAULT: '#16746F', press: '#0F5551', d: '#21AF9F', dpress: '#1B958A' },
-        ok: { DEFAULT: '#1A9D5A', d: '#30D158' },
-      },
+      // Colour lives in the page's CSS custom properties, not here: the palette
+      // is dark-only and the utilities never referenced it.
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Segoe UI', 'system-ui', 'sans-serif'],
         display: ['Cabinet Grotesk', 'Inter', 'sans-serif'],

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth dark">
+<html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
@@ -40,19 +40,11 @@
   }catch(e){}})();
 </script>
 <style>
-  /* Design tokens */
+  /* Design tokens. Dark is the only mode this page ships: the canvas is a
+     near-black carrying a trace of brown, so the brass reads as lit metal
+     rather than a yellow sticker on neutral grey. */
   :root {
-    --canvas: #F5F5F7;  --surface: #FFFFFF;  --elevated: #F0F0F2;  --card: #EAEAEC;
-    --ink: #1D1D1F;     --body: #3A3A3C;     --mute: #6E6E73;      --stone: #BFBFC4;
-    --brass: #B8945F;   --brass-press: #A47E48;  --on-brass: #1A1206;
-    --wash-a: #D8B889;  --ok: #1A9D5A;  --bad: #E5484D;
-    --hair: rgba(0,0,0,.10);  --hair-soft: rgba(0,0,0,.05);  --hair-strong: rgba(0,0,0,.16);
-    --glass: rgba(255,255,255,.62);  --glass-brd: rgba(255,255,255,.7);
-  }
-  /* Dark is the only mode this page ships. The canvas is a near-black carrying a
-     trace of brown, so the brass reads as lit metal rather than a yellow sticker
-     on neutral grey. */
-  html.dark {
+    color-scheme: dark;
     --canvas: #0A0908;  --surface: #12100E;  --elevated: #191614;  --card: #201C19;
     --ink: #F2EEE6;     --body: #A99E8E;     --mute: #7C7263;      --ash: #574F45;  --stone: #3A342D;
     --brass: #D9B679;   --brass-press: #EBCE9C;  --on-brass: #1A1206;
@@ -189,7 +181,6 @@
 
   /* Shared media frame: hero demo, the stub-file shot, the menu-bar panel. */
   .pin-frame { background:var(--surface); border:1px solid var(--hair); box-shadow:var(--lip); border-radius:var(--r-card); padding:6px; }
-  /* No `display` here: Tailwind's block/hidden classes drive the light/dark swap. */
   .pin-frame img { border-radius:var(--r-inner); width:100%; }
   .pin-cap { margin-top:12px; font-size:14px; color:var(--mute); }
   .pin-cap b { color:var(--ink); font-weight:600; }
@@ -198,10 +189,9 @@
      behind a real button instead of autoplaying. The overlay covers the poster
      and hands off to the native controls once playback starts. */
   .demo-media { position:relative; }
-  /* A video showing a poster takes its intrinsic ratio from the poster, and the
-     poster is 12px shorter than the encodes. Pin the box to the real frame ratio
-     and let the poster cover it, or the frame jumps on the first play. */
-  .demo-media video { aspect-ratio: 1440 / 1060; height: auto; object-fit: cover; }
+  /* Poster and encodes are both 1440×1060, so the box keeps one ratio from
+     first paint through playback and nothing jumps on the first play. */
+  .demo-media video { aspect-ratio: 1440 / 1060; height: auto; }
   .demo-play {
     position:absolute; inset:0; width:100%; padding:0; border:0; background:transparent;
     display:flex; align-items:center; justify-content:center; cursor:pointer;
