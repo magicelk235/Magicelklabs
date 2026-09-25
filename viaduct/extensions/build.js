@@ -561,6 +561,7 @@ fs.writeFileSync(path.join(__dirname, 'index.html'), hubPage());
 const LEGAL = ['privacy', 'terms', 'license', 'security'];
 const urls = [
   `${SITE}/`,
+  `${SITE}/about/`,
   `${SITE}/spyglass/`,
   ...LEGAL.map((p) => `${SITE}/spyglass/${p}.html`),
   `${SITE}/viaduct/`,

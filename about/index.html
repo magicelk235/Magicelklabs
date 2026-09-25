@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- CSP arrives as a meta tag because Pages serves static files and gives us no
+     header control. frame-ancestors is ignored in meta form, so framing is not
+     covered here; everything else is. Charset stays above it so the declaration
+     lands inside the 1024-byte sniffing window. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About Magicelk Labs</title>
+<meta name="description" content="Magicelk Labs, also written magicelklabs, is a one-person Mac studio. It makes Spyglass and Viaduct, and you pay for each once.">
+<link rel="canonical" href="https://magicelklabs.com/about/">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/assets/site.webmanifest">
+<meta name="theme-color" content="#0B0B0C">
+<meta property="og:title" content="About Magicelk Labs">
+<meta property="og:description" content="A one-person Mac studio. Spyglass and Viaduct, paid for once.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://magicelklabs.com/about/">
+<meta property="og:site_name" content="Magicelk Labs">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://magicelklabs.com/assets/og-home.jpg?v=2">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Magicelk Labs elk mark above the Spyglass and Viaduct app covers on a black canvas">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="About Magicelk Labs">
+<meta name="twitter:description" content="A one-person Mac studio. Spyglass and Viaduct, paid for once.">
+<meta name="twitter:image" content="https://magicelklabs.com/assets/og-home.jpg?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<!-- Font CSS loads async (media=print swap) so first paint isn't blocked on
+     two third-party stylesheets; display=swap shows fallback text meanwhile. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+</noscript>
+<style>
+:root{
+  color-scheme:dark;
+  --canvas:#0B0B0C;--surface:#131315;--ink:#F5F5F4;--body:#9A9A98;--mute:#6C6C6A;
+  --hair:rgba(255,255,255,.08);--hair-strong:rgba(255,255,255,.14);
+  --tint:rgba(255,255,255,.03)
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--canvas);color:var(--body);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  min-height:100vh;
+  background-image:radial-gradient(120% 100% at 50% 0%,var(--tint),transparent 70%);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--hair-strong);transition:border-color .15s}
+a:hover{border-color:var(--ink)}
+#nav{position:sticky;top:0;z-index:10;padding:20px 24px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.nav-pill{
+  max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;
+}
+.wordmark{display:inline-flex;align-items:center;gap:10px;border:0;font-family:"Cabinet Grotesk","Inter",sans-serif;font-weight:700;font-size:17px;color:var(--ink)}
+.nav-links{display:flex;gap:22px}
+.nav-links a{border:0;color:var(--mute);font-size:14px;font-weight:500}
+.nav-links a:hover,.nav-links a[aria-current]{color:var(--ink)}
+main{max-width:1080px;margin:0 auto;padding:56px 24px 96px}
+.side-label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:18px}
+h1{
+  font-family:"Cabinet Grotesk","Inter",sans-serif;font-weight:800;
+  font-size:clamp(34px,5.4vw,60px);line-height:1.04;color:var(--ink);letter-spacing:-.02em;
+  max-width:14ch;margin-bottom:32px;
+}
+.prose{max-width:62ch}
+.prose p{font-size:17px;line-height:1.65;margin-bottom:22px}
+.prose h2{
+  font-family:"Cabinet Grotesk","Inter",sans-serif;font-weight:700;font-size:22px;
+  color:var(--ink);letter-spacing:-.01em;margin:44px 0 14px;
+}
+.prose ul{list-style:none;margin-bottom:22px}
+.prose li{font-size:17px;line-height:1.65;padding-left:18px;position:relative}
+.prose li::before{content:"";position:absolute;left:0;top:.72em;width:7px;height:2px;background:var(--mute)}
+.prose strong{color:var(--ink);font-weight:600}
+.prose code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header id="nav">
+  <nav class="nav-pill" aria-label="Primary">
+    <a class="wordmark" href="/">
+      <img src="/assets/mark.svg" alt="" aria-hidden="true" width="28" height="28">
+      Magicelk Labs
+    </a>
+    <div class="nav-links">
+      <a href="/#shelf">Apps</a>
+      <a href="/about/" aria-current="page">About</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <p class="side-label">About</p>
+  <h1>One person, two Mac apps, no subscriptions.</h1>
+
+  <div class="prose">
+    <p><strong>Magicelk Labs</strong> is a one-person Mac studio. Online it goes by <strong>magicelklabs</strong>: the site is magicelklabs.com, the GitHub account is <a href="https://github.com/magicelk235">magicelk235</a>, and support mail goes to <a href="mailto:support@magicelklabs.com">support@magicelklabs.com</a>.</p>
+
+    <p>The idea is simple. Pick one thing macOS should do and doesn't, build a native app that does only that thing, and sell it for a single payment. No accounts, no monthly plan, no dashboard you have to log into.</p>
+
+    <h2>The apps</h2>
+    <ul>
+      <li><a href="/spyglass/">Spyglass</a> gives Quick Look real previews for Google Docs, Sheets, Slides, Drawings, Forms, and Sites. Press Space on a <code>.gdoc</code> in Finder and you see the document rather than the JSON stub Google Drive leaves on disk.</li>
+      <li><a href="/viaduct/">Viaduct</a> turns a Chrome extension into a signed Safari extension. Drop the extension in, get a Safari one back, without opening Xcode or a terminal.</li>
+    </ul>
+
+    <h2>Where to find it</h2>
+    <ul>
+      <li>Source and releases: <a href="https://github.com/magicelk235">github.com/magicelk235</a></li>
+      <li>Reddit: <a href="https://www.reddit.com/user/Magicelk235/">u/Magicelk235</a></li>
+      <li>Purchases: <a href="https://magicelk235.gumroad.com/">magicelk235.gumroad.com</a></li>
+      <li>This website is plain HTML served from GitHub Pages. <a href="https://github.com/magicelk235/Magicelklabs">The repository is public.</a></li>
+    </ul>
+
+    <h2>Contact</h2>
+    <p>Bugs, refund requests, and questions all go to <a href="mailto:support@magicelklabs.com">support@magicelklabs.com</a>. Security reports too; there is a <a href="/spyglass/security.html">security page for Spyglass</a> and <a href="/viaduct/security.html">one for Viaduct</a> with what to include.</p>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+<script src="/assets/footer.js"></script>
+<noscript>
+  <footer style="border-top:1px solid var(--hair);padding:40px 0 56px;font-size:14px;color:var(--mute)">
+    <div style="max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px">
+      <span style="font-family:'Cabinet Grotesk','Inter',sans-serif;font-size:16px;color:var(--ink)">Magicelk Labs <span style="color:var(--mute);font-family:Inter,sans-serif;font-size:13px">· © 2026</span></span>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <a href="/about/" style="color:var(--mute);font-weight:500;text-decoration:none;border:0">About</a>
+        <a href="mailto:support@magicelklabs.com" style="color:var(--mute);font-weight:500;text-decoration:none;border:0">Contact</a>
+        <a href="https://github.com/magicelk235" style="color:var(--mute);font-weight:500;text-decoration:none;border:0">GitHub</a>
+      </div>
+    </div>
+  </footer>
+</noscript>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "@id": "https://magicelklabs.com/about/#webpage",
+  "url": "https://magicelklabs.com/about/",
+  "name": "About Magicelk Labs",
+  "isPartOf": { "@id": "https://magicelklabs.com/#website" },
+  "about": { "@id": "https://magicelklabs.com/#organization" },
+  "mainEntity": {
+    "@type": "Organization",
+    "@id": "https://magicelklabs.com/#organization",
+    "name": "Magicelk Labs",
+    "alternateName": ["magicelklabs", "Magicelk", "Magic Elk Labs"],
+    "url": "https://magicelklabs.com/",
+    "logo": "https://magicelklabs.com/assets/apple-touch-icon.png",
+    "email": "support@magicelklabs.com",
+    "numberOfEmployees": { "@type": "QuantitativeValue", "value": 1 },
+    "founder": { "@type": "Person", "name": "magicelk235", "url": "https://github.com/magicelk235" },
+    "sameAs": [
+      "https://github.com/magicelk235",
+      "https://www.reddit.com/user/Magicelk235/",
+      "https://magicelk235.gumroad.com/"
+    ]
+  }
+}
+</script>
+</body>
+</html>

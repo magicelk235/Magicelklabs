@@ -185,33 +185,14 @@
   .pin-cap { margin-top:12px; font-size:14px; color:var(--mute); }
   .pin-cap b { color:var(--ink); font-weight:600; }
 
-  /* Demo video: the recording is the heaviest asset on the page, so it sits
-     behind a real button instead of autoplaying. The overlay covers the poster
-     and hands off to the native controls once playback starts. */
+  /* Demo video: muted and looping, so it starts on its own once it scrolls into
+     view and pauses again off-screen (assets/motion.js has nothing to do with
+     it). No pointer tilt here: a 3D-rotated ancestor forces the playing video
+     off its hardware overlay every frame and it flickers under the cursor. */
   .demo-media { position:relative; }
   /* Poster and encodes are both 1440×1060, so the box keeps one ratio from
      first paint through playback and nothing jumps on the first play. */
   .demo-media video { aspect-ratio: 1440 / 1060; height: auto; }
-  .demo-play {
-    position:absolute; inset:0; width:100%; padding:0; border:0; background:transparent;
-    display:flex; align-items:center; justify-content:center; cursor:pointer;
-    border-radius:var(--r-inner); font:inherit;
-  }
-  /* CSS display beats the hidden attribute, so spell the hidden case out. */
-  .demo-play[hidden] { display:none; }
-  .demo-play-pill {
-    display:inline-flex; align-items:center; gap:10px; padding:11px 20px;
-    background:var(--glass); border:1px solid var(--glass-brd); border-radius:var(--r-pill);
-    color:var(--ink); font-size:15px; font-weight:600; box-shadow:var(--lip);
-    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
-    transition:transform .22s cubic-bezier(.2,.8,.2,1), border-color .2s;
-  }
-  .demo-play:hover .demo-play-pill { transform:translateY(-1px); border-color:var(--brass); }
-  /* Brass triangle drawn with borders, so the affordance needs no asset. */
-  .demo-play-glyph {
-    width:0; height:0; border-style:solid; border-width:6px 0 6px 10px;
-    border-color:transparent transparent transparent var(--brass);
-  }
 
   /* ───────── Format reel ─────────
      Four Quick Look shots on a ribbon that drifts left without stopping. The
@@ -398,16 +379,13 @@
 <!-- DEMO -->
 <section id="demo" class="pb-16 sm:pb-24 px-5 sm:px-8" aria-label="Spyglass in Finder">
   <div class="max-w-4xl mx-auto">
-    <div data-mm="media" data-mm-tilt>
+    <div data-mm="media">
       <div class="pin-frame" data-mm-scrub>
         <div class="demo-media">
-          <video id="sg-demo" class="w-full block rounded-xl" poster="./assets/spyglass-demo-poster.webp" width="1440" height="1060" muted loop playsinline preload="none" aria-label="Screen recording: pressing Space on Google Drive stub files in Finder shows the real documents">
+          <video id="sg-demo" class="w-full block rounded-xl" poster="./assets/spyglass-demo-poster.webp" width="1440" height="1060" muted loop playsinline preload="metadata" aria-label="Screen recording: pressing Space on Google Drive stub files in Finder shows the real documents">
             <source src="./assets/spyglass-demo-1440.webm" type="video/webm" />
             <source src="./assets/spyglass-demo-1440.mp4" type="video/mp4" />
           </video>
-          <button id="sg-demo-play" type="button" class="demo-play" aria-controls="sg-demo">
-            <span class="demo-play-pill"><span class="demo-play-glyph" aria-hidden="true"></span>Play the Spyglass demo</span>
-          </button>
         </div>
       </div>
     </div>
@@ -657,23 +635,29 @@
   var onScroll = function () { if (nav) nav.classList.toggle('scrolled', window.scrollY > 12); };
   onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
 
-  // ── Demo video: click to play ──
-  // No autoplay and preload="none": the clip is the page's heaviest asset, so
-  // nothing is fetched until the overlay button is pressed. Once it is, the
-  // native controls take over. Under reduced motion the loop is dropped so the
-  // clip plays through once and stops.
+  // ── Demo video: plays on its own while on screen ──
+  // Muted + playsinline satisfies every autoplay policy. The clip is the
+  // page's heaviest asset, so it only fetches once the frame is actually in
+  // view, and it pauses off-screen so nothing decodes for nobody. Under
+  // reduced motion it never starts itself: the poster stays and the native
+  // controls let the reader opt in.
   var demo = document.getElementById('sg-demo');
-  var demoPlay = document.getElementById('sg-demo-play');
-  if (demo && demoPlay) {
-    if (reduce) demo.removeAttribute('loop');
-    demoPlay.addEventListener('click', function () {
-      demoPlay.hidden = true;
+  if (demo) {
+    if (reduce) {
+      demo.removeAttribute('loop');
       demo.controls = true;
-      var started = demo.play();
-      // A refused play() still leaves the user with controls over the poster,
-      // so there is nothing to recover here beyond keeping the console clean.
-      if (started && started.catch) started.catch(function () {});
-    });
+    } else if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        var onScreen = entries[0].isIntersecting;
+        if (onScreen === !demo.paused) return;
+        if (!onScreen) { demo.pause(); return; }
+        var started = demo.play();
+        // If playback is refused anyway, hand the reader the controls.
+        if (started && started.catch) started.catch(function () { demo.controls = true; });
+      }, { threshold: 0.35 }).observe(demo);
+    } else {
+      demo.autoplay = true;
+    }
   }
 
   // ── Glass nav ──

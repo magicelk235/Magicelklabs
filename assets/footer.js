@@ -43,6 +43,7 @@
   }
   // Defaults appended unless the page opts out.
   if (d.linksOnly !== "1") {
+    links.push({ label: "About", href: "/about/" });
     links.push({ label: "Contact", href: contact });
     links.push({ label: "GitHub", href: github });
   }
