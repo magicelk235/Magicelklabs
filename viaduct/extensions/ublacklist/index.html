@@ -352,24 +352,8 @@ Google. Viaduct converts extensions locally on your Mac; nothing is redistribute
     if (window.ResizeObserver) new ResizeObserver(buildMap).observe(pill);
     else window.addEventListener('resize', buildMap);
   })();
-
-  // Inbound links tag the visit (?ref=... or ?utm_source=...). Gumroad only logs
-  // the UTM params it receives at checkout, so carry them onto the buy links.
-  (function(){
-    var incoming = new URLSearchParams(window.location.search);
-    var ref = incoming.get('ref');
-    var params = new URLSearchParams();
-    if (ref && !incoming.get('utm_source')) params.set('utm_source', ref);
-    ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'].forEach(function(k){
-      var v = incoming.get(k); if (v) params.set(k, v);
-    });
-    var qs = params.toString();
-    if (!qs) return;
-    document.querySelectorAll('a[href*="gumroad.com/l/viaduct"]').forEach(function(a){
-      a.href += (a.href.indexOf('?') === -1 ? '?' : '&') + qs;
-    });
-  })();
 })();
 </script>
+<script src="/assets/attribution.js"></script>
 </body>
 </html>

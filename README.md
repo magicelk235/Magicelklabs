@@ -14,7 +14,7 @@ The site is static: hand-written HTML, no framework and no bundler. GitHub Pages
 - `index.html` is the studio landing page.
 - `spyglass/` holds the Spyglass product page and its legal pages (privacy, terms, license, security).
 - `viaduct/` holds the Viaduct product page, its legal pages, and `viaduct/extensions/`, a set of SEO guide pages with a hub index (one page per popular Chrome extension).
-- `assets/` holds the shared scripts (`motion.js`, `footer.js`), the favicons, the web manifest, and `assets/tailwind/`, which holds the Tailwind configs the product stylesheets are built from.
+- `assets/` holds the shared scripts (`motion.js`, `footer.js`, and `attribution.js`, which tags Gumroad buy links with where the visitor came from), the favicons, the web manifest, and `assets/tailwind/`, which holds the Tailwind configs the product stylesheets are built from.
 - `DESIGN.md` covers the brand and visual rules. Read it before editing any page.
 - `PRODUCT.md` explains what the site is for and how it converts.
 
