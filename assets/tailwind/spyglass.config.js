@@ -10,8 +10,9 @@ module.exports = {
       // Colour lives in the page's CSS custom properties, not here: the palette
       // is dark-only and the utilities never referenced it.
       fontFamily: {
-        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'system-ui', 'sans-serif'],
-        display: ['Cabinet Grotesk', 'Inter', '-apple-system', 'sans-serif'],
+        // Spyglass is a Mac utility, so its body text is the Mac's own face.
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        display: ['Cabinet Grotesk', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'monospace'],
       },
     },

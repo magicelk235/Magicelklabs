@@ -7,7 +7,7 @@ The site is static: hand-written HTML, no framework and no bundler. GitHub Pages
 ## The apps
 
 - **Viaduct** converts Chrome extensions into native Safari ones.
-- **Spyglass** adds Quick Look previews for Google Workspace files on macOS.
+- **Spyglass** gives Quick Look proper previews for Markdown, code, notebooks, archives, apps, Google Drive files and more.
 
 ## Structure
 

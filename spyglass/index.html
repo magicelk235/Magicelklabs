@@ -4,30 +4,31 @@
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Spyglass</title>
-<meta name="description" content="Quick Look previews for Google Docs, Sheets, Slides, Drawings, Forms, and Sites on macOS. Press Space in Finder and see the document." />
+<title>Spyglass: better Quick Look previews for your Mac</title>
+<meta name="description" content="Spyglass gives Quick Look proper previews for Markdown, code, notebooks, archives, apps, SQLite and Google Drive files on your Mac. Free for 7 days." />
 <link rel="canonical" href="https://magicelklabs.com/spyglass/" />
-<meta property="og:title" content="Spyglass" />
-<meta property="og:description" content="Press Space on a Google Drive stub file and Quick Look shows the document itself." />
+<meta property="og:title" content="Spyglass: a better Quick Look for your Mac" />
+<meta property="og:description" content="Press Space on Markdown, code, a notebook, a zip, an app or a Google Doc and see what's inside. Free for 7 days, then $12 once." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://magicelklabs.com/spyglass/" />
 <meta property="og:site_name" content="Magicelk Labs" />
 <meta property="og:locale" content="en_US" />
-<meta property="og:image" content="https://magicelklabs.com/spyglass/assets/spyglass-og.jpg" />
+<meta property="og:image" content="https://magicelklabs.com/spyglass/assets/spyglass-og-2.jpg" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="A Quick Look window on a near-black canvas, rendering the first page of a Google Doc instead of a stub file" />
+<meta property="og:image:alt" content="The Spyglass headline beside a Quick Look window showing a Jupyter notebook with a temperature chart" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Spyglass" />
-<meta name="twitter:description" content="Press Space on a Google Drive stub file and Quick Look shows the document itself." />
-<meta name="twitter:image" content="https://magicelklabs.com/spyglass/assets/spyglass-og.jpg" />
+<meta name="twitter:title" content="Spyglass: a better Quick Look for your Mac" />
+<meta name="twitter:description" content="Press Space on Markdown, code, a notebook, a zip, an app or a Google Doc and see what's inside. Free for 7 days, then $12 once." />
+<meta name="twitter:image" content="https://magicelklabs.com/spyglass/assets/spyglass-og-2.jpg" />
 <meta name="theme-color" content="#0A0908" />
 <link rel="icon" type="image/png" href="./assets/spyglass-appicon-dark-320.png" />
 <link rel="apple-touch-icon" href="/spyglass/assets/spyglass-appicon-dark-320.png" />
 <link rel="manifest" href="/spyglass/assets/spyglass.webmanifest" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<!-- Body text is the system face (SF Pro), so only the mono comes from Google. -->
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
 <script>
   // Motion gate: hide [data-mm] only when we intend to animate. If GSAP never
@@ -42,17 +43,22 @@
 <style>
   /* Design tokens. Dark is the only mode this page ships: the canvas is a
      near-black carrying a trace of brown, so the brass reads as lit metal
-     rather than a yellow sticker on neutral grey. */
+     rather than a yellow sticker on neutral grey. The deep teal is the closing
+     band only, with brass buttons on it. */
   :root {
     color-scheme: dark;
     --canvas: #0A0908;  --surface: #12100E;  --elevated: #191614;  --card: #201C19;
-    --ink: #F2EEE6;     --body: #A99E8E;     --mute: #7C7263;      --ash: #574F45;  --stone: #3A342D;
+    /* --mute clears 4.5:1 on canvas, surface and elevated. Nothing lighter on
+       the ramp is used for text. */
+    --ink: #F2EEE6;     --body: #A99E8E;     --mute: #8C8171;      --ash: #574F45;  --stone: #3A342D;
     --brass: #D9B679;   --brass-press: #EBCE9C;  --on-brass: #1A1206;
-    --wash-a: #C9A876;  --ok: #30D158;  --bad: #FF6369;
+    --teal-top: #0B3D3A; --teal-bot: #072826; --on-teal: #F2FBF9;
     --hair: rgba(255,255,255,.075); --hair-soft: rgba(255,255,255,.045); --hair-strong: rgba(255,255,255,.14);
-    --glass: rgba(18,16,14,.55);   --glass-brd: rgba(255,255,255,.10);
     /* one shared highlight for every raised edge: light catches the top lip */
     --lip: inset 0 1px 0 rgba(255,255,255,.055);
+    --sys: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --display: 'Cabinet Grotesk', var(--sys);
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
   * { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -61,18 +67,16 @@
      motion.js reads this value for its own scrolling, so a jump lands in the
      same place whether the smooth scroller is running or the browser does it. */
   html { scroll-padding-top: 86px; }
-  body { font-feature-settings: 'cv11','ss01'; overflow-x: hidden; }
+  body { overflow-x: hidden; }
   ::selection { background: var(--brass); color: var(--on-brass); }
 
-  h1,h2,h3 { color: var(--ink); letter-spacing: -0.02em; }
-  /* Display: Cabinet Grotesk for page-level headings, sans stays for UI. */
-  h1,h2 { font-family:'Cabinet Grotesk',Inter,'-apple-system',sans-serif; font-weight:800 !important; letter-spacing:-0.025em; line-height:1.06; }
+  h1,h2,h3 { color: var(--ink); letter-spacing: -0.02em; text-wrap: balance; }
+  /* Display: Cabinet Grotesk for page-level headings, the system face for UI. */
+  h1,h2 { font-family: var(--display); font-weight:800 !important; letter-spacing:-0.025em; line-height:1.06; }
+  p { text-wrap: pretty; }
   .ink { color: var(--ink); }
   .mute { color: var(--mute); }
   .body { color: var(--body); }
-  .cap { letter-spacing: .04em; }
-  /* Used inline on the stub-file extensions and the JSON sample. */
-  .mono { font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace; }
 
   /* Film grain over the whole page. Keeps the near-black from banding under the
      hero's fluid and takes the plastic off the flat fills. */
@@ -87,9 +91,8 @@
   html.mm [data-mm-stagger] > * { visibility: hidden; }
 
   /* Corner radius runs tighter here than on the sibling product pages. Brass is
-     a machined-instrument feel, so panels read crisper and more rectilinear —
-     one scale, two steps: --r-card for panels, --r-inner for media inside them.
-     Override Tailwind's rounded-* on the CDN build since we can't retheme those. */
+     a machined-instrument feel, so panels read crisper and more rectilinear:
+     one scale, two steps, --r-card for panels and --r-inner for media inside them. */
   :root { --r-card: 9px; --r-inner: 6px; --r-pill: 11px; }
   .rounded-2xl { border-radius: var(--r-card) !important; }
   .rounded-xl { border-radius: var(--r-inner) !important; }
@@ -97,8 +100,6 @@
   /* No cast shadows: on a near-black canvas they read as smudge. Depth comes
      from the surface ladder plus the --lip highlight on each raised edge. */
   .surface { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); }
-  .elevated { background: var(--elevated); border: 1px solid var(--hair); box-shadow: var(--lip); }
-  .hair { border-color: var(--hair); }
 
   /* ───────────────────────── Buttons ───────────────────────── */
   .btn-brass {
@@ -112,45 +113,18 @@
   }
   .btn-brass:active { transform: translateY(0) scale(.99); }
 
-  /* Glass secondary: a lit pane, not an outline. */
+  /* Secondary: a lit pane, not an outline. */
   .btn-ghost {
     background: rgba(255,255,255,.05); color: var(--ink); border: 1px solid rgba(255,255,255,.12);
     border-radius: var(--r-pill); box-shadow: var(--lip);
-    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
     transition: transform .22s cubic-bezier(.2,.8,.2,1), border-color .2s, background .2s;
   }
   .btn-ghost:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.2); transform: translateY(-1px); }
   .btn-ghost:active { transform: translateY(0) scale(.99); }
 
-  /* ───────────────────────── Hero atmosphere ─────────────────────────
-     A ferrofluid field, brass-lit, drifting down behind the type. The hero
-     carries no illustration of its own; the demo gets its own section below. */
-  .ferro { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 1.2s ease .3s; }
-  .ferro.lit { opacity: .88; }
-  @media (prefers-reduced-motion: reduce) { .ferro { display: none; } }
-  /* Two masks, intersected. The ellipse holds the middle of the frame open so
-     the headline sits on black and the fluid reads as something seen through a
-     barrel; the linear ramp keeps the light off the section boundary, which the
-     hero's overflow-hidden would otherwise slice into a seam. */
-  .ferro {
-    -webkit-mask-image:
-      radial-gradient(ellipse 52% 46% at 50% 46%, transparent 0%, rgba(0,0,0,.3) 60%, #000 100%),
-      linear-gradient(to bottom, #000 0%, #000 48%, rgba(0,0,0,.45) 76%, transparent 96%);
-    mask-image:
-      radial-gradient(ellipse 52% 46% at 50% 46%, transparent 0%, rgba(0,0,0,.3) 60%, #000 100%),
-      linear-gradient(to bottom, #000 0%, #000 48%, rgba(0,0,0,.45) 76%, transparent 96%);
-    -webkit-mask-composite: source-in;
-    mask-composite: intersect;
+  a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 6px;
   }
-
-  /* One quiet brass bloom, used by the closing CTA. */
-  .brass-glow {
-    position: absolute; left: 50%; bottom: 18%; transform: translateX(-50%);
-    width: min(1150px, 140%); aspect-ratio: 2.1/1; pointer-events: none;
-    background: radial-gradient(ellipse at center, rgba(217,182,121,.20), rgba(140,105,52,.09) 45%, transparent 72%);
-    filter: blur(30px);
-  }
-  @media (max-width: 700px) { .brass-glow { width: 190%; } }
 
   /* ───────────────────────── Nav: a floating glass pill ───────────────────────── */
   .nav-pill {
@@ -178,12 +152,118 @@
   html.glassy #nav.scrolled .nav-pill { background: rgba(18,16,14,.58); }
   .nav-link { color: var(--body); transition: color .2s; }
   .nav-link:hover { color: var(--ink); }
+  img[data-icon] { display: block; object-fit: contain; }
 
-  /* Shared media frame: hero demo, the stub-file shot, the menu-bar panel. */
+  /* ───────────────────────── Hero ─────────────────────────
+     A ferrofluid field, brass-lit, drifting down behind the type. The hero is
+     shorter than the viewport on purpose: the first screenshot below it should
+     already be showing at the bottom of the first screen. */
+  .hero { min-height: 76svh; padding: 112px 0 40px; }
+  @media (max-width: 640px) { .hero { min-height: 0; padding: 124px 0 44px; } }
+  .ferro { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 1.2s ease .3s; }
+  .ferro.lit { opacity: .88; }
+  @media (prefers-reduced-motion: reduce) { .ferro { display: none; } }
+  /* Two masks, intersected. The ellipse holds the middle of the frame open so
+     the headline sits on black and the fluid reads as something seen through a
+     barrel; the linear ramp keeps the light off the section boundary, which the
+     hero's overflow-hidden would otherwise slice into a seam. */
+  .ferro {
+    -webkit-mask-image:
+      radial-gradient(ellipse 52% 46% at 50% 46%, transparent 0%, rgba(0,0,0,.3) 60%, #000 100%),
+      linear-gradient(to bottom, #000 0%, #000 48%, rgba(0,0,0,.45) 76%, transparent 96%);
+    mask-image:
+      radial-gradient(ellipse 52% 46% at 50% 46%, transparent 0%, rgba(0,0,0,.3) 60%, #000 100%),
+      linear-gradient(to bottom, #000 0%, #000 48%, rgba(0,0,0,.45) 76%, transparent 96%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+
+  /* Download plus the Homebrew line. The command is the second way in, so it
+     sits beside the button at the same height rather than under it. */
+  .cta-row { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px; }
+  .brew {
+    display:inline-flex; align-items:center; gap:6px; max-width:100%; min-height:48px;
+    padding:4px 4px 4px 16px; text-align:left;
+    background: rgba(255,255,255,.035); border:1px solid var(--hair-strong);
+    border-radius: var(--r-pill); box-shadow: var(--lip);
+  }
+  .brew code {
+    font-family: var(--mono); font-size: 13px; line-height: 1.5; color: var(--ink);
+    user-select: all; -webkit-user-select: all; overflow-wrap: anywhere;
+    /* JetBrains Mono draws "--" as one long dash, which reads as an em dash and
+       is not what the reader should type. */
+    font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0;
+  }
+  .brew-copy {
+    flex:none; display:grid; place-items:center; width:40px; height:40px; border-radius:8px;
+    color: var(--body); transition: color .2s, background .2s;
+  }
+  .brew-copy:hover { color: var(--ink); background: rgba(255,255,255,.06); }
+  .brew-copy svg { width:17px; height:17px; grid-area:1/1; transition: opacity .2s, transform .2s; }
+  .brew-copy .i-done { opacity:0; transform: scale(.8); color: var(--brass); }
+  .brew-copy.is-done .i-copy { opacity:0; transform: scale(.8); }
+  .brew-copy.is-done .i-done { opacity:1; transform: none; }
+  @media (pointer: coarse) { .brew-copy { width:44px; height:44px; } }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+  /* ───────────────────────── Format gallery ─────────────────────────
+     A row of real Quick Look screenshots, one centred at a time with its
+     neighbours showing at the edges. It never moves on its own: a swipe, the
+     keyboard, a click on a neighbour or a name in the index moves it. */
+  .fx { --fx-w: min(1024px, 100vw - 64px); }
+  @media (max-width: 640px) { .fx { --fx-w: 86vw; } }
+  .fx-index {
+    display:flex; gap:4px 22px; overflow-x:auto; scrollbar-width:none; margin-bottom:18px;
+    -webkit-mask-image: linear-gradient(to right, #000 88%, transparent);
+    mask-image: linear-gradient(to right, #000 88%, transparent);
+  }
+  .fx-index::-webkit-scrollbar { display:none; }
+  @media (min-width: 1024px) { .fx-index { -webkit-mask-image:none; mask-image:none; justify-content:center; } }
+  .fx-index a {
+    flex:none; position:relative; padding:11px 0; font-size:14.5px; font-weight:500;
+    color: var(--body); text-decoration:none; transition: color .2s;
+  }
+  .fx-index a:hover, .fx-index a[aria-current="true"] { color: var(--ink); }
+  .fx-index a::after {
+    content:""; position:absolute; left:0; right:0; bottom:3px; height:2px; border-radius:2px;
+    background: var(--brass); transform: scaleX(0); transition: transform .3s cubic-bezier(.22,1,.36,1);
+  }
+  .fx-index a[aria-current="true"]::after { transform: none; }
+  .fx-track {
+    position:relative; display:flex; gap:20px; overflow-x:auto; overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory; scrollbar-width:none;
+    padding: 2px calc(50vw - var(--fx-w) / 2) 6px;
+  }
+  .fx-track::-webkit-scrollbar { display:none; }
+  .fx-track:focus-visible { outline-offset: -2px; }
+  @media (max-width: 640px) { .fx-track { gap:12px; } }
+  .fx-slide { flex:none; width:var(--fx-w); margin:0; scroll-snap-align:center; }
+  .fx-slide img {
+    display:block; width:100%; height:auto; border-radius: var(--r-card);
+    border:1px solid var(--hair); background: var(--surface);
+    transition: opacity .35s ease;
+  }
+  /* The neighbours step back a little and say they can be clicked. */
+  .fx-on .fx-slide:not(.is-on) { cursor: pointer; }
+  .fx-on .fx-slide:not(.is-on) img { opacity:.45; }
+  .fx-on .fx-slide:not(.is-on):hover img { opacity:.7; }
+  @media (prefers-reduced-motion: reduce) { .fx-slide img, .fx-index a::after { transition:none; } }
+
+  /* ───────────────────────── What it previews ─────────────────────────
+     A ruled ledger: each format sits under its own hairline, three across. */
+  .fmt-grid { display:grid; grid-template-columns:1fr; column-gap:44px; }
+  @media (min-width: 768px) { .fmt-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .fmt-last { grid-column:1 / -1; } }
+  @media (min-width: 1024px) { .fmt-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } .fmt-last { grid-column:auto; } }
+  .fmt { border-top:1px solid var(--hair); padding:22px 0 30px; }
+  .fmt h3 { font-family: var(--display); font-size:19px; font-weight:700; line-height:1.2; margin:0 0 6px; }
+  .fmt-ext { font-family: var(--mono); font-size:12px; letter-spacing:.02em; line-height:1.55; color: var(--mute); margin:0 0 10px; }
+  .fmt p:last-child { font-size:15px; line-height:1.62; margin:0; max-width:46ch; }
+  .fmt a { color: var(--brass); text-decoration: underline; text-decoration-color: rgba(217,182,121,.4); text-underline-offset: 3px; }
+  .fmt a:hover { text-decoration-color: var(--brass); }
+
+  /* Shared media frame: the Drive demo and the two Drive stills. */
   .pin-frame { background:var(--surface); border:1px solid var(--hair); box-shadow:var(--lip); border-radius:var(--r-card); padding:6px; }
   .pin-frame img { border-radius:var(--r-inner); width:100%; }
-  .pin-cap { margin-top:12px; font-size:14px; color:var(--mute); }
-  .pin-cap b { color:var(--ink); font-weight:600; }
 
   /* Demo video: muted and looping, so it starts on its own once it scrolls into
      view and pauses again off-screen (assets/motion.js has nothing to do with
@@ -194,47 +274,53 @@
      first paint through playback and nothing jumps on the first play. */
   .demo-media video { aspect-ratio: 1440 / 1060; height: auto; }
 
-  /* ───────── Format reel ─────────
-     Four Quick Look shots on a ribbon that drifts left without stopping. The
-     strip is cloned, so script can wrap the scroll position by exactly one
-     strip width and the seam never lands anywhere you can see it. No snapping:
-     a card parked dead centre would give the drift somewhere to stutter.
-     Cards run as large as the viewport allows — the vh cap leaves room for the
-     heading above, so a whole card and its neighbours read on one screen. */
-  .hl { --hl-h: min(680px, 70vh, 63vw); --hl-w: calc(var(--hl-h) * 1.45); }
-  .hl-track {
-    display: flex; gap: 20px; overflow-x: auto; overscroll-behavior-x: contain;
-    padding: 4px 0; scrollbar-width: none; -ms-overflow-style: none;
+  /* Free card versus Drive plan, side by side under the demo. The two stills
+     share one 4:3 box and sit at the bottom of their columns, so they line up
+     however long the copy above them runs. */
+  .tier { display:flex; flex-direction:column; }
+  .tier h3 { font-family: var(--display); font-size:20px; font-weight:700; margin:0 0 8px; }
+  .tier p { font-size:15.5px; line-height:1.65; margin:0 0 20px; max-width:50ch; }
+  .tier .pin-frame { margin-top:auto; }
+  .tier-shot { aspect-ratio: 4 / 3; height:auto; object-fit:cover; object-position:top left; }
+
+  /* ───────────────────────── Live reload and settings ─────────────────────────
+     Three columns split by vertical rules; they stack under hairlines on phones. */
+  .trio { display:grid; grid-template-columns:1fr; }
+  .trio > div { padding:22px 0 26px; border-top:1px solid var(--hair); }
+  @media (min-width: 900px) {
+    .trio { grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid var(--hair); }
+    .trio > div { border-top:none; padding:26px 32px 8px; }
+    .trio > div:first-child { padding-left:0; }
+    .trio > div + div { border-left:1px solid var(--hair); }
   }
-  .hl-track::-webkit-scrollbar { display: none; }
-  .hl-card {
-    flex: none; width: var(--hl-w); height: var(--hl-h);
-    display: flex; flex-direction: column; gap: 16px; padding: 26px 26px 0; overflow: hidden;
-    background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip);
-    border-radius: var(--r-card);
-  }
-  /* The shots carry their own window chrome on transparency, so they sit on the
-     card surface and run off its bottom lip instead of being framed again. The
-     card is wider than the shot, so fill it and let the crop take the bottom of
-     the window, which is empty page on every format. */
-  .hl-card img { flex: 1; min-height: 0; width: 100%; object-fit: cover; object-position: center 14%; }
-  .hl-name { display:flex; align-items:baseline; gap:9px; }
-  .hl-name b { font-family:'Cabinet Grotesk','-apple-system',sans-serif; font-weight:800; font-size:clamp(19px,2vw,25px); color:var(--ink); letter-spacing:-.02em; line-height:1; }
-  .hl-name span { font-family:'JetBrains Mono',ui-monospace,monospace; font-size:12.5px; color:var(--mute); }
+  .trio h3 { font-family: var(--display); font-size:19px; font-weight:700; margin:0 0 8px; }
+  .trio p { font-size:15px; line-height:1.65; margin:0; }
 
-  /* The track takes focus so it can be scrolled from the keyboard. */
-  .hl-track:focus-visible { outline: 2px solid var(--brass); outline-offset: 4px; }
-  @media (prefers-reduced-motion: reduce) { .hl-track { scroll-behavior: auto; } }
-
-
-  /* Why-Google-access ledger rows */
-  .why-row { display:grid; grid-template-columns:220px 1fr; gap:24px; padding:20px 0; border-top:1px solid var(--hair-soft); }
+  /* ───────────────────────── Privacy ledger ───────────────────────── */
+  .why-row { display:grid; grid-template-columns:190px 1fr; gap:24px; padding:20px 0; border-top:1px solid var(--hair-soft); }
   .why-row:last-child { border-bottom:1px solid var(--hair-soft); }
-  .why-row b { font-family:'Cabinet Grotesk','-apple-system',sans-serif; font-size:16px; font-weight:700; color:var(--ink); }
-  .why-row p { font-size:14.5px; line-height:1.65; color:var(--body); margin:0; max-width:62ch; }
+  .why-row b { font-family: var(--display); font-size:16.5px; font-weight:700; color:var(--ink); }
+  .why-row p { font-size:15px; line-height:1.65; color:var(--body); margin:0; max-width:62ch; }
+  .why-row a { color: var(--brass); }
   @media (max-width:640px){ .why-row{grid-template-columns:1fr; gap:6px;} }
 
-  img[data-icon] { display: block; object-fit: contain; }
+  /* ───────────────────────── Pricing ─────────────────────────
+     Three ways in. Pro is the anchor and the only lit panel; the trial and the
+     Drive plan sit either side of it, unlit. */
+  .price-lit { position: relative; overflow: hidden;
+    background: linear-gradient(168deg, color-mix(in srgb, var(--brass) 10%, var(--surface)), var(--surface) 58%);
+    border: 1px solid color-mix(in srgb, var(--brass) 26%, transparent);
+    box-shadow: var(--lip);
+  }
+  .price-num { font-family: var(--display); font-weight:800; letter-spacing:-.035em; line-height:1; color:var(--ink); font-variant-numeric: tabular-nums; }
+  .price-per { font-size:15px; color: var(--body); }
+  .price-alt { font-size:14.5px; color: var(--body); margin-top:8px; }
+  .p-row { display:flex; gap:11px; align-items:baseline; padding:11px 0; border-top:1px solid var(--hair-soft); font-size:14.5px; line-height:1.55; color:var(--body); }
+  .p-row:first-child { border-top:none; }
+  .p-row::before { content:"✓"; flex:none; font-size:13px; color:var(--brass); }
+  .p-row b { color:var(--ink); font-weight:600; }
+  .p-legacy { display:flex; flex-wrap:wrap; gap:4px 12px; align-items:baseline; margin-top:28px; padding-top:22px; border-top:1px solid var(--hair); font-size:15.5px; line-height:1.6; }
+  .p-legacy b { color: var(--ink); font-weight:600; }
 
   /* FAQ accordion */
   details summary { list-style: none; cursor: pointer; }
@@ -242,31 +328,15 @@
   details[open] .chev { transform: rotate(180deg); }
   .chev { transition: transform .3s; }
   details + details { border-top: 1px solid var(--hair); }
+  .faq-a { font-size:15px; line-height:1.7; margin-top:12px; max-width:62ch; }
+  .faq-a + .faq-a { margin-top:10px; }
+  .faq-a a { color: var(--brass); }
 
-  a:focus-visible, button:focus-visible, summary:focus-visible {
-    outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 6px;
-  }
-
-  /* ───────────────────────── Pricing ─────────────────────────
-     One product, one unlock, so there is no tier ladder to compare. The paid
-     panel is the anchor and free sits beside it, narrower and unlit. */
-  .price-lit { position: relative; overflow: hidden;
-    background: linear-gradient(168deg, color-mix(in srgb, var(--brass) 10%, var(--surface)), var(--surface) 58%);
-    border: 1px solid color-mix(in srgb, var(--brass) 26%, transparent);
-    box-shadow: var(--lip);
-  }
-  /* Same brass bloom as the closing CTA, tucked into the top corner. */
-  .price-lit::after {
-    content:""; position:absolute; top:-45%; right:-25%; width:75%; aspect-ratio:1; pointer-events:none;
-    background: radial-gradient(circle, rgba(217,182,121,.17), transparent 68%); filter: blur(26px);
-  }
-  .price-num { font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; letter-spacing:-.035em; line-height:1; color:var(--ink); }
-  .p-row { display:flex; gap:11px; align-items:baseline; padding:11px 0; border-top:1px solid var(--hair-soft); font-size:14.5px; line-height:1.55; color:var(--body); }
-  .p-row:first-child { border-top:none; }
-  .p-row::before { content:"✓"; flex:none; font-size:13px; color:var(--brass); }
-  .p-row b { color:var(--ink); font-weight:600; }
-  .p-list-free .p-row::before { color: var(--mute); }
-  .p-note { display:flex; flex-wrap:wrap; justify-content:center; gap:8px 20px; font-size:13px; color:var(--mute); }
+  /* ───────────────────────── Closing band ─────────────────────────
+     The page closes on deep teal with a brass button, the one drenched
+     surface here. */
+  .band-teal { background: linear-gradient(160deg, var(--teal-top), var(--teal-bot)); border-top:1px solid rgba(110,224,209,.14); }
+  .band-teal h2 { color: var(--on-teal); }
 </style>
 <!-- Tailwind is compiled ahead of time into assets/tailwind.css by
      assets/tailwind/spyglass.config.js. It used to be the Play CDN, which
@@ -280,11 +350,17 @@
   "@type": "SoftwareApplication",
   "name": "Spyglass",
   "applicationCategory": "UtilitiesApplication",
-  "operatingSystem": "macOS",
-  "description": "Quick Look previews for Google Docs, Sheets, Slides, Drawings, Forms, and Sites on macOS. Press Space in Finder and see the document.",
+  "operatingSystem": "macOS 14.0 or later",
+  "description": "Spyglass gives Quick Look proper previews for Markdown, code, notebooks, archives, apps, SQLite and Google Drive files on your Mac.",
   "url": "https://magicelklabs.com/spyglass/",
   "downloadUrl": "https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg",
-  "image": "https://magicelklabs.com/spyglass/assets/spyglass-og.jpg",
+  "installUrl": "https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg",
+  "image": "https://magicelklabs.com/spyglass/assets/spyglass-og-2.jpg",
+  "author": {
+    "@type": "Person",
+    "name": "Yehonatan Cohen",
+    "url": "https://github.com/magicelk235"
+  },
   "publisher": {
     "@type": "Organization",
     "name": "Magicelk Labs",
@@ -293,17 +369,49 @@
   "offers": [
     {
       "@type": "Offer",
-      "name": "Info card",
+      "name": "Free trial",
+      "description": "Every format preview, free for 7 days. No card needed.",
       "price": "0",
       "priceCurrency": "USD",
       "url": "https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg"
     },
     {
       "@type": "Offer",
-      "name": "Rendered previews",
+      "name": "Spyglass Pro",
+      "description": "Every format preview, for good, on all your Macs. One-time purchase.",
       "price": "12",
       "priceCurrency": "USD",
-      "url": "https://magicelk235.gumroad.com/l/spyglass?wanted=true"
+      "url": "https://magicelk235.gumroad.com/l/spyglass-pro"
+    },
+    {
+      "@type": "Offer",
+      "name": "Spyglass Pro + Drive, monthly",
+      "description": "Everything in Pro, plus rendered Google Drive previews and thumbnails.",
+      "price": "4",
+      "priceCurrency": "USD",
+      "url": "https://magicelk235.gumroad.com/l/spyglass-drive",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "4",
+        "priceCurrency": "USD",
+        "billingDuration": "P1M",
+        "unitCode": "MON"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Spyglass Pro + Drive, yearly",
+      "description": "Everything in Pro, plus rendered Google Drive previews and thumbnails.",
+      "price": "36",
+      "priceCurrency": "USD",
+      "url": "https://magicelk235.gumroad.com/l/spyglass-drive",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "36",
+        "priceCurrency": "USD",
+        "billingDuration": "P1Y",
+        "unitCode": "ANN"
+      }
     }
   ]
 }
@@ -338,21 +446,19 @@
       <span class="font-display font-bold ink text-[19px] tracking-tight leading-none">Spyglass</span>
     </a>
     <div class="hidden md:flex items-center gap-7 text-[14px] font-medium absolute left-1/2 -translate-x-1/2">
-      <a href="#what" class="nav-link">What it does</a>
+      <a href="#what" class="nav-link">Formats</a>
+      <a href="#drive" class="nav-link">Google Drive</a>
       <a href="#pricing" class="nav-link">Pricing</a>
       <a href="#faq" class="nav-link">FAQ</a>
     </div>
-    <div class="flex items-center gap-2">
-      <a href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg" class="btn-ghost text-[13.5px] px-3.5 py-[7px] hidden sm:inline-flex items-center">Download</a>
-      <a href="https://magicelk235.gumroad.com/l/spyglass?wanted=true" class="btn-brass text-[13.5px] px-3.5 py-[7px] inline-flex items-center">Buy</a>
-    </div>
+    <a href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg" class="btn-brass text-[13.5px] px-3.5 py-[7px] inline-flex items-center">Download</a>
   </nav>
 </header>
 
 <main id="top">
 
 <!-- HERO -->
-<section class="relative min-h-[100svh] flex items-center pt-28 pb-24 px-5 sm:px-8 overflow-hidden">
+<section class="hero relative flex items-center px-5 sm:px-8 overflow-hidden">
 
   <!-- Ambient only: a brass ferrofluid field, no illustration. -->
   <canvas class="ferro" id="hero-ferro" aria-hidden="true"></canvas>
@@ -361,244 +467,343 @@
 
     <h1 data-mm="lines" data-mm-load data-mm-delay=".1" class="text-[clamp(2.6rem,6.6vw,4.9rem)] leading-[1.02] mb-6">
       Press Space.<br />
-      <span style="color:var(--brass)">See the document.</span>
+      <span style="color:var(--brass)">See what's inside.</span>
     </h1>
 
-    <p data-mm="rise" data-mm-load data-mm-delay=".45" class="text-[clamp(1.05rem,2.2vw,1.25rem)] body max-w-xl mx-auto mb-9 leading-relaxed">
-      Quick Look previews for Google Workspace files on macOS.
+    <p data-mm="rise" data-mm-load data-mm-delay=".45" class="text-[clamp(1.05rem,2.2vw,1.25rem)] body max-w-[38rem] mx-auto mb-9 leading-relaxed">
+      Spyglass gives Quick Look proper previews for Markdown, code, notebooks, archives, apps and Google Drive files. Free for 7 days.
     </p>
 
-    <div data-mm="rise" data-mm-load data-mm-delay=".55" class="flex flex-wrap items-center justify-center gap-3">
-      <a href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg" class="btn-ghost text-[15px] px-6 py-3 inline-flex items-center justify-center">Download</a>
-      <a href="https://magicelk235.gumroad.com/l/spyglass?wanted=true" class="btn-brass text-[15px] px-6 py-3 inline-flex items-center justify-center">Buy</a>
+    <div data-mm="rise" data-mm-load data-mm-delay=".55" class="cta-row">
+      <a href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg" class="btn-brass text-[15px] px-7 min-h-[48px] inline-flex items-center justify-center">Download</a>
+      <div class="brew">
+        <code>brew install --cask magicelk235/magicelklabs/spyglass</code>
+        <button type="button" class="brew-copy" data-copy="brew install --cask magicelk235/magicelklabs/spyglass" aria-label="Copy the Homebrew command" hidden>
+          <svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.2"/><path d="M5 15V6.2C5 5.5 5.5 5 6.2 5H15"/></svg>
+          <svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        </button>
+        <span class="sr-only" role="status" id="brew-status"></span>
+      </div>
     </div>
 
   </div>
 </section>
 
-<!-- DEMO -->
-<section id="demo" class="pb-16 sm:pb-24 px-5 sm:px-8" aria-label="Spyglass in Finder">
-  <div class="max-w-4xl mx-auto">
-    <div data-mm="media">
-      <div class="pin-frame" data-mm-scrub>
+<!-- FORMAT GALLERY -->
+<section id="gallery" class="fx pb-20 sm:pb-24" aria-label="Preview screenshots" data-fx>
+  <div class="max-w-5xl mx-auto px-5 sm:px-8">
+    <nav class="fx-index" aria-label="Formats in the gallery">
+      <a href="#f-markdown" aria-current="true">Markdown</a>
+      <a href="#f-code">Code</a>
+      <a href="#f-json">JSON</a>
+      <a href="#f-notebook">Notebook</a>
+      <a href="#f-diff">Diff</a>
+      <a href="#f-sqlite">SQLite</a>
+      <a href="#f-jsonl">JSON Lines</a>
+      <a href="#f-archive">Archive</a>
+      <a href="#f-package">Package</a>
+      <a href="#f-app">App</a>
+      <a href="#f-binary">Binary</a>
+      <a href="#f-folder">Folder</a>
+      <a href="#f-torrent">Torrent</a>
+    </nav>
+  </div>
+  <div class="fx-track" tabindex="0" aria-label="Quick Look previews made by Spyglass">
+    <figure class="fx-slide" id="f-markdown"><img src="./assets/formats/markdown-1000.webp" srcset="./assets/formats/markdown-1000.webp 1000w, ./assets/formats/markdown-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" fetchpriority="high" decoding="async" alt="A project README rendered in Quick Look, with a note callout, a formats table, a Mermaid flowchart, a haversine formula and a contents sidebar" /></figure>
+    <figure class="fx-slide" id="f-code"><img src="./assets/formats/code-1000.webp" srcset="./assets/formats/code-1000.webp 1000w, ./assets/formats/code-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="A Swift source file with syntax highlighting and line numbers" /></figure>
+    <figure class="fx-slide" id="f-json"><img src="./assets/formats/json-1000.webp" srcset="./assets/formats/json-1000.webp 1000w, ./assets/formats/json-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="A minified API response for an order, laid out as indented, highlighted JSON with line numbers" /></figure>
+    <figure class="fx-slide" id="f-notebook"><img src="./assets/formats/notebook-1000.webp" srcset="./assets/formats/notebook-1000.webp 1000w, ./assets/formats/notebook-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="A Jupyter notebook on ten years of harbor water temperature, with an equation, Python cells, their output and a chart" /></figure>
+    <figure class="fx-slide" id="f-diff"><img src="./assets/formats/diff-1000.webp" srcset="./assets/formats/diff-1000.webp 1000w, ./assets/formats/diff-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="A git patch with a tab for each changed file, a Renamed badge, and removed and added lines in red and green" /></figure>
+    <figure class="fx-slide" id="f-sqlite"><img src="./assets/formats/sqlite-1000.webp" srcset="./assets/formats/sqlite-1000.webp 1000w, ./assets/formats/sqlite-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="A SQLite database with its tables and a view listed in a sidebar and the customers table shown as a grid" /></figure>
+    <figure class="fx-slide" id="f-jsonl"><img src="./assets/formats/jsonl-1000.webp" srcset="./assets/formats/jsonl-1000.webp 1000w, ./assets/formats/jsonl-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="A JSON Lines event log shown as a table with one column per key" /></figure>
+    <figure class="fx-slide" id="f-archive"><img src="./assets/formats/archive-1000.webp" srcset="./assets/formats/archive-1000.webp 1000w, ./assets/formats/archive-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="The file tree inside a zip archive, with sizes and dates, listed without extracting it" /></figure>
+    <figure class="fx-slide" id="f-package"><img src="./assets/formats/package-1000.webp" srcset="./assets/formats/package-1000.webp 1000w, ./assets/formats/package-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="A Java .jar with its manifest details, including title and version, above the folders inside it" /></figure>
+    <figure class="fx-slide" id="f-app"><img src="./assets/formats/app-1000.webp" srcset="./assets/formats/app-1000.webp 1000w, ./assets/formats/app-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="Calculator.app's details: bundle ID, version, minimum macOS, code signing and entitlements" /></figure>
+    <figure class="fx-slide" id="f-binary"><img src="./assets/formats/binary-1000.webp" srcset="./assets/formats/binary-1000.webp 1000w, ./assets/formats/binary-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="A universal Mach-O executable with its two architectures, signing, minimum macOS and linked libraries" /></figure>
+    <figure class="fx-slide" id="f-folder"><img src="./assets/formats/folder-1000.webp" srcset="./assets/formats/folder-1000.webp 1000w, ./assets/formats/folder-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="A project folder as a Finder-style list with icons, its item count and total size" /></figure>
+    <figure class="fx-slide" id="f-torrent"><img src="./assets/formats/torrent-1000.webp" srcset="./assets/formats/torrent-1000.webp 1000w, ./assets/formats/torrent-2000.webp 2000w" sizes="(max-width: 640px) 86vw, (max-width: 1088px) calc(100vw - 64px), 1024px" width="2000" height="1250" loading="lazy" decoding="async" alt="A torrent's total size, pieces, info hash, trackers and file list" /></figure>
+  </div>
+</section>
+
+<!-- WHAT IT PREVIEWS -->
+<section id="what" class="py-20 sm:py-24 px-5 sm:px-8">
+  <div class="max-w-5xl mx-auto">
+    <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-10">What it previews</h2>
+    <div class="fmt-grid" data-mm-stagger>
+      <div class="fmt">
+        <h3>Markdown</h3>
+        <p class="fmt-ext">.md .markdown .mdx</p>
+        <p>Rendered the way GitHub shows it, with tables, task lists, footnotes, alerts, math and Mermaid diagrams. Images next to the file show up, and wide windows get a table of contents.</p>
+      </div>
+      <div class="fmt">
+        <h3>Source code</h3>
+        <p class="fmt-ext">.swift .py .ts .go .rs .c and more</p>
+        <p>Around 190 languages, highlighted, with line numbers. Scripts without an extension are recognized by their shebang line, and Makefiles work too.</p>
+      </div>
+      <div class="fmt">
+        <h3>JSON, XML and friends</h3>
+        <p class="fmt-ext">.json .xml .plist .yaml .toml .mobileconfig</p>
+        <p>Minified JSON comes out indented, keys in their original order. Binary plists show as XML, and signed configuration profiles are unwrapped first.</p>
+      </div>
+      <div class="fmt">
+        <h3>Notebooks</h3>
+        <p class="fmt-ext">.ipynb</p>
+        <p>Jupyter notebooks show their markdown cells, highlighted code, plots, HTML tables, LaTeX and colored error tracebacks.</p>
+      </div>
+      <div class="fmt">
+        <h3>Diffs</h3>
+        <p class="fmt-ext">.diff .patch</p>
+        <p>Colored hunks with a tab for each file, and badges for files that were renamed, added or deleted.</p>
+      </div>
+      <div class="fmt">
+        <h3>SQLite</h3>
+        <p class="fmt-ext">.sqlite .db</p>
+        <p>Every table and view with its column types, showing the first 500 rows of each.</p>
+      </div>
+      <div class="fmt">
+        <h3>Tables</h3>
+        <p class="fmt-ext">.tsv .jsonl .ndjson</p>
+        <p>TSV and JSON Lines files open as a table you can sort, up to the first 10,000 rows.</p>
+      </div>
+      <div class="fmt">
+        <h3>Archives</h3>
+        <p class="fmt-ext">.zip .tar .gz .tgz .bz2 .xz .iso</p>
+        <p>See the file tree inside zip, tar, gzip, bzip2 and xz archives and ISO images without extracting anything.</p>
+      </div>
+      <div class="fmt">
+        <h3>Packages</h3>
+        <p class="fmt-ext">.jar .war .apk .aab .whl .nupkg .vsix .xpi</p>
+        <p>Java, Android, Python, NuGet, VS Code and Firefox packages list their files, with the package name and version on top.</p>
+      </div>
+      <div class="fmt">
+        <h3>Apps and installers</h3>
+        <p class="fmt-ext">.app .ipa .pkg .dmg .framework</p>
+        <p>Version, bundle ID, code signature and entitlements. An .ipa also shows its provisioning profile.</p>
+      </div>
+      <div class="fmt">
+        <h3>Binaries</h3>
+        <p class="fmt-ext">Mach-O, .dylib .o .a, ELF</p>
+        <p>Architectures, minimum macOS, linked libraries and signing for executables, dylibs, object files and static libraries. ELF files get the basics.</p>
+      </div>
+      <div class="fmt">
+        <h3>Folders</h3>
+        <p class="fmt-ext">any folder</p>
+        <p>A Finder-style list with icons, plus how many items it holds and their total size.</p>
+      </div>
+      <div class="fmt">
+        <h3>Torrents</h3>
+        <p class="fmt-ext">.torrent</p>
+        <p>The file list, trackers, piece size and info hash.</p>
+      </div>
+      <div class="fmt">
+        <h3>Google Drive</h3>
+        <p class="fmt-ext">.gdoc .gsheet .gslides .gdraw .gform .gsite .webloc</p>
+        <p>A free card with the title, owner and a link to open it. On the Drive plan, Docs, Sheets, Slides and Drawings <a href="#drive">show the document itself</a>, and Forms and Sites keep the card.</p>
+      </div>
+      <div class="fmt fmt-last">
+        <h3>Left to Apple</h3>
+        <p class="fmt-ext">.csv .txt</p>
+        <p>macOS doesn't hand CSV or plain text files to extensions, so those keep Apple's own preview.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GOOGLE DRIVE -->
+<section id="drive" class="py-20 sm:py-24 px-5 sm:px-8" style="background:var(--surface);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
+  <div class="max-w-5xl mx-auto">
+    <div class="max-w-3xl mb-10">
+      <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-4">Google Docs, Sheets and Slides, right in Quick Look.</h2>
+      <p data-mm="rise" class="body text-[17px] leading-relaxed max-w-[60ch]">Google Drive for desktop fills Finder with .gdoc and .gsheet shortcuts, and Quick Look shows each one as a few lines of JSON. Spyglass shows you something you can read instead.</p>
+    </div>
+
+    <div id="demo" data-mm="media" class="max-w-4xl mx-auto mb-14">
+      <div class="pin-frame">
         <div class="demo-media">
-          <video id="sg-demo" class="w-full block rounded-xl" poster="./assets/spyglass-demo-poster.webp" width="1440" height="1060" muted loop playsinline preload="metadata" aria-label="Screen recording: pressing Space on Google Drive stub files in Finder shows the real documents">
+          <video id="sg-demo" class="w-full block rounded-xl" poster="./assets/spyglass-demo-poster.webp" width="1440" height="1060" muted loop playsinline preload="metadata" aria-label="Screen recording: pressing Space on Google Drive files in Finder shows the documents themselves">
             <source src="./assets/spyglass-demo-1440.webm" type="video/webm" />
             <source src="./assets/spyglass-demo-1440.mp4" type="video/mp4" />
           </video>
         </div>
       </div>
     </div>
+
+    <div data-mm-stagger class="grid md:grid-cols-2 gap-10 md:gap-8">
+      <div class="tier">
+        <h3>Free: a card you can open</h3>
+        <p>The title, the owner and a button that opens the file in your browser. It works offline, needs no Google sign-in, and stays free after the trial.</p>
+        <div class="pin-frame"><img src="./assets/drive-card.webp" alt="The free Google Drive card for a document called Sextant 1.0 Roadmap: title, type and owner above an Open in Google Docs button" class="tier-shot block" loading="lazy" decoding="async" width="1000" height="750" /></div>
+      </div>
+      <div class="tier">
+        <h3>Drive plan: the document itself</h3>
+        <p>Spyglass fetches Docs, Sheets, Slides and Drawings from your Drive, read-only, and draws them in Quick Look. The first page also becomes the file's thumbnail in Finder. Forms and Sites keep the free card.</p>
+        <div class="pin-frame"><img src="./assets/drive-sheet.webp" alt="A Google Sheet of made-up time travel expenses, rendered as the real spreadsheet in Quick Look" class="tier-shot block" loading="lazy" decoding="async" width="800" height="600" /></div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- WHAT IT DOES -->
-<section id="what" class="py-20 px-5 sm:px-8" style="background:var(--surface);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
+<!-- LIVE RELOAD AND SETTINGS -->
+<section class="py-20 sm:py-24 px-5 sm:px-8">
   <div class="max-w-5xl mx-auto">
-    <div class="max-w-2xl mb-12">
-      <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-3">What Spyglass does</h2>
-      <p data-mm="rise" class="body text-[17px] leading-relaxed">A Quick Look extension and a small menu-bar app. It hooks into the Space bar preview you already use. Select a stub file, press Space, the document is there.</p>
-    </div>
-    <div data-mm-stagger class="grid md:grid-cols-2 gap-5">
-      <div class="elevated rounded-2xl p-6">
-        <div class="flex items-center gap-2.5 mb-2">
-          <h3 class="text-[18px] font-semibold">No sign-in</h3>
-        </div>
-        <p class="body text-[15px] leading-relaxed">A branded info card for all six file types: icon, title, owner, and a link to open it on Google. Instant, offline, no account. The whole free app, not a trial.</p>
-        <img src="./assets/spyglass-infocard-dark.webp" alt="The free tier's info card preview" class="rounded-xl w-full mt-5 block" loading="lazy" decoding="async" width="1000" height="816" style="border:1px solid var(--hair)" />
-      </div>
-      <div class="price-lit rounded-2xl p-6">
-        <div class="flex items-center gap-2.5 mb-2">
-          <h3 class="text-[18px] font-semibold">Rendered previews</h3>
-        </div>
-        <p class="body text-[15px] leading-relaxed">The real first page for Docs, Sheets, Slides, and Drawings, fetched from your Drive and drawn on the spot. Signed out or slow network? It falls back to the info card, so nothing hangs.</p>
-        <img src="./assets/spyglass-rendered-sheets-dark.webp" alt="A rendered Google Sheet preview" class="rounded-xl w-full mt-5 block" loading="lazy" decoding="async" width="1000" height="816" style="border:1px solid var(--hair)" />
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FORMAT REEL: the four rendered types -->
-<section class="hl py-20 sm:py-24" aria-label="Rendered preview gallery" data-hl>
-  <div class="max-w-6xl mx-auto px-5 sm:px-8">
-    <div class="border-t pt-10 mb-10 flex flex-wrap items-end justify-between gap-x-8 gap-y-4" style="border-color:var(--hair)">
+    <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-10">Leave it open while you work.</h2>
+    <div class="trio" data-mm-stagger>
       <div>
-        <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-3 max-w-[24ch]">The actual first page, in every format.</h2>
-        <p data-mm="rise" class="body text-[16px] max-w-2xl">The paid tier draws the real first page, straight from your Drive.</p>
+        <h3>Live reload</h3>
+        <p>Keep a preview open and save the file in your editor. The preview redraws with the change.</p>
+      </div>
+      <div>
+        <h3>Light, dark or system</h3>
+        <p>Previews follow your Mac's appearance, or stay light or dark if you'd rather. Code gets its own font size.</p>
+      </div>
+      <div>
+        <h3>Your pick of formats</h3>
+        <p>Settings has a switch for every kind of file, so you can turn off any format you don't want Spyglass to handle.</p>
       </div>
     </div>
   </div>
-
-  <div class="hl-track" tabindex="0" role="group" aria-label="Quick Look previews by file type">
-    <figure class="hl-card">
-      <figcaption class="hl-name"><b>Docs</b><span>.gdoc</span></figcaption>
-      <img src="./assets/spyglass-shot-docs-dark.webp" alt="Quick Look rendering the first page of a Google Doc" loading="lazy" decoding="async" width="1000" height="800" />
-    </figure>
-    <figure class="hl-card">
-      <figcaption class="hl-name"><b>Sheets</b><span>.gsheet</span></figcaption>
-      <img src="./assets/spyglass-shot-sheets-dark.webp" alt="Quick Look rendering a Google Sheet as a grid" loading="lazy" decoding="async" width="1000" height="800" />
-    </figure>
-    <figure class="hl-card">
-      <figcaption class="hl-name"><b>Slides</b><span>.gslides</span></figcaption>
-      <img src="./assets/spyglass-shot-slides-dark.webp" alt="Quick Look rendering the title slide of a Google Slides deck" loading="lazy" decoding="async" width="1000" height="800" />
-    </figure>
-    <figure class="hl-card">
-      <figcaption class="hl-name"><b>Drawings</b><span>.gdraw</span></figcaption>
-      <img src="./assets/spyglass-shot-drawings-dark.webp" alt="Quick Look rendering a Google Drawing" loading="lazy" decoding="async" width="1000" height="800" />
-    </figure>
-  </div>
-
 </section>
 
-<!-- MENU BAR APP -->
-<section class="py-20 px-5 sm:px-8" style="background:var(--surface);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
-  <div class="max-w-5xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-    <div>
-      <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-4 max-w-[16ch]">The whole app fits in your menu bar.</h2>
-      <p data-mm="rise" class="body text-[16px] leading-relaxed mb-4 max-w-[52ch]">Paste your license key, sign in with Google, check which tier is active. No dock icon, no windows. That's the whole app.</p>
-    </div>
-    <div data-mm="media" class="max-w-[380px] w-full mx-auto lg:ml-auto">
-      <div class="pin-frame" data-mm-tilt>
-        <img src="./assets/spyglass-menubar-dark.webp" alt="The Spyglass menu-bar panel: tier unlocked, Google account signed in" class="block" loading="lazy" decoding="async" width="967" height="1092" />
+<!-- PRIVACY -->
+<section id="privacy" class="py-20 sm:py-24 px-5 sm:px-8" style="background:var(--surface);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
+  <div class="max-w-5xl mx-auto grid lg:grid-cols-12 gap-x-10 gap-y-8">
+    <h2 data-mm="lines" class="lg:col-span-4 text-[clamp(1.7rem,4vw,2.4rem)]">Your files stay on your Mac.</h2>
+    <div class="lg:col-span-8" data-mm-stagger>
+      <div class="why-row">
+        <b>Drawn locally</b>
+        <p>Every format preview is made on your Mac, and none of them touch the network.</p>
+      </div>
+      <div class="why-row">
+        <b>Only what it shows</b>
+        <p>Spyglass reads a folder's contents, or the images next to a Markdown file, only to draw the preview in front of you.</p>
+      </div>
+      <div class="why-row">
+        <b>Google, on the Drive plan</b>
+        <p>The Drive plan signs in with read-only access to fetch your own documents. The token lives in your Keychain, and signing out revokes it.</p>
+      </div>
+      <div class="why-row">
+        <b>No analytics</b>
+        <p>Spyglass has no server and keeps no usage data, so nothing about your files reaches us. The <a href="./privacy.html">privacy policy</a> has the details.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- PRICING -->
-<section id="pricing" class="py-20 px-5 sm:px-8">
-  <div class="max-w-4xl mx-auto">
-    <div class="border-t pt-10 mb-10" style="border-color:var(--hair)">
-      <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-3">Free to try. $12 to see the page.</h2>
-    </div>
+<section id="pricing" class="py-20 sm:py-24 px-5 sm:px-8">
+  <div class="max-w-5xl mx-auto">
+    <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-10">Free for a week. $12 to keep it.</h2>
 
-    <div data-mm-stagger class="grid md:grid-cols-[.88fr_1.12fr] gap-5 items-stretch">
+    <div data-mm-stagger class="grid lg:grid-cols-3 gap-5 items-stretch">
 
-      <!-- FREE -->
-      <div class="surface rounded-2xl p-7 sm:p-8 flex flex-col">
-        <h3 class="text-[19px] font-bold ink mb-5">Info card</h3>
-        <div class="flex items-baseline gap-2 mb-1">
-          <span class="price-num text-[52px]">$0</span>
+      <!-- TRIAL -->
+      <div class="surface rounded-2xl p-7 flex flex-col">
+        <h3 class="text-[19px] font-bold ink mb-5">Free trial</h3>
+        <div class="flex items-baseline gap-2">
+          <span class="price-num text-[48px]">$0</span>
+          <span class="price-per">for 7 days</span>
         </div>
-
-        <div class="p-list-free mb-7 flex-1">
-          <div class="p-row"><span>Name, owner, type and last edit, for all six types</span></div>
-          <div class="p-row"><span>No Google sign in</span></div>
-          <div class="p-row"><span>Works offline</span></div>
+        <div class="mt-6 mb-7 flex-1">
+          <div class="p-row"><span>Every format preview</span></div>
+          <div class="p-row"><span>Starts the first time you open the app</span></div>
+          <div class="p-row"><span>No card or account needed</span></div>
+          <div class="p-row"><span>Google Drive cards stay free afterwards</span></div>
         </div>
-
-        <a class="btn-ghost text-[16px] w-full py-3.5 mt-auto inline-flex items-center justify-center gap-2" href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg">Download</a>
+        <a class="btn-ghost text-[16px] w-full py-3.5 mt-auto inline-flex items-center justify-center" href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg">Download</a>
       </div>
 
-      <!-- PAID -->
-      <div class="price-lit rounded-2xl p-7 sm:p-8 flex flex-col">
-        <div class="relative flex flex-col h-full">
-          <div class="flex items-center gap-3 mb-5">
-            <h3 class="text-[19px] font-bold ink">Rendered previews</h3>
-          </div>
-          <div class="flex items-baseline gap-2 mb-1">
-            <span class="price-num text-[52px]">$12</span>
-            <span class="mute text-[14px]">once</span>
-          </div>
-
-          <div class="mb-7 flex-1">
-            <div class="p-row"><span>The real first page for <b>Docs, Sheets, Slides, Drawings</b></span></div>
-            <div class="p-row"><span>Info card for all six types</span></div>
-            <div class="p-row"><span>Previews cache on your Mac, so the second look is instant</span></div>
-            <div class="p-row"><span>Google sign-in used only to fetch the page</span></div>
-            <div class="p-row"><span>Updates included</span></div>
-          </div>
-
-          <a class="btn-brass text-[16px] w-full py-3.5 mt-auto inline-flex items-center justify-center gap-2" href="https://magicelk235.gumroad.com/l/spyglass?wanted=true">Buy</a>
+      <!-- PRO -->
+      <div class="price-lit rounded-2xl p-7 flex flex-col">
+        <h3 class="text-[19px] font-bold ink mb-5">Pro</h3>
+        <div class="flex items-baseline gap-2">
+          <span class="price-num text-[48px]">$12</span>
+          <span class="price-per">once</span>
         </div>
+        <div class="mt-6 mb-7 flex-1">
+          <div class="p-row"><span><b>Every format preview</b>, for good</span></div>
+          <div class="p-row"><span>On all your Macs</span></div>
+          <div class="p-row"><span>One payment, no subscription</span></div>
+          <div class="p-row"><span>Free Google Drive cards</span></div>
+        </div>
+        <a class="btn-brass text-[16px] w-full py-3.5 mt-auto inline-flex items-center justify-center" href="https://magicelk235.gumroad.com/l/spyglass-pro?wanted=true">Get Pro</a>
       </div>
 
-
+      <!-- PRO + DRIVE -->
+      <div class="surface rounded-2xl p-7 flex flex-col">
+        <h3 class="text-[19px] font-bold ink mb-5">Pro + Drive</h3>
+        <div class="flex items-baseline gap-2">
+          <span class="price-num text-[48px]">$4</span>
+          <span class="price-per">a month</span>
+        </div>
+        <p class="price-alt">or $36 a year</p>
+        <div class="mt-4 mb-7 flex-1">
+          <div class="p-row"><span>Everything in Pro</span></div>
+          <div class="p-row"><span><b>Docs, Sheets, Slides and Drawings</b> rendered in Quick Look</span></div>
+          <div class="p-row"><span>First pages as Finder thumbnails</span></div>
+          <div class="p-row"><span>7 days free on Gumroad, card required</span></div>
+          <div class="p-row"><span>Cancel anytime</span></div>
+        </div>
+        <a class="btn-ghost text-[16px] w-full py-3.5 mt-auto inline-flex items-center justify-center" href="https://magicelk235.gumroad.com/l/spyglass-drive">Get Pro + Drive</a>
+      </div>
 
     </div>
-    <div data-mm="rise" class="p-note mt-7">
-    </div>
+
+    <p data-mm="rise" class="p-legacy"><b>Bought Spyglass 1.0?</b> <span>Your key now unlocks Pro + Drive for life, at no charge.</span></p>
   </div>
 </section>
-
-<!-- WHY GOOGLE ACCESS (OAuth) -->
-<section id="privacy" class="py-20 px-5 sm:px-8" style="background:var(--surface);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)">
-  <div class="max-w-3xl mx-auto">
-    <div class="max-w-2xl mb-10">
-      <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] mb-3">Why Spyglass needs Google access</h2>
-      <p data-mm="rise" class="body text-[17px] leading-relaxed">Rendered previews have to read the document out of your Drive. That is the only reason Spyglass asks you to sign in.</p>
-    </div>
-    <div data-mm-stagger>
-      <div class="why-row">
-        <b>Read-only</b>
-        <p>Spyglass uses the <code class="mono ink text-[.9em]">drive.readonly</code> scope. It can read your files to draw the preview, and it cannot edit, delete, or share them.</p>
-      </div>
-      <div class="why-row">
-        <b>Previews only</b>
-        <p>One use only: fetching the document export to draw the first page.</p>
-      </div>
-      <div class="why-row">
-        <b>Stays on your Mac</b>
-        <p>Previews cache on your machine. There is no Spyglass server, and your documents never reach us or any third party.</p>
-      </div>
-      <div class="why-row">
-        <b>Email, only to display</b>
-        <p>Shown so you know which Google account is signed in. Spyglass never sends it anywhere.</p>
-      </div>
-      <div class="why-row">
-        <b>Reversible</b>
-        <p>Sign out anytime. That clears the stored tokens and revokes the grant at Google.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 
 <!-- FAQ -->
-<section id="faq" class="py-20 px-5 sm:px-8">
-  <div class="max-w-2xl mx-auto">
-    <h2 data-mm="lines" class="text-[clamp(1.7rem,4vw,2.4rem)] border-t pt-10 mb-12" style="border-color:var(--hair)">Questions</h2>
-    <div data-mm="rise">
+<section id="faq" class="py-20 sm:py-24 px-5 sm:px-8">
+  <div class="max-w-5xl mx-auto grid lg:grid-cols-12 gap-x-10 gap-y-4 border-t pt-10" style="border-color:var(--hair)">
+    <h2 data-mm="lines" class="lg:col-span-4 text-[clamp(1.7rem,4vw,2.4rem)] lg:pt-4">Questions</h2>
+    <div class="lg:col-span-8" data-mm="rise">
       <details class="py-5">
-        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">Is my data safe?
+        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">Which Macs does it run on?
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body text-[14px] leading-relaxed mt-3">Yes. Spyglass requests the read-only <code class="mono text-[.85em]">drive.readonly</code> scope, so it can never edit, delete, or share anything. Previews cache only on your Mac. No server, no uploads to us or anyone else. See the full <a href="./privacy.html" class="font-medium" style="color:var(--brass)">Privacy Policy</a> for details.</p>
+        <p class="faq-a body">Any Mac running macOS 14 Sonoma or later.</p>
       </details>
       <details class="py-5">
-        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">What do I get for free?
+        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">How does the free trial work?
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body text-[14px] leading-relaxed mt-3">A branded info card for all six stub types: icon, title, owner, and a link to open it on Google. Works offline, no sign-in. A complete app, not a trial.</p>
+        <p class="faq-a body">The 7 days start the first time you open Spyglass, and every format preview works during that week. You don't need a card or an account.</p>
+        <p class="faq-a body">When the week is up, those files fall back to plain text or a short file summary with a note, until you add a license. Google Drive cards stay free either way.</p>
       </details>
       <details class="py-5">
-        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">How do I unlock the paid features?
+        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">How do I activate my license?
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body text-[14px] leading-relaxed mt-3">Buy on Gumroad for $12 and a license key arrives by email. Paste it into the menu-bar app, sign in with Google, and rendered previews turn on. One payment, no subscription.</p>
+        <p class="faq-a body">Your Gumroad receipt has a license key in it. Click the Spyglass icon in the menu bar, paste the key and click Unlock. The same key works on each of your Macs.</p>
       </details>
       <details class="py-5">
-        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">Which file types work?
+        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">I bought Spyglass 1.0. What do I get?
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body text-[14px] leading-relaxed mt-3">All six Google Drive stub types: <code class="mono text-[.85em]">.gdoc</code>, <code class="mono text-[.85em]">.gsheet</code>, <code class="mono text-[.85em]">.gslides</code>, <code class="mono text-[.85em]">.gdraw</code>, <code class="mono text-[.85em]">.gform</code>, and <code class="mono text-[.85em]">.gsite</code>. Rendered previews cover Docs, Sheets, Slides, and Drawings. Google has no export for Forms and Sites, so they always show the info card.</p>
+        <p class="faq-a body">Pro + Drive, free, for life. Your 1.0 key keeps working in 2.0 and unlocks every format preview along with the rendered Google Drive previews. If Spyglass ever asks for it, paste the key from your original receipt.</p>
       </details>
       <details class="py-5">
-        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">Does it work offline?
+        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">What happens if I cancel Pro + Drive?
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body text-[14px] leading-relaxed mt-3">The info card works fully offline. Rendered previews need a connection to fetch the document from Drive, and if the network is down or slow, Spyglass falls back to the info card so nothing hangs or comes up blank.</p>
+        <p class="faq-a body">You can cancel from your Gumroad receipt whenever you like, and everything keeps working until the end of the period you've paid for. After that, Drive files go back to the free card, and format previews need a Pro license.</p>
+      </details>
+      <details class="py-5">
+        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">Why do CSV and .txt files look the same as before?
+          <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="faq-a body">macOS keeps those two types for its own preview and never passes them to a Quick Look extension, so no app can take them over. TSV and JSON Lines files do get Spyglass's table view.</p>
+      </details>
+      <details class="py-5">
+        <summary class="flex items-center justify-between gap-4 font-semibold text-[16px] ink">Space still shows the old preview. What's wrong?
+          <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="faq-a body">First, check that Spyglass is in your Applications folder and that you've opened it once. If another Quick Look app is installed, it may be handling the same file types, and macOS only uses one extension per type.</p>
+        <p class="faq-a body">On macOS 15 or later, open System Settings → General → Login Items &amp; Extensions, find Quick Look under Extensions and turn off the other app's extension. On macOS 14 the same list is under System Settings → Privacy &amp; Security → Extensions → Quick Look.</p>
       </details>
     </div>
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="relative py-28 sm:py-36 px-5 sm:px-8 overflow-hidden border-t hair">
-  <!-- one quiet echo of the hero's light, no structure this time -->
-  <div class="brass-glow" aria-hidden="true"></div>
-  <div class="max-w-3xl mx-auto text-center relative z-10" data-mm-parallax=".05">
-    <div>
-      <h2 data-mm="lines" class="text-[clamp(2rem,5vw,3.4rem)] leading-[1.04] mb-5">Make the Space bar<br />work on Drive files.</h2>
-      <div data-mm="rise" data-mm-delay=".1" class="flex flex-wrap items-center gap-3 justify-center">
-        <a class="btn-ghost text-[16px] px-7 py-3.5 inline-flex items-center justify-center" href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg">Download</a>
-        <a class="btn-brass text-[16px] px-7 py-3.5 inline-flex items-center justify-center" href="https://magicelk235.gumroad.com/l/spyglass?wanted=true">Buy</a>
-      </div>
+<!-- CLOSING BAND -->
+<section class="band-teal py-24 sm:py-28 px-5 sm:px-8">
+  <div class="max-w-3xl mx-auto text-center">
+    <h2 data-mm="lines" class="text-[clamp(2rem,5vw,3.4rem)] leading-[1.04] mb-8">Try it on your own files.</h2>
+    <div data-mm="rise" data-mm-delay=".1">
+      <a class="btn-brass text-[16px] px-8 py-3.5 inline-flex items-center justify-center" href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg">Download</a>
     </div>
   </div>
 </section>
@@ -607,18 +812,18 @@
 
 <!-- FOOTER -->
 <div id="site-footer"></div>
-<script src="/assets/footer.js" data-product="Spyglass" data-links-only="1" data-links="Privacy|./privacy.html, Terms|./terms.html, Security|./security.html, License|./license.html, Contact|mailto:support@magicelklabs.com, Source|https://github.com/magicelk235/Spyglass"></script>
+<script src="/assets/footer.js" data-product="Spyglass" data-links-only="1" data-links="Privacy|./privacy.html, Terms|./terms.html, Security|./security.html, License|./license.html, Contact|mailto:support@magicelklabs.com, Source|https://github.com/magicelk235/spyglass"></script>
 <noscript>
   <footer style="border-top:1px solid var(--hair);padding:40px 0 56px;font-size:14px;color:var(--mute)">
     <div style="max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px">
-      <span style="font-family:'Cabinet Grotesk','Inter',sans-serif;font-size:16px;color:var(--ink)">Magicelk Labs · Spyglass <span style="color:var(--mute);font-family:Inter,sans-serif;font-size:13px">· © 2026</span></span>
+      <span style="font-family:'Cabinet Grotesk',-apple-system,sans-serif;font-size:16px;color:var(--ink)">Magicelk Labs · Spyglass <span style="color:var(--mute);font-family:-apple-system,sans-serif;font-size:13px">· © 2026</span></span>
       <div style="display:flex;gap:20px;flex-wrap:wrap">
         <a href="./privacy.html" style="color:var(--mute);font-weight:500;text-decoration:none">Privacy</a>
         <a href="./terms.html" style="color:var(--mute);font-weight:500;text-decoration:none">Terms</a>
         <a href="./security.html" style="color:var(--mute);font-weight:500;text-decoration:none">Security</a>
         <a href="./license.html" style="color:var(--mute);font-weight:500;text-decoration:none">License</a>
         <a href="mailto:support@magicelklabs.com" style="color:var(--mute);font-weight:500;text-decoration:none">Contact</a>
-        <a href="https://github.com/magicelk235/Spyglass" style="color:var(--mute);font-weight:500;text-decoration:none">Source</a>
+        <a href="https://github.com/magicelk235/spyglass" style="color:var(--mute);font-weight:500;text-decoration:none">Source</a>
       </div>
     </div>
   </footer>
@@ -634,6 +839,85 @@
   var nav = document.getElementById('nav');
   var onScroll = function () { if (nav) nav.classList.toggle('scrolled', window.scrollY > 12); };
   onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+  // ── Homebrew line: copy button ──
+  // The button only appears where the clipboard API exists. Without it the
+  // command is still one click to select (user-select: all).
+  (function () {
+    var btn = document.querySelector('[data-copy]');
+    var status = document.getElementById('brew-status');
+    if (!btn || !navigator.clipboard || !window.isSecureContext) return;
+    btn.hidden = false;
+    var t = 0;
+    btn.addEventListener('click', function () {
+      navigator.clipboard.writeText(btn.getAttribute('data-copy')).then(function () {
+        btn.classList.add('is-done');
+        if (status) status.textContent = 'Copied';
+        clearTimeout(t);
+        t = setTimeout(function () {
+          btn.classList.remove('is-done');
+          if (status) status.textContent = '';
+        }, 1800);
+      });
+    });
+  })();
+
+  // ── Format gallery ──
+  // The index names jump the row sideways and never scroll the page; the
+  // name under the centred screenshot stays marked as the row moves.
+  (function () {
+    var root = document.querySelector('[data-fx]');
+    if (!root) return;
+    var track = root.querySelector('.fx-track');
+    var index = root.querySelector('.fx-index');
+    var links = Array.prototype.slice.call(index.querySelectorAll('a'));
+    var slides = links.map(function (a) { return document.getElementById(a.hash.slice(1)); });
+    if (slides.indexOf(null) !== -1) return;
+    root.classList.add('fx-on');
+
+    function go(k) {
+      var s = slides[k];
+      track.scrollTo({ left: s.offsetLeft + s.offsetWidth / 2 - track.clientWidth / 2,
+                       behavior: reduce ? 'auto' : 'smooth' });
+    }
+    function mark(k) {
+      links.forEach(function (a, j) {
+        if (j === k) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+      });
+      slides.forEach(function (s, j) { s.classList.toggle('is-on', j === k); });
+      // Keep the marked name in view where the index scrolls (phones), without
+      // touching the page's own scroll position.
+      var a = links[k];
+      if (index.scrollWidth > index.clientWidth) {
+        index.scrollTo({ left: a.offsetLeft - (index.clientWidth - a.offsetWidth) / 2,
+                         behavior: reduce ? 'auto' : 'smooth' });
+      }
+    }
+
+    // Stopping the click here also keeps motion.js from turning the hash link
+    // into a vertical scroll to the slide.
+    links.forEach(function (a, k) {
+      a.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); go(k); });
+    });
+    slides.forEach(function (s, k) {
+      s.addEventListener('click', function () { if (!s.classList.contains('is-on')) go(k); });
+    });
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) mark(slides.indexOf(e.target)); });
+      }, { root: track, threshold: 0.6 });
+      slides.forEach(function (s) { io.observe(s); });
+    }
+    mark(0);
+
+    // Sideways wheel deltas belong to the row, so keep them from reaching
+    // Lenis, which preventDefaults every wheel event for its own easing.
+    // Vertical deltas bubble on and the page keeps scrolling past.
+    track.addEventListener('wheel', function (e) {
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation();
+    }, { passive: true });
+  })();
 
   // ── Demo video: plays on its own while on screen ──
   // Muted + playsinline satisfies every autoplay policy. The clip is the
@@ -867,105 +1151,6 @@
     sync();
     requestAnimationFrame(function () { cv.classList.add('lit'); });
   })();
-})();
-</script>
-
-<script>
-/* Format reel. Native snap scrolling does the moving; this only decides when to
-   step to the next card. Runs when the reel is on screen, the tab is in front,
-   and the visitor hasn't asked for less motion. */
-(function () {
-  var reel = document.querySelector('[data-hl]');
-  if (!reel) return;
-  var track = reel.querySelector('.hl-track');
-  var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var strip = Array.prototype.slice.call(track.children);
-  var n = strip.length;
-  // glide is the fallback wait for a step to land where scrollend is missing, so
-  // it has to stay well under dwell.
-  var ends = 'onscrollend' in window;
-  var dwell = 2600, glide = 900, timer = 0, settle = 0, onScreen = false;
-
-  // A copy of the strip either side of the real one. Two jobs: a card always
-  // bleeds off both edges, and the reel can keep stepping the same direction
-  // for ever — see recentre().
-  function copy() {
-    return strip.map(function (c) {
-      var d = c.cloneNode(true);
-      d.setAttribute('aria-hidden', 'true');
-      d.querySelectorAll('img').forEach(function (img) { img.alt = ''; });
-      return d;
-    });
-  }
-  copy().forEach(function (d) { track.appendChild(d); });
-  copy().reverse().forEach(function (d) { track.insertBefore(d, track.firstChild); });
-  var cards = Array.prototype.slice.call(track.children);
-  var i = n; // sit in the middle copy
-
-  function center(k, jump) {
-    var c = cards[k];
-    track.scrollTo({ left: c.offsetLeft + c.offsetWidth / 2 - track.clientWidth / 2,
-                     behavior: (jump || still) ? 'auto' : 'smooth' });
-  }
-  function slot(k) { return ((k % n) + n) % n; }
-  // Step the strip back to the middle copy once the reel has come to rest. The
-  // copies are identical, so nothing moves on screen and the next step has a
-  // full strip of runway ahead of it again.
-  function recentre() {
-    if (i >= n && i < 2 * n) return;
-    i = n + slot(i);
-    center(i, true);
-  }
-  function tick() {
-    clearTimeout(timer);
-    if (still || !onScreen || document.hidden) return;
-    timer = setTimeout(function () {
-      i += 1; center(i);
-      // Recentre only once the step has landed: cutting a smooth scroll short
-      // leaves it animating towards a card that is no longer the target.
-      if (ends) track.addEventListener('scrollend', recentre, { once: true });
-      else setTimeout(recentre, glide);
-      tick();
-    }, dwell);
-  }
-
-  // Sideways wheel deltas belong to the strip, so keep them from reaching Lenis,
-  // which preventDefaults every wheel event for its own easing. Vertical deltas
-  // bubble on through and the page keeps scrolling smoothly past the reel.
-  track.addEventListener('wheel', function (e) {
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation();
-  }, { passive: true });
-
-  // A swipe or a keyboard scroll wins: take the card nearest the middle and
-  // give it a full dwell before moving on.
-  track.addEventListener('scroll', function () {
-    clearTimeout(settle);
-    settle = setTimeout(function () {
-      var mid = track.scrollLeft + track.clientWidth / 2, best = 0, near = Infinity;
-      cards.forEach(function (c, k) {
-        var d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid);
-        if (d < near) { near = d; best = k; }
-      });
-      if (best !== i) { i = best; tick(); }
-      recentre();
-    }, 140);
-  }, { passive: true });
-
-  // Card width tracks the viewport, so a resize moves every snap point. Wait for
-  // it to settle, then pin the current card back to the middle copy: the scroll
-  // events a resize throws would otherwise leave the index on whatever card the
-  // half-updated layout put nearest the middle.
-  var rz = 0;
-  addEventListener('resize', function () {
-    clearTimeout(rz);
-    rz = setTimeout(function () { clearTimeout(settle); i = n + slot(i); center(i, true); }, 150);
-  }, { passive: true });
-
-  center(i, true);
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function (es) { onScreen = es[0].isIntersecting; tick(); }, { threshold: .3 }).observe(track);
-  } else { onScreen = true; tick(); }
-  document.addEventListener('visibilitychange', tick);
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js" integrity="sha384-FKTX0CNJ8ngN1oGMBReVu7mvjTJyjFiD5etb1NKnYxc+8eFI2O0KWnksTN+oTFcu" crossorigin="anonymous"></script>

@@ -48,9 +48,10 @@ colour without touching the theme.
 in deep teal (`linear-gradient(168deg,#0F4D48,#093732)` — the `.hero-band` /
 `.pro-panel` / `.cta` gradient). It carries the hero, the Pro pricing panel,
 and the closing CTA. Spyglass keeps its own teal band
-(`--teal-top`/`--teal-bot`) with brass CTAs. On-band text: near-white ink
+(`--teal-top` `#0B3D3A` / `--teal-bot` `#072826`) for its closing call to
+action, with a brass button on it. On-band text: near-white ink
 `#F2FBF9`, body `#C6E3DE`, dim `#93C2BB`, bright accent `#6EE0D1`; on-band
-primary buttons are white with dark-teal text.
+primary buttons are white with dark-teal text (Viaduct) or brass (Spyglass).
 
 One accent per page. Dark is the only mode the site has: tokens are declared
 once in `:root` with `color-scheme:dark`, there is no light palette to override
@@ -97,8 +98,9 @@ scheme is a bug.
 
 ## Layout
 
-- Content column: `max-width:1120px` (root), `1080px` (the legal pages), or
-  `max-w-6xl` (product pages); 24px side padding.
+- Content column: `max-width:1120px` (root), `1080px` (the legal pages),
+  `max-w-6xl` (Viaduct) or `max-w-5xl` (Spyglass, the same width as its nav
+  pill, so every section starts on one left edge); 24px side padding.
 - Root: a headline, one line under it, and the shelf. Nothing else. Every
   other block that has been tried here (stat ledger, fact rail, tenet list,
   approach paragraph, closing CTA band) restated the pricing or the pitch a
@@ -131,9 +133,10 @@ elements in with data attributes:
 - `data-mm-replay` on a section: entrances inside re-run every time it
   scrolls back into view (used on Viaduct's compat layer); default is once.
 - `data-mm-pin` + `data-mm-pin-stage/-item/-panel`: pinned walkthroughs
-  (Viaduct's Drop → Convert → Done, Spyglass's file-type gallery). Pin engages
-  only ≥1024px + fine pointer; below that the CSS fallback is a static stack
-  with per-panel captions.
+  (Viaduct's Drop → Convert → Done). Pin engages only ≥1024px + fine pointer;
+  below that the CSS fallback is a static stack with per-panel captions.
+  Spyglass's format gallery is not pinned: it is a sideways scroll-snap row
+  with an index of format names, and it never moves on its own.
 
 Continuous "premium" layer (all fine-pointer-gated, all dead under reduced
 motion):
@@ -168,10 +171,13 @@ band light.
 
 ## App facts (source of truth: Google Drive media kits)
 
-**Spyglass** — Real Quick Look previews for Google Workspace files on macOS.
-Press Space on a `.gdoc` / `.gsheet` / `.gslides` / `.gdraw` / `.gform` /
-`.gsite` and see the document, not raw JSON. Free tier: branded info cards,
-offline, no sign-in. Paid: $12 one-time, rendered first-page previews.
+**Spyglass** — Better Quick Look for your Mac, including Google Drive. Press
+Space on Markdown, code, JSON, notebooks, diffs, SQLite, TSV and JSON Lines,
+archives, packages, apps, binaries, folders, torrents or Google Drive files and
+see what's inside. CSV and `.txt` stay with Apple's preview. Every format is
+free for 7 days; Spyglass Pro is $12 once; Spyglass Pro + Drive is $4/month or
+$36/year and adds rendered Google Drive previews and thumbnails. The Drive
+info card is free for everyone, and 1.0 buyers get Pro + Drive for life.
 macOS 14+.
 
 **Viaduct** — Run Chrome extensions in Safari, natively. Drop in a `.zip`,
@@ -185,7 +191,10 @@ conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
 - `viaduct/assets/viaduct-icon-dark.png` — Viaduct icon (256px, web).
 - `assets/spyglass-cover.webp` and `assets/viaduct-cover.webp` (1200×630) are
   the shelf covers on the root page, encoded from the media-kit social cards
-  with `cwebp -q 86`. A new app needs one at the same size.
+  with `cwebp -q 86`. A new app needs one at the same size. The Spyglass cover
+  is the same composition as its social card,
+  `spyglass/assets/spyglass-og-2.jpg` (1200×630 JPEG): the hero headline on
+  the canvas beside the media kit's framed notebook window.
 - **The mark** is an elk rack rising from a single stem: two beams sweeping up
   and outward, five prongs a side, joined at one point above a short stem. No
   letterform, deliberately. An `M` sitting 9px from the word "Magicelk Labs"
@@ -207,8 +216,15 @@ conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
   locally) converted with `cwebp -q 82 -resize 1800 0`. Every shot is captured
   with the app in dark mode; the `-dark` suffix is history, there is no second
   variant to swap to.
-  - `spyglass/assets/spyglass-shot-{docs,sheets,slides,drawings}-dark.webp`
-    (1800×1474) and `spyglass-menubar-dark.webp` (1400×1567).
+  - `spyglass/assets/formats/<format>-{2000,1000}.webp` (16:10) are the
+    format gallery, encoded from the media kit's `mediakit/screenshots/` dark
+    renders (converted from Display P3 to sRGB first) with
+    `cwebp -q 82 -m 6 -sharp_yuv -resize 2000 0` and `-resize 1000 0`; the
+    page serves them through `srcset`.
+  - `spyglass/assets/drive-card.webp` (1000×750) is the free Drive card,
+    rendered by the media kit from a made-up `.gdoc`. `drive-sheet.webp`
+    (800×600) is a rendered Sheet of made-up data, cropped to the table from
+    the 1.0 Quick Look capture. Neither shows a real account; keep it that way.
   - `viaduct/assets/viaduct-{main,developer}-dark.webp` and
     `viaduct-step-{select,convert,succeed}-dark.webp` (1800×1324).
     `viaduct-main-dark.webp` is the exception: re-encoded at 1400×848, cropped

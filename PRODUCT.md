@@ -8,21 +8,26 @@ zero build step except `viaduct/extensions/build.js`.
 
 ## Register
 
-Brand / marketing. Design IS the product here: the site must sell $9–$19
-one-time utilities to design-conscious Mac users. Pages: studio landing (`/`),
+Brand / marketing. Design IS the product here: the site must sell $12–$19
+one-time utilities, plus Spyglass's optional Pro + Drive subscription, to
+design-conscious Mac users. Pages: studio landing (`/`),
 two product pages (`/spyglass/`, `/viaduct/`), 20 SEO extension guides
 + hub (`/viaduct/extensions/`), privacy pages.
 
 ## Audience
 
 Mac users who care how software looks and feels; developers and power users
-(Viaduct), Google Workspace users on macOS (Spyglass).
+(Viaduct, and Spyglass's format previews), Google Drive users on macOS
+(Spyglass's Drive plan).
 
 ## Conversion paths
 
 - Viaduct: Gumroad buy buttons (`data-gumroad-action="buy"`, product `uadrjp`).
   Landing is also embedded in Gumroad's iframe; do not break the postMessage wiring.
-- Spyglass: Gumroad link + free GitHub download.
+- Spyglass: free GitHub download (every format free for 7 days) and two
+  Gumroad products, `spyglass-pro` ($12 once, linked with `?wanted=true`) and
+  `spyglass-drive` ($4/month or $36/year, linked to the product page so the
+  buyer picks monthly or yearly).
 - Checkout is Gumroad's own page, full tab. Don't frame it (modal/iframe):
   Gumroad rejects paid orders without its `_gumroad_guid` cookie, which Safari,
   iOS browsers, Brave and Chrome incognito block in a third-party frame.
