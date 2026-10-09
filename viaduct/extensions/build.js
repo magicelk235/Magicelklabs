@@ -550,6 +550,8 @@ const urls = [
   ...LEGAL.map((p) => `${SITE}/spyglass/${p}.html`),
   `${SITE}/viaduct/`,
   ...LEGAL.map((p) => `${SITE}/viaduct/${p}.html`),
+  `${SITE}/lector/`,
+  ...LEGAL.map((p) => `${SITE}/lector/${p}.html`),
   `${SITE}/viaduct/extensions/`,
   ...EXTENSIONS.map((x) => `${SITE}/viaduct/extensions/${x.slug}/`),
 ];

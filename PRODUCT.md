@@ -10,19 +10,24 @@ zero build step except `viaduct/extensions/build.js`.
 
 Brand / marketing. Design IS the product here: the site must sell $9–$19
 one-time utilities to design-conscious Mac users. Pages: studio landing (`/`),
-two product pages (`/spyglass/`, `/viaduct/`), 20 SEO extension guides
+three product pages (`/spyglass/`, `/viaduct/`, `/lector/`), 20 SEO extension guides
 + hub (`/viaduct/extensions/`), privacy pages.
 
 ## Audience
 
 Mac users who care how software looks and feels; developers and power users
-(Viaduct), Google Workspace users on macOS (Spyglass).
+(Viaduct), Google Workspace users on macOS (Spyglass), people who keep hitting
+text on their Mac's screen they can't select or read (Lector).
 
 ## Conversion paths
 
 - Viaduct: Gumroad buy buttons (`data-gumroad-action="buy"`, product `uadrjp`).
   Landing is also embedded in Gumroad's iframe; do not break the postMessage wiring.
 - Spyglass: Gumroad link + free GitHub download.
+- Lector: free GitHub download; Buy Text and Buy Translate go straight to
+  checkout with the tier preselected (`?variant=Text|Translate&wanted=true`);
+  the plain Buy buttons open the product page so Gumroad shows its tier picker;
+  the Text to Translate upgrade is its own product (`lector-upgrade`).
 - Checkout is Gumroad's own page, full tab. Don't frame it (modal/iframe):
   Gumroad rejects paid orders without its `_gumroad_guid` cookie, which Safari,
   iOS browsers, Brave and Chrome incognito block in a third-party frame.

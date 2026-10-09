@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy Policy — Lector</title>
+<meta name="description" content="How Lector handles your screen and your data: it reads and translates on your Mac, keeps nothing you capture, and has no analytics.">
+<link rel="icon" href="./assets/lector-appicon-dark-320.png">
+<link rel="canonical" href="https://magicelklabs.com/lector/privacy.html">
+<link rel="apple-touch-icon" href="/lector/assets/lector-appicon-dark-320.png">
+<link rel="manifest" href="/lector/assets/lector.webmanifest">
+<meta name="theme-color" content="#0C0808">
+<meta property="og:title" content="Privacy Policy — Lector">
+<meta property="og:description" content="How Lector handles your screen and your data: it reads and translates on your Mac, keeps nothing you capture, and has no analytics.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://magicelklabs.com/lector/privacy.html">
+<meta property="og:site_name" content="Magicelk Labs">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://magicelklabs.com/lector/assets/lector-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A Japanese game menu on a Mac, with Lector's English translation painted over each line">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Privacy Policy — Lector">
+<meta name="twitter:description" content="How Lector handles your screen and your data: it reads and translates on your Mac, keeps nothing you capture, and has no analytics.">
+<meta name="twitter:image" content="https://magicelklabs.com/lector/assets/lector-og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Font CSS loads async (media=print swap) so first paint isn't blocked on
+     two third-party stylesheets; display=swap shows fallback text meanwhile. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+</noscript>
+<style>
+/* Lector tokens. footer.js styles itself with --hair/--mute/--ink and hovers in --accent. */
+:root{color-scheme:dark;--canvas:#0C0808;--surface:#140E0D;--elevated:#1C1413;--card:#231917;--ink:#F4ECE7;--body:#B9A9A2;--mute:#908079;--hair:rgba(255,255,255,.075);--red:#C0544F;--red-press:#B04A45;--on-red:#FFFFFF;--red-text:#E58A82;--lip:inset 0 1px 0 rgba(255,255,255,.055);--accent:var(--red-text)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body::after{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--canvas);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:clamp(48px,8vh,96px) 24px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.back{display:inline-block;color:var(--red-text);text-decoration:none;font-size:15px;font-weight:600}
+.back:hover{text-decoration:underline}
+.actions{display:flex;align-items:center;gap:8px}
+.btn,.btn-ghost{display:inline-flex;align-items:center;font-size:13.5px;font-weight:600;line-height:1.4;padding:7px 14px;border-radius:999px;text-decoration:none;transition:transform .22s cubic-bezier(.2,.8,.2,1),background .2s,border-color .2s}
+.btn{background:var(--red);color:var(--on-red);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.btn:hover{background:var(--red-press);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--ink);border:1px solid rgba(255,255,255,.12);box-shadow:var(--lip)}
+.btn-ghost:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+.btn:active,.btn-ghost:active{transform:translateY(0) scale(.99)}
+h1{font-family:"Cabinet Grotesk",sans-serif;font-size:clamp(30px,5vw,42px);font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+.updated{color:var(--mute);font-size:15px;margin:0 0 36px}
+h2{font-family:"Cabinet Grotesk",sans-serif;font-size:clamp(19px,2.6vw,24px);font-weight:700;margin:36px 0 10px}
+p,li{color:var(--body)}
+strong{color:var(--ink);font-weight:600}
+p{margin:0 0 14px}
+ul{padding-left:22px;margin:0 0 14px}
+li{margin-bottom:8px}
+.muted{color:var(--mute)}
+code{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--surface);border:1px solid var(--hair);color:var(--red-text);padding:1px 6px;border-radius:4px;font-size:.86em;overflow-wrap:anywhere}
+a{color:var(--red-text)}
+footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--hair);color:var(--mute);font-size:14px}
+footer a{text-decoration:none}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Lector","description":"How Lector handles your screen and your data: it reads and translates on your Mac, keeps nothing you capture, and has no analytics.","url":"https://magicelklabs.com/lector/privacy.html","inLanguage":"en","dateModified":"2026-10-07","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+</script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <a class="back" href="./">← Lector</a>
+    <nav class="actions" aria-label="Get Lector">
+      <a class="btn-ghost" href="https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg">Download</a>
+      <a class="btn" href="https://magicelk235.gumroad.com/l/lector">Buy</a>
+    </nav>
+  </header>
+
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: October 7, 2026</p>
+
+  <p>Lector is a menu bar app for macOS that copies and translates text from your screen. This policy explains what it captures, what it keeps, and what it sends. In short: everything happens on your Mac, and nothing you capture is kept or sent anywhere.</p>
+
+  <h2>What Lector captures</h2>
+  <ul>
+    <li><strong>Only when you ask.</strong> Lector captures the screen only when you press one of its shortcuts (<code>⌘⇧2</code>, <code>⌘⇧1</code> or <code>⌘⇧9</code> unless you've changed them), and it uses macOS's own screenshot tool to do it. That's why it needs the Screen Recording permission. It doesn't need Accessibility.</li>
+    <li><strong>Grabs and translations.</strong> The capture goes to a private temporary file that Lector reads and deletes straight away.</li>
+    <li><strong>Live translation.</strong> Lector watches only the area you drew, only until you stop it, and reads it in memory without saving anything.</li>
+  </ul>
+
+  <h2>How your text is read and translated</h2>
+  <p>Everything happens on your Mac. Lector reads the text with Apple's Vision and a bundled copy of Tesseract, and translates it with Apple's on-device Translation or an offline Opus-MT language pack. Text Lector has translated since you opened it is kept in memory so it can show up again straight away. It's gone when Lector quits.</p>
+  <p>Nothing you capture is kept or sent anywhere, and there are no analytics.</p>
+
+  <h2>What Lector stores</h2>
+  <p>Lector stores a few things on your Mac, and never the text itself:</p>
+  <ul>
+    <li><strong>Settings</strong>, such as the language you picked for an app and the last few languages you translated between, so it can offer them first.</li>
+    <li><strong>How many grabs and translations you've made this month</strong>, to apply your plan's limits. The counts start over on the first of each month.</li>
+    <li><strong>Your license key</strong>, if you enter one, with the email address Gumroad has for that purchase and the date Gumroad last confirmed it. This lives in Lector's Application Support folder.</li>
+    <li><strong>Language packs</strong> you've downloaded, also in Lector's Application Support folder.</li>
+  </ul>
+
+  <h2>What Lector sends, and where</h2>
+  <p>Lector talks to three services, and only for these reasons:</p>
+  <ul>
+    <li><strong>Hugging Face, for language packs.</strong> A pack is 100 to 250 MB. Lector downloads one on its own only when it's the only way to translate a language, because Apple's Translation doesn't support it. If you turn on Download packs for instant drafts in Settings › Translation, it downloads packs for other languages too.</li>
+    <li><strong>Gumroad, for your license.</strong> If you enter a license key, Lector sends that key to Gumroad to check it, when you enter it and again at each launch. A key Gumroad has confirmed keeps working for 30 days without a connection.</li>
+    <li><strong>GitHub, for updates.</strong> From the second launch, Lector asks whether it may check for updates. If you allow it, Lector asks GitHub once a day whether there's a new version. You can turn this off in Settings › General.</li>
+  </ul>
+  <p>None of these requests carries anything you captured.</p>
+
+  <h2>Payments</h2>
+  <p>The Text and Translate plans are sold through <a href="https://magicelk235.gumroad.com/l/lector" rel="noopener">Gumroad</a>, which processes your purchase and payment. We never see or store your card details. Gumroad's handling of your data is governed by <a href="https://gumroad.com/privacy" rel="noopener">Gumroad's privacy policy</a>.</p>
+
+  <h2>Removing what Lector stores</h2>
+  <ul>
+    <li>Settings › License removes your license key from this Mac.</li>
+    <li>Settings › Translation lists each language pack with its size and can remove any of them. It also lists the languages Lector remembers for each app, which you can change or remove.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>Lector is a general-purpose tool and is not directed at children under 13.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If this policy changes, the updated version will be posted on this page with a new "last updated" date.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy or your data? Email <a href="mailto:support@magicelklabs.com">support@magicelklabs.com</a>.</p>
+
+<div id="site-footer"></div>
+<script src="/assets/footer.js" data-product="Lector" data-links-only="1" data-links="Privacy|./privacy.html, Terms|./terms.html, Security|./security.html, License|./license.html, Contact|mailto:support@magicelklabs.com, Source|https://github.com/magicelk235/Lector"></script>
+<noscript>
+  <footer style="border-top:1px solid var(--hair);padding:40px 0 56px;font-size:14px;color:var(--mute)">
+    <div style="max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px">
+      <span style="font-family:'Cabinet Grotesk','Inter',sans-serif;font-size:16px;color:var(--ink)">Magicelk Labs · Lector <span style="color:var(--mute);font-family:Inter,sans-serif;font-size:13px">· © 2026</span></span>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <a href="./privacy.html" style="color:var(--mute);font-weight:500;text-decoration:none">Privacy</a>
+        <a href="./terms.html" style="color:var(--mute);font-weight:500;text-decoration:none">Terms</a>
+        <a href="./security.html" style="color:var(--mute);font-weight:500;text-decoration:none">Security</a>
+        <a href="./license.html" style="color:var(--mute);font-weight:500;text-decoration:none">License</a>
+        <a href="mailto:support@magicelklabs.com" style="color:var(--mute);font-weight:500;text-decoration:none">Contact</a>
+        <a href="https://github.com/magicelk235/Lector" style="color:var(--mute);font-weight:500;text-decoration:none">Source</a>
+      </div>
+    </div>
+  </footer>
+</noscript>
+
+</div>
+<script src="/assets/attribution.js"></script>
+</body>
+</html>

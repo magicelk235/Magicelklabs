@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>License — Lector</title>
+<meta name="description" content="Lector license. Lector is source-available under the PolyForm Shield License 1.0.0, and its third-party components keep their own licenses.">
+<link rel="icon" href="./assets/lector-appicon-dark-320.png">
+<link rel="canonical" href="https://magicelklabs.com/lector/license.html">
+<link rel="apple-touch-icon" href="/lector/assets/lector-appicon-dark-320.png">
+<link rel="manifest" href="/lector/assets/lector.webmanifest">
+<meta name="theme-color" content="#0C0808">
+<meta property="og:title" content="License — Lector">
+<meta property="og:description" content="Lector license. Lector is source-available under the PolyForm Shield License 1.0.0, and its third-party components keep their own licenses.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://magicelklabs.com/lector/license.html">
+<meta property="og:site_name" content="Magicelk Labs">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://magicelklabs.com/lector/assets/lector-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A Japanese game menu on a Mac, with Lector's English translation painted over each line">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="License — Lector">
+<meta name="twitter:description" content="Lector license. Lector is source-available under the PolyForm Shield License 1.0.0, and its third-party components keep their own licenses.">
+<meta name="twitter:image" content="https://magicelklabs.com/lector/assets/lector-og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Font CSS loads async (media=print swap) so first paint isn't blocked on
+     two third-party stylesheets; display=swap shows fallback text meanwhile. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+</noscript>
+<style>
+/* Lector tokens. footer.js styles itself with --hair/--mute/--ink and hovers in --accent. */
+:root{color-scheme:dark;--canvas:#0C0808;--surface:#140E0D;--elevated:#1C1413;--card:#231917;--ink:#F4ECE7;--body:#B9A9A2;--mute:#908079;--hair:rgba(255,255,255,.075);--red:#C0544F;--red-press:#B04A45;--on-red:#FFFFFF;--red-text:#E58A82;--lip:inset 0 1px 0 rgba(255,255,255,.055);--accent:var(--red-text)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body::after{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--canvas);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:clamp(48px,8vh,96px) 24px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.back{display:inline-block;color:var(--red-text);text-decoration:none;font-size:15px;font-weight:600}
+.back:hover{text-decoration:underline}
+.actions{display:flex;align-items:center;gap:8px}
+.btn,.btn-ghost{display:inline-flex;align-items:center;font-size:13.5px;font-weight:600;line-height:1.4;padding:7px 14px;border-radius:999px;text-decoration:none;transition:transform .22s cubic-bezier(.2,.8,.2,1),background .2s,border-color .2s}
+.btn{background:var(--red);color:var(--on-red);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.btn:hover{background:var(--red-press);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--ink);border:1px solid rgba(255,255,255,.12);box-shadow:var(--lip)}
+.btn-ghost:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+.btn:active,.btn-ghost:active{transform:translateY(0) scale(.99)}
+h1{font-family:"Cabinet Grotesk",sans-serif;font-size:clamp(30px,5vw,42px);font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+.updated{color:var(--mute);font-size:15px;margin:0 0 36px}
+h2{font-family:"Cabinet Grotesk",sans-serif;font-size:clamp(19px,2.6vw,24px);font-weight:700;margin:36px 0 10px}
+p,li{color:var(--body)}
+strong{color:var(--ink);font-weight:600}
+p{margin:0 0 14px}
+ul{padding-left:22px;margin:0 0 14px}
+li{margin-bottom:8px}
+.muted{color:var(--mute)}
+code{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--surface);border:1px solid var(--hair);color:var(--red-text);padding:1px 6px;border-radius:4px;font-size:.86em;overflow-wrap:anywhere}
+pre{background:var(--surface);border:1px solid var(--hair);box-shadow:var(--lip);border-radius:8px;padding:20px;overflow-x:auto;font-size:13px;line-height:1.6;font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;color:var(--body)}
+a{color:var(--red-text)}
+footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--hair);color:var(--mute);font-size:14px}
+footer a{text-decoration:none}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"License — Lector","description":"How Lector handles your screen and your data: it reads and translates on your Mac, keeps nothing you capture, and has no analytics.","url":"https://magicelklabs.com/lector/license.html","inLanguage":"en","dateModified":"2026-10-07","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+</script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <a class="back" href="./">← Lector</a>
+    <nav class="actions" aria-label="Get Lector">
+      <a class="btn-ghost" href="https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg">Download</a>
+      <a class="btn" href="https://magicelk235.gumroad.com/l/lector">Buy</a>
+    </nav>
+  </header>
+
+  <h1>License</h1>
+  <p class="updated">PolyForm Shield License 1.0.0</p>
+
+  <p>
+    Lector is <strong>source-available</strong> under the PolyForm Shield License 1.0.0.
+    You may use, copy, modify, and share it for almost any purpose. You may
+    <strong>not</strong> use it to build or provide a product that competes with
+    Lector or with any other product from its author. The full terms are below,
+    and they are the ones that count.
+  </p>
+
+  <h2>In plain words</h2>
+  <ul>
+    <li><strong>You can</strong> use Lector, read its <a href="https://github.com/magicelk235/Lector" rel="noopener">source</a>, change it, and share copies, with or without your changes.</li>
+    <li><strong>When you share it</strong>, pass on these terms (or their URL) and the <code>Required Notice:</code> lines at the top.</li>
+    <li><strong>You can't</strong> use it to make or offer a product that competes with Lector or another of the author's products. That holds even if your product is free, or works on a different platform.</li>
+    <li><strong>You can't</strong> sublicense or transfer your license to someone else.</li>
+    <li><strong>If you break the terms</strong> and are told so in writing, you keep your license if you fix it within 32 days.</li>
+    <li><strong>No warranty.</strong> The software comes as is.</li>
+  </ul>
+  <p>
+    This license covers the source code. Using the app you download, and its
+    paid plans, is covered by the <a href="./terms.html">Terms of Service</a>.
+  </p>
+
+  <h2>Third-party components</h2>
+  <p>
+    Lector is built on open-source work that keeps its own license. These
+    licenses ship inside the app and are shown in Settings › Acknowledgements.
+  </p>
+  <ul>
+    <li><strong>Tesseract</strong>, bundled with the app, reads the scripts Apple's Vision can't. Apache License 2.0. <a href="https://github.com/magicelk235/Lector/blob/main/Vendor/licenses/tesseract-LICENSE.txt" rel="noopener">License text</a></li>
+    <li><strong>Leptonica</strong>, bundled with the app, is the image library Tesseract uses. Copyright 2001 to 2020 Leptonica, under a BSD-style license. <a href="https://github.com/magicelk235/Lector/blob/main/Vendor/licenses/leptonica-LICENSE.txt" rel="noopener">License text</a></li>
+    <li><strong>ONNX Runtime</strong>, bundled with the app, runs the offline translation models. Copyright Microsoft Corporation, MIT License, with its own third-party notices. <a href="https://github.com/magicelk235/Lector/blob/main/Vendor/licenses/onnxruntime-LICENSE.txt" rel="noopener">License text</a>, <a href="https://github.com/magicelk235/Lector/blob/main/Vendor/licenses/onnxruntime-ThirdPartyNotices.txt" rel="noopener">third-party notices</a></li>
+    <li><strong>Opus-MT</strong> translation models, by the Language Technology Research Group at the University of Helsinki (Helsinki-NLP). Creative Commons Attribution 4.0 International (CC BY 4.0). They are not bundled: Lector downloads them from Hugging Face when needed, as ONNX conversions made by their publishers there (Xenova, onnx-community, R4kSo1997, TigreGotico, fintutto), used unmodified at pinned revisions. <a href="https://github.com/magicelk235/Lector/blob/main/Vendor/licenses/opus-mt-NOTICE.txt" rel="noopener">Notice</a></li>
+  </ul>
+  <p class="muted">
+    Opus-MT reference: Jörg Tiedemann and Santhosh Thottingal. 2020. OPUS-MT,
+    Building open translation services for the World. In Proceedings of the 22nd
+    Annual Conference of the European Association for Machine Translation (EAMT),
+    Lisbon, Portugal.
+  </p>
+
+  <h2>Full license text</h2>
+  <pre>Required Notice: Copyright (c) 2026 Yehonatan Cohen (magicelk235)
+Required Notice: https://github.com/magicelk235
+
+# PolyForm Shield License 1.0.0
+
+&lt;https://polyformproject.org/licenses/shield/1.0.0&gt;
+
+## Acceptance
+
+In order to get any license under these terms, you must agree
+to them as both strict obligations and conditions to all
+your licenses.
+
+## Copyright License
+
+The licensor grants you a copyright license for the
+software to do everything you might do with the software
+that would otherwise infringe the licensor's copyright
+in it for any permitted purpose.  However, you may
+only distribute the software according to [Distribution
+License](#distribution-license) and make changes or new works
+based on the software according to [Changes and New Works
+License](#changes-and-new-works-license).
+
+## Distribution License
+
+The licensor grants you an additional copyright license
+to distribute copies of the software.  Your license
+to distribute covers distributing the software with
+changes and new works permitted by [Changes and New Works
+License](#changes-and-new-works-license).
+
+## Notices
+
+You must ensure that anyone who gets a copy of any part of
+the software from you also gets a copy of these terms or the
+URL for them above, as well as copies of any plain-text lines
+beginning with `Required Notice:` that the licensor provided
+with the software.  For example:
+
+&gt; Required Notice: Copyright Yoyodyne, Inc. (http://example.com)
+
+## Changes and New Works License
+
+The licensor grants you an additional copyright license to
+make changes and new works based on the software for any
+permitted purpose.
+
+## Patent License
+
+The licensor grants you a patent license for the software that
+covers patent claims the licensor can license, or becomes able
+to license, that you would infringe by using the software.
+
+## Noncompete
+
+Any purpose is a permitted purpose, except for providing any
+product that competes with the software or any product the
+licensor or any of its affiliates provides using the software.
+
+## Competition
+
+Goods and services compete even when they provide functionality
+through different kinds of interfaces or for different technical
+platforms.  Applications can compete with services, libraries
+with plugins, frameworks with development tools, and so on,
+even if they're written in different programming languages
+or for different computer architectures.  Goods and services
+compete even when provided free of charge.  If you market a
+product as a practical substitute for the software or another
+product, it definitely competes.
+
+## New Products
+
+If you are using the software to provide a product that does
+not compete, but the licensor or any of its affiliates brings
+your product into competition by providing a new version of
+the software or another product using the software, you may
+continue using versions of the software available under these
+terms beforehand to provide your competing product, but not
+any later versions.
+
+## Discontinued Products
+
+You may begin using the software to compete with a product
+or service that the licensor or any of its affiliates has
+stopped providing, unless the licensor includes a plain-text
+line beginning with `Licensor Line of Business:` with the
+software that mentions that line of business.  For example:
+
+&gt; Licensor Line of Business: YoyodyneCMS Content Management
+System (http://example.com/cms)
+
+## Sales of Business
+
+If the licensor or any of its affiliates sells a line of
+business developing the software or using the software
+to provide a product, the buyer can also enforce
+[Noncompete](#noncompete) for that product.
+
+## Fair Use
+
+You may have "fair use" rights for the software under the
+law. These terms do not limit them.
+
+## No Other Rights
+
+These terms do not allow you to sublicense or transfer any of
+your licenses to anyone else, or prevent the licensor from
+granting licenses to anyone else.  These terms do not imply
+any other licenses.
+
+## Patent Defense
+
+If you make any written claim that the software infringes or
+contributes to infringement of any patent, your patent license
+for the software granted under these terms ends immediately. If
+your company makes such a claim, your patent license ends
+immediately for work on behalf of your company.
+
+## Violations
+
+The first time you are notified in writing that you have
+violated any of these terms, or done anything with the software
+not covered by your licenses, your licenses can nonetheless
+continue if you come into full compliance with these terms,
+and take practical steps to correct past violations, within
+32 days of receiving notice.  Otherwise, all your licenses
+end immediately.
+
+## No Liability
+
+***As far as the law allows, the software comes as is, without
+any warranty or condition, and the licensor will not be liable
+to you for any damages arising out of these terms or the use
+or nature of the software, under any kind of legal claim.***
+
+## Definitions
+
+The **licensor** is the individual or entity offering these
+terms, and the **software** is the software the licensor makes
+available under these terms.
+
+A **product** can be a good or service, or a combination
+of them.
+
+**You** refers to the individual or entity agreeing to these
+terms.
+
+**Your company** is any legal entity, sole proprietorship,
+or other kind of organization that you work for, plus all
+its affiliates.
+
+**Affiliates** means the other organizations than an
+organization has control over, is under the control of, or is
+under common control with.
+
+**Control** means ownership of substantially all the assets of
+an entity, or the power to direct its management and policies
+by vote, contract, or otherwise.  Control can be direct or
+indirect.
+
+**Your licenses** are all the licenses granted to you for the
+software under these terms.
+
+**Use** means anything you do with the software requiring one
+of your licenses.</pre>
+
+<div id="site-footer"></div>
+<script src="/assets/footer.js" data-product="Lector" data-links-only="1" data-links="Privacy|./privacy.html, Terms|./terms.html, Security|./security.html, License|./license.html, Contact|mailto:support@magicelklabs.com, Source|https://github.com/magicelk235/Lector"></script>
+<noscript>
+  <footer style="border-top:1px solid var(--hair);padding:40px 0 56px;font-size:14px;color:var(--mute)">
+    <div style="max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px">
+      <span style="font-family:'Cabinet Grotesk','Inter',sans-serif;font-size:16px;color:var(--ink)">Magicelk Labs · Lector <span style="color:var(--mute);font-family:Inter,sans-serif;font-size:13px">· © 2026</span></span>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <a href="./privacy.html" style="color:var(--mute);font-weight:500;text-decoration:none">Privacy</a>
+        <a href="./terms.html" style="color:var(--mute);font-weight:500;text-decoration:none">Terms</a>
+        <a href="./security.html" style="color:var(--mute);font-weight:500;text-decoration:none">Security</a>
+        <a href="./license.html" style="color:var(--mute);font-weight:500;text-decoration:none">License</a>
+        <a href="mailto:support@magicelklabs.com" style="color:var(--mute);font-weight:500;text-decoration:none">Contact</a>
+        <a href="https://github.com/magicelk235/Lector" style="color:var(--mute);font-weight:500;text-decoration:none">Source</a>
+      </div>
+    </div>
+  </footer>
+</noscript>
+
+</div>
+<script src="/assets/attribution.js"></script>
+</body>
+</html>

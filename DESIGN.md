@@ -9,7 +9,7 @@ sells small engineered tools; Viaduct is literally named after a bridge).
 Always **Magicelk Labs** — "Magicelk" is one word, capital M. Never "Magic Elk",
 "MagicElk", or "magicelk labs".
 
-Individual apps keep their own casing: **Spyglass**, **Viaduct**.
+Individual apps keep their own casing: **Spyglass**, **Viaduct**, **Lector**.
 
 ## Typography
 
@@ -33,9 +33,11 @@ Every page shares one construction: a near-black canvas, a surface ladder
 hairlines at 7% white, and `--lip: inset 0 1px 0 rgba(255,255,255,.05)` on
 every raised edge instead of a cast shadow.
 
-The two product pages tint the canvas toward their own accent so it reads as
+The product pages tint the canvas toward their own accent so it reads as
 lit rather than stuck on: Viaduct `#070908` (green-black) under teal
-`#2DD4BF`, Spyglass `#0A0908` (brown-black) under brass `#D9B679`.
+`#2DD4BF`, Spyglass `#0A0908` (brown-black) under brass `#D9B679`, Lector
+`#0C0808` (maroon-black) under lectern red `#C0544F`, with `#E58A82` for red
+text (the accent itself is 4.4:1 on the canvas) and vellum `#F8EAD2` ink.
 
 The house page carries no accent at all, and that is the point. It is a shelf:
 every app already has cover art, the covers hold all the colour, and the room
@@ -154,6 +156,14 @@ motion):
 The Threads hero field lives in the root page's own inline script rather than
 motion.js, because no other page uses it.
 
+Lector does not use motion.js. Its scroll acts (clips scrubbed by the wheel,
+the pinned example drum, the keycap pause) run on the scroll-craft engine
+copied into `lector/assets/scrollcraft.{css,js}`, which is never edited;
+the page's own choreography is in `lector/assets/lector.{css,js}`. Its hero
+lamp is React Bits' LightRays ported to plain WebGL, same as Viaduct's
+SideRays, and its headline arrives in Japanese and scrambles into English
+letter by letter. Cabinet Grotesk is self-hosted there (`lector/assets/fonts/`).
+
 Safety contract: an inline head script adds `html.mm` (skipped under
 `prefers-reduced-motion`) and CSS hides `[data-mm]` only under that class;
 motion.js reveals everything, and a 2s failsafe strips the class if GSAP never
@@ -179,12 +189,23 @@ macOS 14+.
 Safari. Runs in Safari's own engine (keeps battery life). Free for 2
 conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
 
+**Lector** — Copy or translate any text on your Mac's screen. ⌘⇧2 copies the
+text under a crosshair; ⌘⇧1 paints the translation over the original, in
+place. Reads Latin, CJK, Cyrillic plus Hebrew, Arabic, the Indic scripts and
+more (Apple Vision + bundled Tesseract); translates on the Mac (Apple
+Translation + offline Opus-MT packs). Free: 100 grabs and 10 translations a
+month. Text $9 one-time (unlimited grabs, 30 translations/month). Translate
+$15 one-time (unlimited, plus live translation in beta). Upgrade $6. macOS 15+.
+
 ## Assets
 
 - `spyglass/assets/spyglass-appicon-dark-320.png` — Spyglass icon.
 - `viaduct/assets/viaduct-icon-dark.png` — Viaduct icon (256px, web).
-- `assets/spyglass-cover.webp` and `assets/viaduct-cover.webp` (1200×630) are
-  the shelf covers on the root page, encoded from the media-kit social cards
+- `lector/assets/lector-appicon-dark-320.png` — Lector icon (favicon, touch
+  icon, manifest); `lector/assets/lector-mark.png` is the lectern alone, for
+  the nav pill.
+- `assets/spyglass-cover.webp`, `assets/viaduct-cover.webp` and
+  `assets/lector-cover.webp` (1200×630) are the shelf covers on the root page, encoded from the media-kit social cards
   with `cwebp -q 86`. A new app needs one at the same size.
 - **The mark** is an elk rack rising from a single stem: two beams sweeping up
   and outward, five prongs a side, joined at one point above a short stem. No
