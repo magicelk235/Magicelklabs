@@ -376,17 +376,32 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(20, 14, 13, .58); }
   .hero h1 { font-size: clamp(2.2rem, 10vw, 2.9rem); }
   .demo__stage { padding-inline: 16px; }
   .grab__stage { padding-inline: 16px; }
-  .grab { --grab-ar: 1200 / 1250; }
-  .demo { --demo-ar: 1; }
   /* Crop the settings comparison to the window and its language chip, so the
      labels stay legible at phone width. Both layers share the crop. */
   .compare { aspect-ratio: 1120 / 780; }
   .slot.compare img { position: absolute; max-width: none; width: 142.857%; height: 128.205%; left: -21.429%; top: -11.538%; }
-  .peak__media :is(video, img) { object-position: 0 0; }
-  .peak__copy { inset-inline: 16px; bottom: 48px; }
   .instead__line { gap: 16px; }
   .row { grid-template-columns: 1fr; gap: 6px; }
   .foot { justify-content: center; text-align: center; }
+}
+/* Full bleed on a screen taller than 4:3, the newspaper would be cropped to a
+   strip of the page, and a phone on its side leaves too little height for it.
+   Frame it at its own shape instead, with the copy beside or beneath it. */
+@media (max-aspect-ratio: 4 / 3), (max-height: 520px) and (orientation: landscape) {
+  .peak__stage { display: grid; align-content: center; gap: 28px; padding: 84px 23px 24px; }
+  .peak__media {
+    position: relative; inset: auto; aspect-ratio: 1556 / 1080;
+    border-radius: var(--r-inner); overflow: hidden; background: var(--elevated);
+    box-shadow: 0 0 0 6px var(--surface), 0 0 0 7px var(--hair);
+  }
+  .peak__scrim { display: none; }
+  .peak__copy { position: static; inset: auto; margin: 0; max-width: none; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .peak__stage { grid-template-columns: 7fr 5fr; align-items: center; padding: 80px 31px 16px; }
+  .peak__media { width: min(100%, (100svh - 110px) * 1556 / 1080); justify-self: center; }
+  .peak__copy h2 { font-size: 1.9rem; }
+  .peak__copy p { margin-top: 12px; font-size: 15px; line-height: 1.55; }
 }
 
 /* The nav's logo and Buy button are smaller than a fingertip; widen what

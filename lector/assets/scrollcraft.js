@@ -42,10 +42,10 @@
    ---------------------------------------------------------------------------
      data-sc-scrub            on <video>. p scrubs currentTime. Blob-loaded, so
                               it seeks without needing HTTP range support.
-                              data-sc-src-mobile is fetched instead at 720px and
-                              narrower, the same breakpoint as the page's
-                              <picture> posters, since phone clips are recut to
-                              a portrait frame that a wide stage would crop.
+                              data-sc-src-mobile is fetched instead on a touch
+                              screen or at 860px and narrower. It must be the
+                              same frame at a lower resolution, not a recrop,
+                              because the stage keeps the desktop shape.
      data-sc-sequence="a/{i}.webp:120:1"
                               on <canvas>. p scrubs an image sequence
                               (path template : frameCount : startIndex).
@@ -148,7 +148,6 @@
   var smallMQ = matchMedia('(max-width: 860px)');
   var coarse = matchMedia('(hover: none) and (pointer: coarse)').matches;
   var isMobile = function () { return coarse || smallMQ.matches; };
-  var phoneClipMQ = matchMedia('(max-width: 720px)');
 
   var clamp = function (x, a, b) { return x < a ? a : x > b ? b : x; };
   var clamp01 = function (x) { return clamp(x, 0, 1); };
@@ -631,7 +630,7 @@
       // Under reduced motion the clip is never fetched. The poster holds the
       // frame and the copy still cues, so the page reads without the decode.
       if (reduce || !V || V.loading) return;
-      var src = (phoneClipMQ.matches && V.el.getAttribute('data-sc-src-mobile')) ||
+      var src = (isMobile() && V.el.getAttribute('data-sc-src-mobile')) ||
                 V.el.getAttribute('data-sc-src') || V.el.currentSrc || V.el.src;
       if (!src) return;
       V.loading = true;
