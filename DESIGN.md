@@ -119,6 +119,16 @@ price belongs on the product page where you can act on it.
 To add an app, copy one `<a class="book">` and change the cover, the name, the
 sentence, and the href. Nothing else. The grid reflows on its own.
 
+### More from Magicelk Labs
+
+Each product page ends with the other apps as shelf covers, between the
+closing band and the footer, so a visitor on one app can find the rest.
+`assets/footer.js` renders it when the script tag carries `data-more="1"`,
+from its own `APPS` list minus the app named by `data-product`. Same cover,
+name and sentence as the shelf; hover is a 2px lift. Legal pages and the
+extension guides do not carry it. A new app is one entry in `APPS` plus one
+`<a class="book">` on the root shelf. The footer's "Magicelk Labs" links home.
+
 ## Motion
 
 Apple-grade scroll choreography via GSAP 3.13 (+ ScrollTrigger + SplitText,
