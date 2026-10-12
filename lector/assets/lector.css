@@ -371,7 +371,7 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(20, 14, 13, .58); }
 @media (max-width: 720px) {
   .nav { top: 10px; }
   .nav-pill { height: 50px; }
-  .brand span, .nav-download { display: none; }
+  .nav-download { display: none; }
   .hero { padding: 96px 20px 72px; }
   .hero h1 { font-size: clamp(2.2rem, 10vw, 2.9rem); }
   .demo__stage { padding-inline: 16px; }
