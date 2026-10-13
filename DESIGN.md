@@ -47,9 +47,11 @@ buttons, and the mark are ivory. Adding an app adds a cover, so it adds
 colour without touching the theme.
 
 **Committed color, not timid accents.** Viaduct's brand surfaces are drenched
-in deep teal (`linear-gradient(168deg,#0F4D48,#093732)` — the `.hero-band` /
-`.pro-panel` / `.cta` gradient). It carries the hero and the Pro pricing
-panel. Spyglass keeps its own teal band
+in deep teal (`linear-gradient(168deg,#0F4D48,#093732)`, the `--band-top` /
+`--band-bot` pair in `viaduct/assets/viaduct.css`). It floods the store act
+the moment the install button flips, and carries the Pro pricing panel. The
+rest of the page stays on the green-black canvas, so the flood is the one
+colour event on the page. Spyglass keeps its own teal band
 (`--teal-top`/`--teal-bot`) with brass CTAs. On-band text: near-white ink
 `#F2FBF9`, body `#C6E3DE`, dim `#93C2BB`, bright accent `#6EE0D1`; on-band
 primary buttons are white with dark-teal text.
@@ -77,8 +79,9 @@ scheme is a bug.
   fragment program, recoloured to the page's own palette, parked by an
   IntersectionObserver whenever the section is off screen or the tab is in the
   background. Viaduct runs SideRays in the hero; the root page runs Threads in
-  ivory at half opacity. Neither one follows the cursor. The hero is something
-  you read past, so the field drifts on its own clock and ignores the pointer.
+  ivory at half opacity; Lector runs LightRays. None of them follows the
+  cursor. The hero is something you read past, so the field drifts on its
+  own clock and ignores the pointer.
 - **Glass nav pill.** Every page's nav is the same floating pill with the
   GlassSurface displacement map (`#nav-glass`), Chromium-gated behind
   `html.glassy`, plain `backdrop-filter: blur()` everywhere else.
@@ -133,9 +136,9 @@ extension guides do not carry it. A new app is one entry in `APPS` plus one
 
 ## Motion
 
-Apple-grade scroll choreography via GSAP 3.13 (+ ScrollTrigger + SplitText,
-jsDelivr CDN) driven by the shared runtime **`/assets/motion.js`**. Pages opt
-elements in with data attributes:
+Spyglass and the root page run Apple-grade scroll choreography via GSAP 3.13
+(+ ScrollTrigger + SplitText, jsDelivr CDN) driven by the shared runtime
+**`/assets/motion.js`**. Pages opt elements in with data attributes:
 
 - `data-mm="lines"` masked line-by-line headline reveal (SplitText);
   `data-mm="rise" / "fade" / "media"` for blocks and screenshots;
@@ -143,11 +146,10 @@ elements in with data attributes:
 - `data-mm-stagger` staggers direct children; `data-mm-parallax` slow drift;
   `data-mm-counter` count-up numerals.
 - `data-mm-replay` on a section: entrances inside re-run every time it
-  scrolls back into view (used on Viaduct's compat layer); default is once.
+  scrolls back into view; default is once.
 - `data-mm-pin` + `data-mm-pin-stage/-item/-panel`: pinned walkthroughs
-  (Viaduct's Drop → Convert → Done, Spyglass's file-type gallery). Pin engages
-  only ≥1024px + fine pointer; below that the CSS fallback is a static stack
-  with per-panel captions.
+  (Spyglass's file-type gallery). Pin engages only ≥1024px + fine pointer;
+  below that the CSS fallback is a static stack with per-panel captions.
 
 Continuous "premium" layer (all fine-pointer-gated, all dead under reduced
 motion):
@@ -168,13 +170,64 @@ motion):
 The Threads hero field lives in the root page's own inline script rather than
 motion.js, because no other page uses it.
 
-Lector does not use motion.js. Its scroll acts (clips scrubbed by the wheel,
-the pinned example drum, the keycap pause) run on the scroll-craft engine
-copied into `lector/assets/scrollcraft.{css,js}`, which is never edited;
-the page's own choreography is in `lector/assets/lector.{css,js}`. Its hero
-lamp is React Bits' LightRays ported to plain WebGL, same as Viaduct's
-SideRays, and its headline arrives in Japanese and scrambles into English
-letter by letter. Cabinet Grotesk is self-hosted there (`lector/assets/fonts/`).
+Lector and Viaduct do not use motion.js. Their scroll acts run on the
+scroll-craft engine, copied into each app's `assets/scrollcraft.{css,js}` and
+never edited; each page's own choreography is in its own
+`assets/<app>.{css,js}`. The engine publishes each act's progress as `--sc-p`
+and the pages drive their bespoke moves from that in CSS.
+
+Lector: clips scrubbed by the wheel, the pinned example drum, the keycap
+pause. Its hero lamp is React Bits' LightRays ported to plain WebGL, and its
+headline arrives in Japanese and scrambles into English letter by letter.
+Cabinet Grotesk is self-hosted there (`lector/assets/fonts/`).
+
+Viaduct follows one real extension, Dark Reader, through the page:
+
+- **Hero:** a centred headline under SideRays (React Bits, plain WebGL, in
+  `viaduct.js`), Download and Get Pro. No product imagery; a layered
+  two-screenshot hero was tried and rejected.
+- **The store act (`#how`, pinned, the page's peak):** the real Dark Reader
+  listing, captured from headless Chrome, which gets the same "Switch to
+  Chrome?" card, banner and disabled button that Safari does. The capture is
+  cut into planes: header, banner, listing, and the card. The install button
+  is markup over the space the capture left empty. The card is dismissed, the
+  button lifts out of the page, its word rolls from Chrome to Safari letter by
+  letter, the teal band floods in, the button settles back, and then the
+  banner fades and the listing (with the button) moves up into its place,
+  because with Viaduct installed the page has nothing to nag about. All of it
+  is CSS keyed off `--sc-p`; the timings are listed at the top of the `.flip`
+  block in `viaduct.css`. `viaduct.js` measures where the lifted button
+  travels to and each word's width, so the label stays centred while the
+  cell narrows from "Chrome" to "Safari".
+
+- **The install (after the store act, scrubbed):** the media kit's
+  `viaduct-install-from-chrome-web-store.mp4`, scrubbed by the wheel: Add to
+  Safari clicked, the build, "Installed", Remove from Safari, Dark Reader's
+  popup. A scrub clip plays across the stage's whole time on screen, so the
+  clip holds its first frame 3.3s and its last 4.4s longer than the
+  recording; with `data-sc-span="3"` that puts the click at the start of the
+  pin (p ≈ 0.05) and the popup near its end (p ≈ 0.89), and the captions are
+  keyed to those moments. Change the span and the holds have to be redone.
+- **Compatibility:** each break is struck through and answered as its row
+  enters the viewport (`data-sc-in`).
+- **Now try yours (`#try`):** the reader drops a .crx, a .zip or a folder
+  (onto the plate, in any state) or picks one of six sample extensions beside
+  it. `viaduct/assets/inspect.js` reads a dropped package in memory (ZIP
+  central directory, CRX2/3 headers, `DecompressionStream`); the samples were
+  read by the same script ahead of time, because the page can't fetch from
+  the Web Store (`viaduct/assets/samples/`, see the README). The plate shows
+  the listing, flips its button the same way, then four counts (permissions,
+  site access, Chrome APIs, files) and the names behind them as tags, long
+  lists cut short with a "+N more" button, and anything Viaduct will patch.
+  Nothing is uploaded.
+- **Features:** the heading sticks while the numbered rows scroll past it.
+  The grid must stretch its items (no `align-items: start`), or the sticky
+  heading's container is no taller than the heading and it never moves.
+
+Under reduced motion the hero rays are off, the flip still happens as a
+crossfade (colour, band and word change with scroll; nothing travels), the
+listing moves up in one step rather than sliding, and the install clip never
+loads: its still is the last frame, with the popup open.
 
 Safety contract: an inline head script adds `html.mm` (skipped under
 `prefers-reduced-motion`) and CSS hides `[data-mm]` only under that class;
@@ -247,8 +300,27 @@ $15 one-time (unlimited, plus live translation in beta). Upgrade $6. macOS 15+.
     `viaduct-main-dark.webp` is the exception: re-encoded at 1400×848, cropped
     to the window rect and trimmed below the Choose extension button, because
     the app's own empty space below it was half the height of the slot.
-  - `viaduct/assets/viaduct-store-install.mp4` (1600w, ~1.9 MB) + poster: the
-    full uncut Chrome-Web-Store-to-Safari install capture.
+  - `viaduct/assets/viaduct-store-install.mp4` (900×614) + poster: the old
+    uncut Chrome-Web-Store-to-Safari install capture. Not on the page: the
+    store and the app have both changed since it was recorded.
+  - `viaduct/assets/viaduct-install.mp4` (1440×810) and `-m.mp4` (854×480):
+    the media kit's `videos/viaduct-install-from-chrome-web-store.mp4`, padded
+    and encoded for scrubbing at 20fps, no audio:
+    `ffmpeg -i <src> -an -vf "tpad=start_mode=clone:start_duration=3.3:stop_mode=clone:stop_duration=4.4,fps=20,scale=1440:810:flags=lanczos,format=yuv420p" -c:v libx264 -preset slow -tune stillimage -crf 25 -g 10 -keyint_min 10 -sc_threshold 0 -movflags +faststart viaduct-install.mp4`
+    (phone: `scale=854:480`, `-crf 27 -g 8 -keyint_min 8`).
+    `viaduct-install-poster.webp` and `viaduct-install-end.webp` are its first
+    and last frames.
+  - `viaduct/assets/viaduct-store-{top,banner,body}.webp` (2800 wide),
+    `viaduct-store-listing-m.webp` (1136×362, the title block for phones) and
+    `viaduct-store-nag.webp` (696×437): the Dark Reader listing on the Chrome
+    Web Store, captured at 1440×900 @2x in headless Chrome, which the store
+    treats like Safari, with the card and the install button hidden. `top` and
+    `banner` are rows 0-224 and 224-480 of that shot; `body` is rows 224-1160
+    of a second shot with the banner removed from layout, so the listing in it
+    sits 128 CSS px higher. The card is cut from a third shot at its own box.
+    Every position in the `.flip` CSS (plane offsets, the 128px shift, the
+    button and the card) is in units of that 1400px-wide crop, so a re-capture
+    has to re-measure them.
   - `spyglass/assets/spyglass-demo-1440.{webm,mp4}` (1440×1060) is the Finder
     screen recording. Cut its poster straight out of the encode at the same
     size — `ffmpeg -ss 3 -i spyglass-demo-1440.mp4 -frames:v 1 frame.png`, then
