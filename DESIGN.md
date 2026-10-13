@@ -48,8 +48,8 @@ colour without touching the theme.
 
 **Committed color, not timid accents.** Viaduct's brand surfaces are drenched
 in deep teal (`linear-gradient(168deg,#0F4D48,#093732)` — the `.hero-band` /
-`.pro-panel` / `.cta` gradient). It carries the hero, the Pro pricing panel,
-and the closing CTA. Spyglass keeps its own teal band
+`.pro-panel` / `.cta` gradient). It carries the hero and the Pro pricing
+panel. Spyglass keeps its own teal band
 (`--teal-top`/`--teal-bot`) with brass CTAs. On-band text: near-white ink
 `#F2FBF9`, body `#C6E3DE`, dim `#93C2BB`, bright accent `#6EE0D1`; on-band
 primary buttons are white with dark-teal text.
@@ -67,8 +67,11 @@ scheme is a bug.
 - **Bare numerals.** Process steps use large bare Cabinet Grotesk numerals in
   the accent color, and index rows use small mono numbers. Never numbers
   inside circles or chips.
-- **Band bookends.** Product pages open and close on a drenched brand band.
-  The house page has none; it ends on the shelf.
+- **No closing band.** Product pages end on the FAQ, then the other apps, then
+  the footer. The closing CTA band each page used to have (centered headline,
+  Download and Buy) was cut: it repeated the hero's buttons, and the nav pill
+  keeps Buy in reach at every scroll position. Do not add one back. The house
+  page ends on the shelf.
 - **Ported ambients, not decoration.** WebGL backgrounds are lifted from React
   Bits onto plain WebGL (no React, no ogl): one fullscreen triangle and one
   fragment program, recoloured to the page's own palette, parked by an
@@ -106,7 +109,6 @@ scheme is a bug.
   approach paragraph, closing CTA band) restated the pricing or the pitch a
   second time and was cut. The whole page is 84 words.
 - Section headers: left-aligned h2, optional hairline `border-top` rule above.
-  Centered composition is reserved for band CTAs on the product pages.
 
 ### The shelf
 
@@ -121,8 +123,8 @@ sentence, and the href. Nothing else. The grid reflows on its own.
 
 ### More from Magicelk Labs
 
-Each product page ends with the other apps as shelf covers, between the
-closing band and the footer, so a visitor on one app can find the rest.
+Each product page ends with the other apps as shelf covers, between the FAQ
+and the footer, so a visitor on one app can find the rest.
 `assets/footer.js` renders it when the script tag carries `data-more="1"`,
 from its own `APPS` list minus the app named by `data-product`. Same cover,
 name and sentence as the shelf; hover is a 2px lift. Legal pages and the

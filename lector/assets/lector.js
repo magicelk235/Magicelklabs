@@ -210,19 +210,4 @@
     syncRays();
     requestAnimationFrame(function () { cv.classList.add('lit'); });
   })();
-
-  /* ---- Band light --------------------------------------------------------------
-     The two orbs in the closing band drift only while the band is on screen. */
-  (function () {
-    var band = document.getElementById('band');
-    if (!band) return;
-    if (reduce) { band.classList.add('lit'); return; }
-    if (!('IntersectionObserver' in window)) { band.classList.add('lit'); return; }
-    new IntersectionObserver(function (es) {
-      var on = es[0].isIntersecting;
-      band.classList.toggle('parked', !on);
-      if (on) band.classList.add('lit');
-    }).observe(band);
-    document.addEventListener('visibilitychange', function () { band.classList.toggle('parked', document.hidden); });
-  })();
 })();

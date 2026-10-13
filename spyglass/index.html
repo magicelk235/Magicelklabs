@@ -143,15 +143,6 @@
     mask-composite: intersect;
   }
 
-  /* One quiet brass bloom, used by the closing CTA. */
-  .brass-glow {
-    position: absolute; left: 50%; bottom: 18%; transform: translateX(-50%);
-    width: min(1150px, 140%); aspect-ratio: 2.1/1; pointer-events: none;
-    background: radial-gradient(ellipse at center, rgba(217,182,121,.20), rgba(140,105,52,.09) 45%, transparent 72%);
-    filter: blur(30px);
-  }
-  @media (max-width: 700px) { .brass-glow { width: 190%; } }
-
   /* ───────────────────────── Nav: a floating glass pill ───────────────────────── */
   .nav-pill {
     position: relative;
@@ -584,21 +575,6 @@
           <svg class="chev w-5 h-5 shrink-0 mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
         <p class="body text-[14px] leading-relaxed mt-3">The info card works fully offline. Rendered previews need a connection to fetch the document from Drive, and if the network is down or slow, Spyglass falls back to the info card so nothing hangs or comes up blank.</p>
       </details>
-    </div>
-  </div>
-</section>
-
-<!-- FINAL CTA -->
-<section class="relative py-28 sm:py-36 px-5 sm:px-8 overflow-hidden border-t hair">
-  <!-- one quiet echo of the hero's light, no structure this time -->
-  <div class="brass-glow" aria-hidden="true"></div>
-  <div class="max-w-3xl mx-auto text-center relative z-10" data-mm-parallax=".05">
-    <div>
-      <h2 data-mm="lines" class="text-[clamp(2rem,5vw,3.4rem)] leading-[1.04] mb-5">Make the Space bar<br />work on Drive files.</h2>
-      <div data-mm="rise" data-mm-delay=".1" class="flex flex-wrap items-center gap-3 justify-center">
-        <a class="btn-ghost text-[16px] px-7 py-3.5 inline-flex items-center justify-center" href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg">Download</a>
-        <a class="btn-brass text-[16px] px-7 py-3.5 inline-flex items-center justify-center" href="https://magicelk235.gumroad.com/l/spyglass?wanted=true">Buy</a>
-      </div>
     </div>
   </div>
 </section>

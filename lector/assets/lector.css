@@ -24,7 +24,6 @@
   --red: #C0544F;     --red-press: #B04A45; --on-red: #FFFFFF;
   --red-text: #E58A82;
   --lamp: #FFE1C4;
-  --band-top: #3E1C1A; --band-bot: #260A10;
   --hair: rgba(255, 255, 255, .075); --hair-soft: rgba(255, 255, 255, .045);
   --lip: inset 0 1px 0 rgba(255, 255, 255, .055);
   --r-card: 12px; --r-inner: 8px; --r-pill: 12px;
@@ -100,7 +99,7 @@ kbd {
 h2 .keys kbd { font-size: .62em; color: var(--red-text); }
 
 /* -------------------------------------------------------------- buttons -- */
-.btn-red, .btn-ghost, .btn-paper {
+.btn-red, .btn-ghost {
   display: inline-flex; align-items: center; justify-content: center;
   font-weight: 600; text-decoration: none; white-space: nowrap; border: 0; cursor: pointer;
   font-family: inherit; line-height: 1.2;
@@ -118,12 +117,10 @@ h2 .keys kbd { font-size: .62em; color: var(--red-text); }
   border-radius: var(--r-pill); box-shadow: var(--lip);
   transition: transform .22s cubic-bezier(.2, .8, .2, 1), border-color .2s, background .2s;
 }
-.btn-paper { background: #FFF8F4; color: #3A0F0E; border-radius: var(--r-pill); transition: transform .22s cubic-bezier(.2, .8, .2, 1), background .2s; }
 /* Touch screens keep :hover after a tap, which would leave a button lifted. */
 @media (hover: hover) {
   .btn-red:hover { background: var(--red-press); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 6px 26px -8px rgba(192, 84, 79, .55); }
   .btn-ghost:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .2); transform: translateY(-1px); }
-  .btn-paper:hover { background: #FFFFFF; transform: translateY(-1px); }
 }
 .btn-red:active, .btn-ghost:active { transform: translateY(0) scale(.99); }
 
@@ -325,26 +322,6 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(20, 14, 13, .58); }
 .faq details[open] .chev { transform: rotate(180deg); }
 .faq details p { margin: 12px 0 0; font-size: 15px; line-height: 1.65; }
 
-/* ------------------------------------------------------------------ band --
-   The drenched closing band. Two soft lights drift inside it on their own
-   clock: band luminance, not floating decoration, parked when off screen. */
-.band { position: relative; overflow: hidden; padding: clamp(112px, 14vw, 144px) 24px; background: linear-gradient(168deg, var(--band-top), var(--band-bot)); }
-.band__light { position: absolute; inset: 0; pointer-events: none; }
-.band__light i {
-  position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255, 190, 170, .14), transparent 70%);
-  filter: blur(40px); opacity: 0;
-}
-.band__light i:first-child { left: -20vmax; top: -30vmax; animation: orb-a 26s ease-in-out infinite alternate; }
-.band__light i:last-child { right: -24vmax; bottom: -34vmax; animation: orb-b 32s ease-in-out infinite alternate; }
-.band.lit .band__light i { opacity: 1; }
-.band.parked .band__light i { animation-play-state: paused; }
-@keyframes orb-a { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(14vmax, 10vmax, 0); } }
-@keyframes orb-b { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-12vmax, -8vmax, 0); } }
-.band__inner { position: relative; text-align: center; }
-.band h2 { color: #FBF2EE; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.04; margin-bottom: 32px; }
-.band__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-
 /* ---------------------------------------------------------------- footer -- */
 .foot { border-top: 1px solid var(--hair); padding: 40px 24px 56px; font-size: 14px; color: var(--mute); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; max-width: 1080px; margin-inline: auto; }
 .foot nav { display: flex; flex-wrap: wrap; gap: 20px; }
@@ -415,8 +392,7 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(20, 14, 13, .58); }
 @media (prefers-reduced-motion: reduce) {
   .rays { display: none; }
   .rise, .tl-in, .tl .hit { animation: none; }
-  .band__light i { animation: none; opacity: 1; }
   .peak__media .done { opacity: 1; }
   .drum li { transform: none; }
-  .btn-red, .btn-ghost, .btn-paper { transition: none; }
+  .btn-red, .btn-ghost { transition: none; }
 }
