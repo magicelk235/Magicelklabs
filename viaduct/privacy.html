@@ -61,7 +61,7 @@
     footer { color: var(--mute); font-size: 14px; }
   </style>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Viaduct","description":"Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions entirely on your Mac. It collects no personal data.","url":"https://magicelklabs.com/viaduct/privacy.html","inLanguage":"en","dateModified":"2026-07-04","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+  {"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Viaduct","description":"Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions entirely on your Mac. It collects no personal data.","url":"https://magicelklabs.com/viaduct/privacy.html","inLanguage":"en","dateModified":"2026-10-17","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
   </script>
 </head>
 <body>
@@ -69,7 +69,7 @@
     <a class="back" href="/viaduct/">&larr; Viaduct</a>
 
     <h1>Privacy Policy</h1>
-    <p class="meta">Last updated: July 4, 2026</p>
+    <p class="meta">Last updated: October 17, 2026</p>
 
     <p>
       Viaduct is a native macOS app that converts Google Chrome extensions into
@@ -81,7 +81,9 @@
     <p>
       Viaduct collects no personal data. All conversion happens locally on your
       Mac. Nothing about the extensions you convert, and nothing about you, is
-      sent to us.
+      sent to us. The one exception is a few anonymous usage counts that go
+      along with your purchase when you click "Buy a license" in the app (see
+      below).
     </p>
 
     <h2>What runs on your Mac</h2>
@@ -92,22 +94,46 @@
       and a bundled copy of the Node.js runtime. The extension source, the
       converted output, and your signing identity never leave your Mac.
     </p>
+    <p>
+      When you convert an extension that is also installed in Chrome or another
+      Chromium browser (Brave, Edge, Arc, Vivaldi, Opera, Chromium), Viaduct
+      reads that extension's saved settings from the browser's profile folder so
+      it can bring them over. Import from Chrome reads the same folders to list
+      the extensions you have. Recent versions of macOS ask for your permission
+      first, and none of it leaves your Mac.
+    </p>
 
     <h2>Data we collect</h2>
     <p>
-      None. Viaduct has no analytics, no telemetry, no accounts, and no servers
-      that receive your data.
+      Viaduct has no analytics, no telemetry, no accounts, and no servers that
+      receive your data. When you click "Buy a license" inside the app, the
+      Gumroad checkout link it opens carries the values below to Gumroad. If you
+      complete the purchase, Gumroad passes them to us with the sale:
+    </p>
+    <ul>
+      <li>how many free conversions you used;</li>
+      <li>how many converted extensions you have installed;</li>
+      <li>how many days ago Viaduct was first set up on your Mac;</li>
+      <li>whether you clicked from the paywall or from Settings; and</li>
+      <li>your Viaduct and macOS version numbers.</li>
+    </ul>
+    <p>
+      That is all the link carries. No extension names, file paths, or identifiers are
+      included, and nothing is sent unless you click that link.
     </p>
 
     <h2>Network access</h2>
     <p>
-      Viaduct works offline for conversion. It may reach the network only to:
+      Converting runs on your Mac. Viaduct reaches the network only to:
     </p>
     <ul>
-      <li>download the Node.js runtime and developer components it needs, from their official sources; and</li>
+      <li>download its conversion engine from npm on first launch, and check npm for a newer version each time it starts;</li>
+      <li>check for app updates once a day, after you allow it on first launch;</li>
+      <li>download an extension from the Chrome Web Store when you click "Add to Safari", and, if you turn on weekly updates in Pro, check the store once a week for new versions of those extensions;</li>
+      <li>check your license key with Gumroad when you activate Pro and when Viaduct starts; and</li>
       <li>open external links (such as this page or the store) in your browser when you click them.</li>
     </ul>
-    <p>These requests contain no personal information about you.</p>
+    <p>Apart from the license key sent to Gumroad, these requests contain no personal information about you.</p>
 
     <h2>Payments</h2>
     <p>
@@ -120,8 +146,7 @@
 
     <h2>Third parties</h2>
     <p>
-      Aside from Gumroad for payment, Viaduct shares no data with third parties,
-      because it collects none to share.
+      Aside from Gumroad for payment, Viaduct shares no data with third parties.
     </p>
 
     <h2>Children</h2>
