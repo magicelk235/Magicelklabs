@@ -68,7 +68,7 @@ footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--hair);color:v
 footer a{text-decoration:none}
 </style>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Lector","description":"How Lector handles your screen and your data: it reads and translates on your Mac, keeps nothing you capture, and has no analytics.","url":"https://magicelklabs.com/lector/privacy.html","inLanguage":"en","dateModified":"2026-10-07","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Lector","description":"How Lector handles your screen and your data: it reads and translates on your Mac, keeps nothing you capture, and has no analytics.","url":"https://magicelklabs.com/lector/privacy.html","inLanguage":"en","dateModified":"2026-10-17","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
 </script>
 </head>
 <body>
@@ -83,7 +83,7 @@ footer a{text-decoration:none}
   </header>
 
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: October 7, 2026</p>
+  <p class="updated">Last updated: October 17, 2026</p>
 
   <p>Lector is a menu bar app for macOS that copies and translates text from your screen. This policy explains what it captures, what it keeps, and what it sends. In short: everything happens on your Mac, and nothing you capture is kept or sent anywhere.</p>
 
@@ -91,17 +91,20 @@ footer a{text-decoration:none}
   <ul>
     <li><strong>Only when you ask.</strong> Lector captures the screen only when you press one of its shortcuts (<code>⌘⇧2</code>, <code>⌘⇧1</code> or <code>⌘⇧9</code> unless you've changed them), and it uses macOS's own screenshot tool to do it. That's why it needs the Screen Recording permission. It doesn't need Accessibility.</li>
     <li><strong>Grabs and translations.</strong> The capture goes to a private temporary file that Lector reads and deletes straight away.</li>
-    <li><strong>Live translation.</strong> Lector watches only the area you drew, only until you stop it, and reads it in memory without saving anything.</li>
+    <li><strong>Live translation.</strong> Lector watches only the area you drew, only until you stop it, and reads it in memory without saving anything. When the area is inside a window, Lector reads only that window, so nothing that covers it gets read.</li>
   </ul>
 
   <h2>How your text is read and translated</h2>
-  <p>Everything happens on your Mac. Lector reads the text with Apple's Vision and a bundled copy of Tesseract, and translates it with Apple's on-device Translation or an offline Opus-MT language pack. Text Lector has translated since you opened it is kept in memory so it can show up again straight away. It's gone when Lector quits.</p>
+  <p>Everything happens on your Mac. Lector reads the text with Apple's Vision and a bundled copy of Tesseract, and translates it with Apple's on-device Translation or an offline Opus-MT language pack. Look Up shows what your Mac's own dictionaries say about a word. Text Lector has translated since you opened it is kept in memory so it can show up again straight away, and so are the names it notices turning up often. Both are gone when Lector quits.</p>
   <p>Nothing you capture is kept or sent anywhere, and there are no analytics.</p>
 
   <h2>What Lector stores</h2>
   <p>Lector stores a few things on your Mac, and never the text itself:</p>
   <ul>
     <li><strong>Settings</strong>, such as the language you picked for an app and the last few languages you translated between, so it can offer them first.</li>
+    <li><strong>Each app's glossary</strong>: the terms you chose to keep as written or always translate one way.</li>
+    <li><strong>Where live translation watched in each app</strong>, so the next live translation there can start in the same place. This is the area's position in the window, not what was in it.</li>
+    <li><strong>The day Lector first ran</strong> on this Mac.</li>
     <li><strong>How many grabs and translations you've made this month</strong>, to apply your plan's limits. The counts start over on the first of each month.</li>
     <li><strong>Your license key</strong>, if you enter one, with the email address Gumroad has for that purchase and the date Gumroad last confirmed it. This lives in Lector's Application Support folder.</li>
     <li><strong>Language packs</strong> you've downloaded, also in Lector's Application Support folder.</li>
@@ -112,9 +115,10 @@ footer a{text-decoration:none}
   <ul>
     <li><strong>Hugging Face, for language packs.</strong> A pack is 100 to 250 MB. Lector downloads one on its own only when it's the only way to translate a language, because Apple's Translation doesn't support it. If you turn on Download packs for instant drafts in Settings › Translation, it downloads packs for other languages too.</li>
     <li><strong>Gumroad, for your license.</strong> If you enter a license key, Lector sends that key to Gumroad to check it, when you enter it and again at each launch. A key Gumroad has confirmed keeps working for 30 days without a connection.</li>
+    <li><strong>Gumroad, when you click Buy.</strong> The Buy and Upgrade buttons open Gumroad's checkout in your browser. The link carries where in Lector you clicked, your current plan, how many grabs and translations you've made this month, and roughly how long Lector has been installed (under 2 days, up to a week, up to a month, or longer). If you buy, Gumroad passes these to us with the sale. Nothing is sent unless you click Buy.</li>
     <li><strong>GitHub, for updates.</strong> From the second launch, Lector asks whether it may check for updates. If you allow it, Lector asks GitHub once a day whether there's a new version. You can turn this off in Settings › General.</li>
   </ul>
-  <p>None of these requests carries anything you captured.</p>
+  <p>None of these requests carries anything you captured. Apart from the license key and the Buy link, they carry nothing about you.</p>
 
   <h2>Payments</h2>
   <p>The Text and Translate plans are sold through <a href="https://magicelk235.gumroad.com/l/lector" rel="noopener">Gumroad</a>, which processes your purchase and payment. We never see or store your card details. Gumroad's handling of your data is governed by <a href="https://gumroad.com/privacy" rel="noopener">Gumroad's privacy policy</a>.</p>
@@ -122,7 +126,8 @@ footer a{text-decoration:none}
   <h2>Removing what Lector stores</h2>
   <ul>
     <li>Settings › License removes your license key from this Mac.</li>
-    <li>Settings › Translation lists each language pack with its size and can remove any of them. It also lists the languages Lector remembers for each app, which you can change or remove.</li>
+    <li>Settings › Translation lists each language pack with its size and can remove any of them. It also lists the languages Lector remembers for each app, which you can change or remove, and the apps with a remembered live translation area, which you can forget.</li>
+    <li>Settings › Glossary lists each app's terms, and you can remove any of them.</li>
   </ul>
 
   <h2>Children</h2>
