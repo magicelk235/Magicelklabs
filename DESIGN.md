@@ -84,7 +84,12 @@ scheme is a bug.
   own clock and ignores the pointer.
 - **Glass nav pill.** Every page's nav is the same floating pill with the
   GlassSurface displacement map (`#nav-glass`), Chromium-gated behind
-  `html.glassy`, plain `backdrop-filter: blur()` everywhere else.
+  `html.glassy`, plain `backdrop-filter: blur()` everywhere else. The product
+  pages draw it as a 16px-cornered bar; the root page keeps the full capsule.
+  Every Viaduct page (product, extension guides, legal) loads the one copy in
+  `viaduct/assets/nav.{css,js}`; `nav.js` injects the filter itself, so a page
+  only needs the `<header id="nav" class="nav">` markup, the two files, and
+  `.btn-teal`/`.btn-ghost` of its own.
 - **Film grain.** `body::after` at roughly 3% opacity over the whole page, so
   large near-black areas do not band.
 
@@ -105,8 +110,13 @@ scheme is a bug.
 
 ## Layout
 
-- Content column: `max-width:1120px` (root), `1080px` (the legal pages), or
+- Content column: `max-width:1120px` (root), `680px` (the legal pages), or
   `max-w-6xl` (product pages); 24px side padding.
+- Legal pages (privacy, terms, security, license) wear their product's
+  tokens, not a neutral grey: the same canvas, Inter body, Cabinet Grotesk
+  headings, accent links and grain as the product page. Viaduct's carry the
+  product nav; Lector's still use a back link with Download and Buy pills. No
+  `<hr>` before the footer; footer.js draws its own rule.
 - Root: a headline, one line under it, and the shelf. Nothing else. Every
   other block that has been tried here (stat ledger, fact rail, tenet list,
   approach paragraph, closing CTA band) restated the pricing or the pitch a
@@ -252,7 +262,8 @@ macOS 14+.
 **Viaduct** — Run Chrome extensions in Safari, natively. Drop in a `.zip`,
 `.crx`, or unpacked folder; Viaduct converts, signs, and installs it into
 Safari. Runs in Safari's own engine (keeps battery life). Free for 2
-conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
+conversions, which Viaduct removes after 7 days; then $19 one-time (unlimited,
+keeps extensions installed, opt-in weekly Web Store updates). macOS 13+. Beta.
 
 **Lector** — Copy or translate any text on your Mac's screen. ⌘⇧2 copies the
 text under a crosshair; ⌘⇧1 paints the translation over the original, in

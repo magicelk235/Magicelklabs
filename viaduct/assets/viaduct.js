@@ -1,12 +1,11 @@
 /* Viaduct page behaviour on top of the scrollcraft engine. The engine owns
    scroll and publishes each act's progress as --sc-p; the store act's
-   choreography is CSS reading that value. This file owns the nav, the glass,
-   the letter split and word widths for the rolling button, where the lifted
-   button travels to, the extension plate, and the hero's light rays. */
+   choreography is CSS reading that value. This file owns the letter split
+   and word widths for the rolling button, where the lifted button travels
+   to, the extension plate, and the hero's light rays. The nav is nav.js. */
 (function () {
   'use strict';
 
-  var root = document.documentElement;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---- Rolling words ----------------------------------------------------------
@@ -56,57 +55,6 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measureRolls(document); });
 
   ScrollCraft.mount(document.body);
-
-  /* ---- Nav weight on scroll ---------------------------------------------------- */
-  var nav = document.getElementById('nav');
-  if (nav && 'IntersectionObserver' in window) {
-    var top = document.createElement('div');
-    top.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:12px;pointer-events:none';
-    document.body.prepend(top);
-    new IntersectionObserver(function (es) { nav.classList.toggle('scrolled', !es[0].isIntersecting); }).observe(top);
-  }
-
-  /* ---- Glass nav --------------------------------------------------------------
-     React Bits' GlassSurface, ported the same way as the other product pages.
-     Only Chromium resolves url() inside backdrop-filter, so everyone else
-     keeps the plain blur. */
-  (function () {
-    var pill = document.querySelector('.nav-pill');
-    var map = document.getElementById('nav-glass-map');
-    if (!pill || !map) return;
-    var ua = navigator.userAgent;
-    var probe = document.createElement('div');
-    probe.style.backdropFilter = 'url(#nav-glass)';
-    var supported = probe.style.backdropFilter !== '' &&
-      !(/Safari/.test(ua) && !/Chrome/.test(ua)) && !/Firefox/.test(ua);
-    if (!supported) return;
-    function buildMap() {
-      var r = pill.getBoundingClientRect();
-      var w = Math.round(r.width), h = Math.round(r.height);
-      if (!w || !h) return;
-      var radius = 16;
-      var edge = Math.min(w, h) * 0.035;
-      var svg =
-        '<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">' +
-          '<defs>' +
-            '<linearGradient id="r" x1="100%" y1="0%" x2="0%" y2="0%">' +
-              '<stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="red"/></linearGradient>' +
-            '<linearGradient id="b" x1="0%" y1="0%" x2="0%" y2="100%">' +
-              '<stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="blue"/></linearGradient>' +
-          '</defs>' +
-          '<rect width="' + w + '" height="' + h + '" fill="black"/>' +
-          '<rect width="' + w + '" height="' + h + '" rx="' + radius + '" fill="url(#r)"/>' +
-          '<rect width="' + w + '" height="' + h + '" rx="' + radius + '" fill="url(#b)" style="mix-blend-mode:difference"/>' +
-          '<rect x="' + edge + '" y="' + edge + '" width="' + (w - edge * 2) + '" height="' + (h - edge * 2) + '"' +
-            ' rx="' + radius + '" fill="hsl(0 0% 50% / 0.93)" style="filter:blur(11px)"/>' +
-        '</svg>';
-      map.setAttribute('href', 'data:image/svg+xml,' + encodeURIComponent(svg));
-    }
-    buildMap();
-    root.classList.add('glassy');
-    if (window.ResizeObserver) new ResizeObserver(buildMap).observe(pill);
-    else addEventListener('resize', buildMap);
-  })();
 
   /* ---- Where the lifted button goes ----------------------------------------------
      The button lifts out of the listing to the middle of the capture and grows

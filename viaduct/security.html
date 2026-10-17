@@ -28,49 +28,84 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- Font CSS loads async (media=print swap) so first paint isn't blocked on
-       a third-party stylesheet; display=swap shows fallback text meanwhile. -->
-  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+       two third-party stylesheets; display=swap shows fallback text meanwhile. -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
   <noscript>
-    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet" />
   </noscript>
+  <link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
   <style>
+    /* Viaduct's tokens, as in assets/viaduct.css. footer.js styles itself with
+       --hair/--mute/--ink and hovers in --accent. */
     :root {
       color-scheme: dark;
-      --ink: #F5F5F7; --body: #D4D4D8; --mute: #98989F;
-      --teal: #21AF9F; --bg: #0B0B0D; --hair: #26262A;
+      --canvas: #070908; --surface: #0E1211;
+      --ink: #ECF2F0; --body: #A3B0AD; --mute: #85938F;
+      --teal: #2DD4BF; --teal-press: #5FE3D2; --on-teal: #04211D;
+      --hair: rgba(255, 255, 255, .075);
+      --lip: inset 0 1px 0 rgba(255, 255, 255, .055);
+      --accent: var(--teal);
     }
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
     body {
-      margin: 0; background: var(--bg); color: var(--body);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      font-size: 17px; line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
+      margin: 0; background: var(--canvas); color: var(--body);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
     }
-    .wrap { max-width: 680px; margin: 0 auto; padding: 72px 24px 96px; }
+    /* Film grain, so the near-black doesn't band. */
+    body::after { content: ""; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .035; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"); }
+    ::selection { background: var(--teal); color: var(--on-teal); }
+    .wrap { max-width: 680px; margin: 0 auto; padding: 112px 24px clamp(48px, 8vh, 96px); }
     a { color: var(--teal); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    h1 { color: var(--ink); font-family: "Cabinet Grotesk", sans-serif; font-size: 34px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 6px; }
-    h2 { color: var(--ink); font-family: "Cabinet Grotesk", sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 40px 0 10px; }
-    .meta { color: var(--mute); font-size: 14px; margin: 0 0 8px; }
-    .back { display: inline-block; margin-bottom: 40px; font-size: 15px; }
+    a:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 6px; }
+    .btn-teal, .btn-ghost { display: inline-flex; align-items: center; font-size: 13.5px; font-weight: 600; line-height: 1.4; padding: 7px 14px; border-radius: 999px; transition: transform .22s cubic-bezier(.2, .8, .2, 1), background .2s, border-color .2s; }
+    .btn-teal:hover, .btn-ghost:hover { text-decoration: none; transform: translateY(-1px); }
+    .btn-teal:active, .btn-ghost:active { transform: translateY(0) scale(.99); }
+    .btn-teal { background: var(--teal); color: var(--on-teal); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); }
+    .btn-teal:hover { background: var(--teal-press); }
+    .btn-ghost { background: rgba(255, 255, 255, .05); color: var(--ink); border: 1px solid rgba(255, 255, 255, .12); box-shadow: var(--lip); }
+    .btn-ghost:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .2); }
+    h1 { color: var(--ink); font-family: "Cabinet Grotesk", sans-serif; font-size: clamp(30px, 5vw, 42px); font-weight: 800; letter-spacing: -.02em; margin: 0 0 8px; }
+    h2 { color: var(--ink); font-family: "Cabinet Grotesk", sans-serif; font-size: clamp(19px, 2.6vw, 24px); font-weight: 700; margin: 36px 0 10px; }
+    .meta { color: var(--mute); font-size: 15px; margin: 0 0 36px; }
     p { margin: 0 0 14px; }
     ul { margin: 0 0 14px; padding-left: 22px; }
-    li { margin: 0 0 6px; }
-    code { background: var(--hair); padding: 2px 6px; border-radius: 5px; font-size: 0.9em; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    hr { border: none; border-top: 1px solid var(--hair); margin: 48px 0; }
-    footer { color: var(--mute); font-size: 14px; }
+    li { margin-bottom: 8px; }
+    strong { color: var(--ink); font-weight: 600; }
+    code { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--surface); border: 1px solid var(--hair); color: var(--teal); padding: 1px 6px; border-radius: 4px; font-size: .86em; overflow-wrap: anywhere; }
+    pre { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); border-radius: 10px; padding: 20px; overflow-x: auto; font-size: 13px; line-height: 1.6; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--body); white-space: pre-wrap; }
   </style>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebPage","name":"Security Policy — Viaduct","description":"Viaduct security policy. How to report a vulnerability in the Viaduct app or its CLI engine, and what to expect.","url":"https://magicelklabs.com/viaduct/security.html","inLanguage":"en","dateModified":"2026-07-15","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+  {"@context":"https://schema.org","@type":"WebPage","name":"Security Policy — Viaduct","description":"Viaduct security policy. How to report a vulnerability in the Viaduct app or its CLI engine, and what to expect.","url":"https://magicelklabs.com/viaduct/security.html","inLanguage":"en","dateModified":"2026-10-17","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
   </script>
 </head>
 <body>
+<header id="nav" class="nav">
+  <nav class="nav-pill" aria-label="Primary">
+    <a href="/viaduct/" class="brand" aria-label="Viaduct home">
+      <img src="/viaduct/assets/viaduct-appicon.png" width="21" height="21" alt="">
+      <span>Viaduct</span>
+    </a>
+    <div class="nav-links">
+      <a href="/viaduct/#how">How it works</a>
+      <a href="/viaduct/#features">Features</a>
+      <a href="/viaduct/#pricing">Pricing</a>
+      <a href="/viaduct/#faq">FAQ</a>
+    </div>
+    <div class="nav-actions">
+      <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
+      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
+    </div>
+  </nav>
+</header>
   <main class="wrap">
-    <a class="back" href="/viaduct/">&larr; Viaduct</a>
 
     <h1>Security Policy</h1>
-    <p class="meta">Last updated: July 15, 2026</p>
+    <p class="meta">Last updated: October 17, 2026</p>
 
     <h2>Supported versions</h2>
     <p>
@@ -86,11 +121,11 @@
     </p>
     <ul>
       <li>
-        <strong>GitHub Security Advisories</strong> — open a draft advisory at
+        <strong>GitHub Security Advisories:</strong> open a draft advisory at
         <a href="https://github.com/magicelk235/viaduct-app/security/advisories/new" rel="noopener">the repository's advisories page</a> (preferred).
       </li>
       <li>
-        <strong>Email</strong> —
+        <strong>Email:</strong>
         <a href="mailto:support@magicelklabs.com?subject=SECURITY%3A%20viaduct-app">support@magicelklabs.com</a>
         with subject <code>SECURITY: viaduct-app</code>.
       </li>
@@ -114,15 +149,16 @@
     <p>
       Viaduct wraps the
       <a href="https://www.npmjs.com/package/@magicelk235/viaduct" rel="noopener">@magicelk235/viaduct</a>
-      command-line tool and can download extensions from the Chrome Web Store,
-      sign them with your local Apple identity, and self-update the bundled CLI
-      from npm. Reports touching any of these paths — CLI invocation, code
-      signing, the <code>viaduct://</code> URL scheme, or the auto-update flow —
-      are in scope. Vulnerabilities in the upstream CLI package itself should be
+      command-line tool, which it downloads from npm and keeps up to date. It
+      can download extensions from the Chrome Web Store, sign them with your
+      local Apple identity, read extension settings from your Chromium browser
+      profiles, and update itself through Sparkle. Reports touching any of these
+      paths (CLI invocation, code signing, the <code>viaduct://</code> URL scheme,
+      browser profile reads, or either update flow) are in scope. Vulnerabilities
+      in the upstream CLI package itself should be
       reported against that package.
     </p>
 
-    <hr />
 <div id="site-footer"></div>
 <script src="/assets/footer.js" data-product="Viaduct" data-links-only="1" data-links="Privacy|/viaduct/privacy.html, Terms|/viaduct/terms.html, Security|/viaduct/security.html, License|/viaduct/license.html, Viaduct|/viaduct/"></script>
 <noscript>
@@ -140,5 +176,7 @@
   </footer>
 </noscript>
   </main>
+<script src="/viaduct/assets/nav.js?v=1"></script>
+<script src="/assets/attribution.js"></script>
 </body>
 </html>
