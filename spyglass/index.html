@@ -2,7 +2,7 @@
 <html lang="en" class="no-js">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Spyglass: better Quick Look previews for your Mac</title>
 <meta name="description" content="Spyglass gives Quick Look proper previews for Markdown, code, notebooks, archives, apps, SQLite and Google Drive files on your Mac. Free for 7 days.">
@@ -31,12 +31,32 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./assets/scrollcraft.css?v=1">
-<link rel="stylesheet" href="./assets/spyglass.css?v=1">
+<link rel="stylesheet" href="./assets/spyglass.css?v=2">
 <script>document.documentElement.classList.remove('no-js');</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Spyglass",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "macOS 14.0 or later",
+  "url": "https://magicelklabs.com/spyglass/",
+  "downloadUrl": "https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg",
+  "description": "Spyglass gives Quick Look real previews for Markdown, code, notebooks, archives, apps, SQLite and Google Drive files on your Mac.",
+  "image": "https://magicelklabs.com/spyglass/assets/spyglass-og-2.jpg",
+  "publisher": { "@type": "Organization", "name": "Magicelk Labs", "url": "https://magicelklabs.com/" },
+  "offers": [
+    { "@type": "Offer", "name": "Free trial", "price": "0", "priceCurrency": "USD", "url": "https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg" },
+    { "@type": "Offer", "name": "Spyglass Pro", "price": "12", "priceCurrency": "USD", "url": "https://magicelk235.gumroad.com/l/spyglass-pro" },
+    { "@type": "Offer", "name": "Spyglass Pro + Drive", "price": "4", "priceCurrency": "USD", "url": "https://magicelk235.gumroad.com/l/spyglass-drive" }
+  ]
+}
+</script>
+<script defer src="/assets/analytics.js"></script>
 </head>
 <body>
 
-<span data-sc-progress></span>
+<a class="skip" href="#main">Skip to content</a>
 <div class="sc-grain" aria-hidden="true"></div>
 
 <svg class="glass-defs" aria-hidden="true" focusable="false">
@@ -58,7 +78,7 @@
 
 <header id="nav" class="nav">
   <nav class="nav-pill" aria-label="Primary">
-    <a href="#top" class="brand" aria-label="Spyglass home"><img src="./assets/spyglass-mark.png" width="22" height="22" alt=""><span>Spyglass</span></a>
+    <a href="#main" class="brand" aria-label="Spyglass home"><img src="./assets/spyglass-mark.png" width="21" height="21" alt=""><span>Spyglass</span></a>
     <div class="nav-links">
       <a href="#what">Formats</a>
       <a href="#drive">Google Drive</a>
@@ -72,7 +92,7 @@
   </nav>
 </header>
 
-<main id="top">
+<main id="main">
 
 <!-- THE COLLECTION. Static catalogue by default; spyglass.js pins it and
      runs the lens on wide screens with motion allowed. -->
@@ -224,9 +244,9 @@
 <section id="drive" class="dv section" data-pin-act="pin" data-pin-span="2.6" aria-labelledby="dv-h">
   <div class="dv-stage wrap" data-sc-stage>
     <div>
-      <div class="dv-head">
+      <div class="intro">
         <h2 id="dv-h">Google Docs, Sheets and Slides, right in Quick Look.</h2>
-        <p>Google Drive for desktop fills Finder with .gdoc and .gsheet files, and Quick Look shows each one as a line of JSON.</p>
+        <p class="body">Google Drive for desktop fills Finder with .gdoc and .gsheet files, and Quick Look shows each one as a line of JSON.</p>
       </div>
       <div class="dv-caps" hidden></div>
     </div>
@@ -248,94 +268,115 @@
 </section>
 
 <!-- LEAVE IT OPEN -->
-<section class="section">
+<section id="features" class="section section--surface">
   <div class="wrap">
-    <h2 data-sc-in>Leave it open while you work.</h2>
-    <div class="trio" data-sc-in data-sc-stagger="80">
-      <div><h3>Live reload</h3><p>Keep a preview open and save the file in your editor. The preview redraws with the change.</p></div>
-      <div><h3>Light, dark or system</h3><p>Previews follow your Mac's appearance, or stay light or dark if you'd rather. Code gets its own font size.</p></div>
-      <div><h3>Your pick of formats</h3><p>Settings has a switch for every kind of file, so you can turn off any format you don't want Spyglass to handle.</p></div>
+    <div class="intro" data-sc-in>
+      <h2>Leave it open while you work.</h2>
+    </div>
+    <div class="facts" data-sc-in data-sc-stagger="80">
+      <div class="fact"><h3>Live reload</h3><p class="body">Keep a preview open and save the file in your editor. The preview redraws with the change.</p></div>
+      <div class="fact"><h3>Light, dark or system</h3><p class="body">Previews follow your Mac's appearance, or stay light or dark if you'd rather. Code gets its own font size.</p></div>
+      <div class="fact"><h3>Your pick of formats</h3><p class="body">Settings has a switch for every kind of file, so you can turn off any format you don't want Spyglass to handle.</p></div>
     </div>
   </div>
 </section>
 
 <!-- PRIVACY -->
-<section id="privacy" class="section band">
-  <div class="wrap split">
-    <h2 data-sc-in>Your files stay on your Mac.</h2>
-    <div class="ledger" data-sc-in data-sc-stagger="70">
-      <div><b>Drawn locally</b><p>Every format preview is made on your Mac, and none of them touch the network.</p></div>
-      <div><b>Only what it shows</b><p>Spyglass reads a folder's contents, or the images next to a Markdown file, only to draw the preview in front of you.</p></div>
-      <div><b>Google, on the Drive plan</b><p>The Drive plan signs in with read-only access to fetch your own documents. The token lives in your Keychain, and signing out revokes it.</p></div>
-      <div><b>Counts, not files</b><p>Spyglass has no server. It tallies previews per format on your Mac, and only when you press Buy does the checkout link carry a few of those counts. File names never leave your Mac. The <a href="./privacy.html">privacy policy</a> has the details.</p></div>
+<section id="privacy" class="section">
+  <div class="wrap wrap--3">
+    <div class="intro" data-sc-in>
+      <h2>Your files stay on your Mac.</h2>
+    </div>
+    <div class="rows" data-sc-in data-sc-stagger="70">
+      <div class="row"><b>Drawn locally</b><p class="body">Every format preview is made on your Mac, and none of them touch the network.</p></div>
+      <div class="row"><b>Only what it shows</b><p class="body">Spyglass reads a folder's contents, or the images next to a Markdown file, only to draw the preview in front of you.</p></div>
+      <div class="row"><b>Google, on the Drive plan</b><p class="body">The Drive plan signs in with read-only access to fetch your own documents. The token lives in your Keychain, and signing out revokes it.</p></div>
+      <div class="row"><b>Counts, not files</b><p class="body">Spyglass has no server. It tallies previews per format on your Mac, and only when you press Buy does the checkout link carry a few of those counts. File names never leave your Mac. The <a href="./privacy.html">privacy policy</a> has the details.</p></div>
     </div>
   </div>
 </section>
 
 <!-- PRICING -->
-<section id="pricing" class="section">
-  <div class="wrap">
-    <h2 data-sc-in>Free for a week. $12 to keep it.</h2>
-    <div class="plans" data-sc-in data-sc-stagger="90">
+<section id="pricing" class="section section--surface">
+  <div class="wrap wrap--5">
+    <div class="intro" data-sc-in>
+      <h2>Free for a week. $12 to keep it.</h2>
+    </div>
+    <div class="plans" data-sc-in data-sc-stagger="80">
       <div class="plan">
         <h3>Free trial</h3>
-        <div class="price"><span>$0</span><span>for 7 days</span></div>
-        <ul><li>Every format preview</li><li>Starts the first time you open the app</li><li>No card or account needed</li><li>Google Drive cards stay free afterwards</li></ul>
+        <p class="price"><span class="price-num">$0</span><span class="mute">for 7 days</span></p>
+        <div class="plan__rows">
+          <div class="p-row"><span><b>Every</b> format preview</span></div>
+          <div class="p-row"><span>Starts the first time you open the app</span></div>
+          <div class="p-row"><span>No card or account needed</span></div>
+          <div class="p-row"><span>Google Drive cards stay free afterwards</span></div>
+        </div>
         <a class="btn-ghost btn-block" href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg">Download</a>
       </div>
-      <div class="plan lit">
+      <div class="plan price-lit">
         <h3>Pro</h3>
-        <div class="price"><span>$12</span><span>once</span></div>
-        <ul><li><b>Every format preview</b>, for good</li><li>On all your Macs</li><li>One payment, no subscription</li><li>Free Google Drive cards</li></ul>
+        <p class="price"><span class="price-num">$12</span><span class="mute">once</span></p>
+        <div class="plan__rows">
+          <div class="p-row"><span><b>Every</b> format preview, for good</span></div>
+          <div class="p-row"><span>On all your Macs</span></div>
+          <div class="p-row"><span>One payment, no subscription</span></div>
+          <div class="p-row"><span>Free Google Drive cards</span></div>
+        </div>
         <a class="btn-brass btn-block" href="https://magicelk235.gumroad.com/l/spyglass-pro?wanted=true">Get Pro</a>
       </div>
       <div class="plan">
         <h3>Pro + Drive</h3>
-        <div class="price"><span>$4</span><span>a month</span></div>
-        <p class="price-alt">or $36 a year</p>
-        <ul><li>Everything in Pro</li><li><b>Docs, Sheets, Slides and Drawings</b> rendered in Quick Look</li><li>First pages as Finder thumbnails</li><li>7 days free on Gumroad, card required</li><li>Cancel anytime</li></ul>
+        <p class="price"><span class="price-num">$4</span><span class="mute">a month, or $36 a year</span></p>
+        <div class="plan__rows">
+          <div class="p-row"><span>Everything in Pro</span></div>
+          <div class="p-row"><span><b>Docs, Sheets, Slides and Drawings</b> rendered in Quick Look</span></div>
+          <div class="p-row"><span>First pages as Finder thumbnails</span></div>
+          <div class="p-row"><span>7 days free on Gumroad, card required</span></div>
+          <div class="p-row"><span>Cancel anytime</span></div>
+        </div>
         <a class="btn-ghost btn-block" href="https://magicelk235.gumroad.com/l/spyglass-drive">Get Pro + Drive</a>
       </div>
     </div>
-    <p class="legacy" data-sc-in><b>Bought Spyglass 1.0?</b> Your key now unlocks Pro + Drive for life, at no charge.</p>
+    <p class="legacy body" data-sc-in><b>Bought Spyglass 1.0?</b> Your key now unlocks Pro + Drive for life, at no charge.</p>
   </div>
 </section>
 
 <!-- FAQ -->
-<section id="faq" class="section">
-  <div class="wrap split">
-    <h2 data-sc-in>Questions</h2>
+<section id="faq" class="section section--faq">
+  <div class="wrap wrap--2">
+    <h2 class="faq__title" data-sc-in>Questions</h2>
     <div class="faq" data-sc-in>
-        <details>
-          <summary>Which Macs does it run on?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-          <p>Any Mac running macOS 14 Sonoma or later.</p>
-        </details>
-        <details>
-          <summary>How does the free trial work?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-          <p>The 7 days start the first time you open Spyglass, and every format preview works during that week. You don't need a card or an account.</p>
-          <p>When the week is up, those files fall back to plain text or a short file summary with a note, until you add a license. Google Drive cards stay free either way.</p>
-        </details>
-        <details>
-          <summary>How do I activate my license?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-          <p>Your Gumroad receipt has a license key in it. Click the Spyglass icon in the menu bar, paste the key and click Unlock. The same key works on each of your Macs.</p>
-        </details>
-        <details>
-          <summary>I bought Spyglass 1.0. What do I get?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-          <p>Pro + Drive, free, for life. Your 1.0 key keeps working in 2.0 and unlocks every format preview along with the rendered Google Drive previews. If Spyglass ever asks for it, paste the key from your original receipt.</p>
-        </details>
-        <details>
-          <summary>What happens if I cancel Pro + Drive?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-          <p>You can cancel from your Gumroad receipt whenever you like, and everything keeps working until the end of the period you've paid for. After that, Drive files go back to the free card, and format previews need a Pro license.</p>
-        </details>
-        <details>
-          <summary>Why do CSV and .txt files look the same as before?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-          <p>macOS keeps those two types for its own preview and never passes them to a Quick Look extension, so no app can take them over. TSV and JSON Lines files do get Spyglass's table view.</p>
-        </details>
-        <details>
-          <summary>Space still shows the old preview. What's wrong?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></summary>
-          <p>First, check that Spyglass is in your Applications folder and that you've opened it once. If another Quick Look app is installed, it may be handling the same file types, and macOS only uses one extension per type.</p>
-          <p>On macOS 15 or later, open System Settings, General, Login Items &amp; Extensions, find Quick Look under Extensions and turn off the other app's extension. On macOS 14 the same list is under System Settings, Privacy &amp; Security, Extensions, Quick Look.</p>
-        </details>
+      <details>
+        <summary>Which Macs does it run on?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="body">Any Mac running macOS 14 Sonoma or later.</p>
+      </details>
+      <details>
+        <summary>How does the free trial work?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="body">The 7 days start the first time you open Spyglass, and every format preview works during that week. You don't need a card or an account.</p>
+        <p class="body">When the week is up, those files fall back to plain text or a short file summary with a note, until you add a license. Google Drive cards stay free either way.</p>
+      </details>
+      <details>
+        <summary>How do I activate my license?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="body">Your Gumroad receipt has a license key in it. Click the Spyglass icon in the menu bar, paste the key and click Unlock. The same key works on each of your Macs.</p>
+      </details>
+      <details>
+        <summary>I bought Spyglass 1.0. What do I get?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="body">Pro + Drive, free, for life. Your 1.0 key keeps working in 2.0 and unlocks every format preview along with the rendered Google Drive previews. If Spyglass ever asks for it, paste the key from your original receipt.</p>
+      </details>
+      <details>
+        <summary>What happens if I cancel Pro + Drive?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="body">You can cancel from your Gumroad receipt whenever you like, and everything keeps working until the end of the period you've paid for. After that, Drive files go back to the free card, and format previews need a Pro license.</p>
+      </details>
+      <details>
+        <summary>Why do CSV and .txt files look the same as before?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="body">macOS keeps those two types for its own preview and never passes them to a Quick Look extension, so no app can take them over. TSV and JSON Lines files do get Spyglass's table view.</p>
+      </details>
+      <details>
+        <summary>Space still shows the old preview. What's wrong?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="body">First, check that Spyglass is in your Applications folder and that you've opened it once. If another Quick Look app is installed, it may be handling the same file types, and macOS only uses one extension per type.</p>
+        <p class="body">On macOS 15 or later, open System Settings, General, Login Items &amp; Extensions, find Quick Look under Extensions and turn off the other app's extension. On macOS 14 the same list is under System Settings, Privacy &amp; Security, Extensions, Quick Look.</p>
+      </details>
     </div>
   </div>
 </section>
@@ -343,9 +384,22 @@
 </main>
 
 <div id="site-footer"></div>
-<script src="/assets/footer.js" data-product="Spyglass" data-links-only="1" data-links="Privacy|./privacy.html, Terms|./terms.html, Security|./security.html, License|./license.html, Contact|mailto:support@magicelklabs.com, Source|https://github.com/magicelk235/spyglass"></script>
-<script src="./assets/scrollcraft.js?v=1"></script>
-<script src="./assets/spyglass.js?v=1"></script>
+<noscript>
+  <footer class="foot">
+    <nav aria-label="Legal and contact">
+      <a href="./privacy.html">Privacy</a>
+      <a href="./terms.html">Terms</a>
+      <a href="./security.html">Security</a>
+      <a href="./license.html">License</a>
+      <a href="mailto:support@magicelklabs.com">Contact</a>
+      <a href="https://github.com/magicelk235/spyglass">Source</a>
+    </nav>
+    <p>Magicelk Labs · Spyglass · © 2026</p>
+  </footer>
+</noscript>
+<script src="./assets/scrollcraft.js?v=2"></script>
+<script src="./assets/spyglass.js?v=2"></script>
+<script src="/assets/footer.js" data-product="Spyglass" data-more="1" data-links-only="1" data-links="Privacy|./privacy.html, Terms|./terms.html, Security|./security.html, License|./license.html, Contact|mailto:support@magicelklabs.com, Source|https://github.com/magicelk235/spyglass"></script>
 <script src="/assets/attribution.js"></script>
 </body>
 </html>

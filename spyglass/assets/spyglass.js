@@ -75,14 +75,22 @@
     function layout() {
       W = stage.clientWidth; H = stage.clientHeight;
       r = Math.round(Math.min(H * 0.29, W * 0.2, 300));
-      var col = Math.max(40, W / 2 - 640);
-      lx = Math.round(Math.max(W * 0.63, col + 456 + r));
+      // Text column on the site's 1152px grid, so the headline lines up with every section below.
+      var col = Math.round(Math.max(24, W / 2 - 552));
+      // The lens sits right of the headline at its natural width, so
+      // "See what's inside." never wraps onto a third line.
+      var h1 = intro.querySelector('h1');
+      h1.style.width = 'max-content';
+      var textW = Math.max(h1.getBoundingClientRect().width, 360);
+      h1.style.width = '';
+      lx = Math.round(Math.max(W * 0.63, col + textW + 56 + r));
       ly = Math.round(H * 0.5);
       si = r * 1.25;
       drift = r * 0.3;
       stage.style.setProperty('--lx', lx + 'px');
       stage.style.setProperty('--ly', ly + 'px');
       stage.style.setProperty('--r', r + 'px');
+      stage.style.setProperty('--col', col + 'px');
       // Size each preview for its zoom, and keep its focus point far enough
       // inside that the glass is always full.
       objs.forEach(function (o) {
