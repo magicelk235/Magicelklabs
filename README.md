@@ -45,14 +45,15 @@ That writes a `<slug>/index.html` for each extension, the hub `index.html`, and 
 
 ### Product stylesheets
 
-`spyglass/index.html` and `viaduct/index.html` load `assets/tailwind.css`, built from the configs in `assets/tailwind/`. Rebuild after adding or changing a utility class on either page, or the new class will do nothing:
+`viaduct/index.html` loads `viaduct/assets/tailwind.css`, built from the config in `assets/tailwind/`. Rebuild after adding or changing a utility class on the page, or the new class will do nothing:
 
 ```
-npx tailwindcss@3.4.16 -c assets/tailwind/spyglass.config.js -i assets/tailwind/input.css -o spyglass/assets/tailwind.css --minify
-npx tailwindcss@3.4.16 -c assets/tailwind/viaduct.config.js  -i assets/tailwind/input.css -o viaduct/assets/tailwind.css  --minify
+npx tailwindcss@3.4.16 -c assets/tailwind/viaduct.config.js -i assets/tailwind/input.css -o viaduct/assets/tailwind.css --minify
 ```
 
-Each config only scans its own page, so the two stylesheets stay small and independent. The `<link>` sits after each page's inline `<style>` on purpose: the Play CDN used to inject its stylesheet at the end of `<head>`, and the pages were written expecting utilities to win over the inline rules.
+The `<link>` sits after the page's inline `<style>` on purpose: the Play CDN used to inject its stylesheet at the end of `<head>`, and the page was written expecting utilities to win over the inline rules.
+
+`spyglass/index.html` uses no Tailwind. Its styles are plain CSS in `spyglass/assets/spyglass.css`.
 
 ## Deployment
 

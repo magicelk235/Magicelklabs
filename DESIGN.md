@@ -78,6 +78,13 @@ scheme is a bug.
 - **Glass nav pill.** Every page's nav is the same floating pill with the
   GlassSurface displacement map (`#nav-glass`), Chromium-gated behind
   `html.glassy`, plain `backdrop-filter: blur()` everywhere else.
+- **Buttons.** Every product page uses the same fully rounded pills:
+  `.btn-ghost` (lit pane) for Download and the page's accent (`.btn-teal`,
+  `.btn-red`, `.btn-brass`) for buying, in three sizes (`.btn-sm` 13.5px in
+  the nav, `.btn-lg` 15px in the hero, `.btn-block` full width in pricing).
+  The nav pill ends with a small ghost Download and a small accent Buy or
+  Get Pro (Download hides under 720px); the hero pairs the same two at large
+  size.
 - **Film grain.** `body::after` at roughly 3% opacity over the whole page, so
   large near-black areas do not band.
 
@@ -98,9 +105,8 @@ scheme is a bug.
 
 ## Layout
 
-- Content column: `max-width:1120px` (root), `1080px` (the legal pages),
-  `max-w-6xl` (Viaduct) or `max-w-5xl` (Spyglass, the same width as its nav
-  pill, so every section starts on one left edge); 24px side padding.
+- Content column: `max-width:1120px` (root and Spyglass), `1080px` (the legal
+  pages) or `max-w-6xl` (Viaduct); 24px side padding.
 - Root: a headline, one line under it, and the shelf. Nothing else. Every
   other block that has been tried here (stat ledger, fact rail, tenet list,
   approach paragraph, closing CTA band) restated the pricing or the pitch a
@@ -121,9 +127,9 @@ sentence, and the href. Nothing else. The grid reflows on its own.
 
 ## Motion
 
-Apple-grade scroll choreography via GSAP 3.13 (+ ScrollTrigger + SplitText,
-jsDelivr CDN) driven by the shared runtime **`/assets/motion.js`**. Pages opt
-elements in with data attributes:
+Viaduct and the root page run Apple-grade scroll choreography via GSAP 3.13
+(+ ScrollTrigger + SplitText, jsDelivr CDN) driven by the shared runtime
+**`/assets/motion.js`**. Pages opt elements in with data attributes:
 
 - `data-mm="lines"` masked line-by-line headline reveal (SplitText);
   `data-mm="rise" / "fade" / "media"` for blocks and screenshots;
@@ -135,8 +141,58 @@ elements in with data attributes:
 - `data-mm-pin` + `data-mm-pin-stage/-item/-panel`: pinned walkthroughs
   (Viaduct's Drop → Convert → Done). Pin engages only ≥1024px + fine pointer;
   below that the CSS fallback is a static stack with per-panel captions.
-  Spyglass's format gallery is not pinned: it is a sideways scroll-snap row
-  with an index of format names, and it never moves on its own.
+
+Spyglass does not use motion.js. It runs on the scroll-craft engine, copied
+into `spyglass/assets/scrollcraft.{css,js}` and never edited; the page's own
+behaviour is in `spyglass/assets/spyglass.{css,js}`.
+
+- **Background:** the brand's Quick Look glass, obsidian `#0F1413` grading up
+  to `#1B2422` behind the lens, under the film grain. Brass `#B8945F` fills
+  and `#EDC371` text accents, as in the media kit's BRAND.md.
+- **The lens (`#what`, pinned, the page's peak):** the headline sits beside a
+  brass-rimmed lens with the Markdown preview already in it. Scrolling moves
+  fourteen objects (thirteen formats, then Google Drive, which ends the act)
+  through the lens: each Finder icon queues to the right and fades as it
+  crosses the rim, and as it does its real preview fades in inside the glass
+  over the previous one, settling from a 6% zoom. Each `<figure>` says where
+  the lens looks (`data-focus`, fractions of width and height) and how much it
+  magnifies (`data-zoom`, preview height over lens diameter, default 1.3).
+  Pick the focus where the circle is full of content: the list previews
+  (Archives, Packages, Folders) keep everything in their top-left corner and
+  showed an empty circle when centred, so they sit at `0 0` with zoom 1.6,
+  and the Drive card uses zoom 1 so its whole title fits. The previews live
+  inside the lens element, which clips them to its circle with
+  `overflow: hidden`. The label beside the lens follows one schema: name,
+  extensions, one fact. An index of the fourteen names along the bottom jumps
+  to each object. The lens follows
+  the scroll linearly from the first pixel to the last: objects settle through
+  fade timing (each label holds while its object is nearest the glass and
+  swaps halfway to the next), never by slowing the scroll down. Two earlier
+  versions eased the scroll to a stop or near-stop at every object and sped
+  up between them, which felt like the page sticking and then jumping. Blurred Finder
+  icons behind the lens and above it move at 0.22x and 1.05x the queue's speed
+  for depth; the far plane is masked off the text column. Their blur is baked
+  into the sprites, never a CSS `filter`: blurring 28 moving layers at runtime
+  made Chrome drop about 40% of frames while scrolling the lens. Anything that
+  moves on this page animates only `transform` and `opacity`.
+
+  Keep everything in the lens moving at about scroll speed or slower. The
+  first draft slid each preview the full width of the lens, which moved it up
+  to 8x faster than the scroll: at Safari's 60Hz animation rate that is a jump
+  of hundreds of pixels per frame, and the text in the screenshots strobed
+  however fast the page rendered. The previews now drift at most 0.3 of the
+  lens radius per object.
+- **Google Drive (`#drive`, pinned):** the same `.gdoc` three ways, as real
+  Quick Look windows: the JSON stub, then an upward wipe to the free card,
+  then an iris onto the rendered document, each with its caption.
+- Below those, the trio, privacy, pricing and FAQ enter with `data-sc-in`.
+
+Both pins run only at 1024px and up, 620px tall, with a fine pointer and
+motion allowed. `spyglass.js` decides that once, before the engine mounts: it
+adds `html.lens.pin` and promotes the page's `data-pin-*` attributes to
+`data-sc-*`. Everywhere else the same markup is a static catalogue (icon,
+label, full preview per object, under a lens showing the Markdown preview)
+and the Drive act is the three windows stacked with their captions.
 
 Continuous "premium" layer (all fine-pointer-gated, all dead under reduced
 motion):
@@ -217,14 +273,26 @@ conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
   with the app in dark mode; the `-dark` suffix is history, there is no second
   variant to swap to.
   - `spyglass/assets/formats/<format>-{2000,1000}.webp` (16:10) are the
-    format gallery, encoded from the media kit's `mediakit/screenshots/` dark
+    previews in the lens, encoded from the media kit's `mediakit/screenshots/` dark
     renders (converted from Display P3 to sRGB first) with
     `cwebp -q 82 -m 6 -sharp_yuv -resize 2000 0` and `-resize 1000 0`; the
     page serves them through `srcset`.
-  - `spyglass/assets/drive-card.webp` (1000×750) is the free Drive card,
-    rendered by the media kit from a made-up `.gdoc`. `drive-sheet.webp`
-    (800×600) is a rendered Sheet of made-up data, cropped to the table from
-    the 1.0 Quick Look capture. Neither shows a real account; keep it that way.
+  - `spyglass/assets/drive/{stub,card,doc}.webp` (1200×953, alpha) are full
+    Quick Look windows of one `.gdoc` from the media kit: the raw JSON stub,
+    the free card and the rendered document. The stub capture was a taller
+    window; its empty middle is cut so all three share one size. The card's
+    owner line reads the support address, the same one the file's JSON
+    carries. Keep personal accounts out of these.
+  - `spyglass/assets/files/*.webp` (256×256, alpha) are the Finder icons for
+    each format, exported from macOS. Types macOS draws as a blank page get
+    the extension stamped on in the system face, the way Finder labels
+    SQLite or Swift.
+  - `spyglass/assets/files/soft/<name>-{far,deep,near}.webp` are those icons
+    pre-blurred for the lens's depth planes, padded so the halo isn't clipped
+    (the icon fills the middle 1/1.4 of a far or deep sprite, 1/1.5 of a near
+    one, and `spyglass.js` sizes them to match). Gaussian sigma is 6.5%
+    (far), 11% (deep) and 5.7% (near, also darkened to 62%) of the icon size,
+    matching the CSS blurs they replace.
   - `viaduct/assets/viaduct-{main,developer}-dark.webp` and
     `viaduct-step-{select,convert,succeed}-dark.webp` (1800×1324).
     `viaduct-main-dark.webp` is the exception: re-encoded at 1400×848, cropped
@@ -232,12 +300,6 @@ conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
     the app's own empty space below it was half the height of the slot.
   - `viaduct/assets/viaduct-store-install.mp4` (1600w, ~1.9 MB) + poster: the
     full uncut Chrome-Web-Store-to-Safari install capture.
-  - `spyglass/assets/spyglass-demo-1440.{webm,mp4}` (1440×1060) is the Finder
-    screen recording. Cut its poster straight out of the encode at the same
-    size — `ffmpeg -ss 3 -i spyglass-demo-1440.mp4 -frames:v 1 frame.png`, then
-    `cwebp -q 82` — so the tile and the first played frame share one ratio and
-    one composition. A poster from another capture, or trimmed to a different
-    height, shows up as a cropped still that jumps the moment playback starts.
 
 ## Build
 
