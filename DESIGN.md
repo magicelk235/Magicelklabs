@@ -287,7 +287,13 @@ Spyglass: the page's own behaviour is in `spyglass/assets/spyglass.{css,js}`.
 - **Google Drive (`#drive`, pinned):** the same `.gdoc` three ways, as real
   Quick Look windows: the JSON stub, then an upward wipe to the free card,
   then an iris onto the rendered document, each with its caption.
-- Below those, the trio, privacy, pricing and FAQ enter with `data-sc-in`.
+- **Settings (`#features`):** the copy beside the real Settings window, the
+  Formats pane in front of the Appearance pane, captured from Spyglass 2.0
+  (`spyglass/assets/settings/{formats,appearance}.webp`, 999×896, alpha).
+- **Privacy (`#privacy`):** one centred statement and one line on the hero's
+  glass grade, nothing else. The Drive plan's Google access and what the Buy
+  link carries are in the privacy policy, linked from the footer.
+- Those, pricing and the FAQ enter with `data-sc-in`.
 
 Both pins run only at 1024px and up, 620px tall, with a fine pointer and
 motion allowed. `spyglass.js` decides that once, before the engine mounts: it
@@ -314,9 +320,9 @@ band light.
 Space on Markdown, code, JSON, notebooks, diffs, SQLite, TSV and JSON Lines,
 archives, packages, apps, binaries, folders, torrents or Google Drive files and
 see what's inside. CSV and `.txt` stay with Apple's preview. Every format is
-free for 7 days; Spyglass Pro is $12 once; Spyglass Pro + Drive is $4/month or
-$36/year and adds rendered Google Drive previews and thumbnails. The Drive
-info card is free for everyone, and 1.0 buyers get Pro + Drive for life.
+free for 7 days; Spyglass Pro is $12 once; Spyglass Drive is $4/month and
+adds rendered Google Drive previews and thumbnails. The Drive
+info card is free for everyone, and 1.0 buyers get Spyglass Drive for life.
 macOS 14+.
 
 **Viaduct** — Run Chrome extensions in Safari, natively. Drop in a `.zip`,
