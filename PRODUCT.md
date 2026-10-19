@@ -38,6 +38,10 @@ text on their Mac's screen they can't select or read (Lector).
   (what Gumroad's Referrers table shows) plus `utm_source`/`utm_medium`/
   `utm_campaign` (Gumroad's UTM links need all three; defaults `referral` /
   `magicelklabs`).
+- Analytics: Umami Cloud via `/assets/analytics.js` (cookieless, no consent
+  banner). Page views and sources come from Umami itself; the script adds
+  `Buy` (Gumroad `/l/` links) and `Download` (GitHub release links) events
+  with a `product` property. The privacy pages disclose it under "This website".
 
 ## Constraints
 

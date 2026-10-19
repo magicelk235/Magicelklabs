@@ -152,11 +152,12 @@ footer .links a:hover { color:var(--teal); }
 a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--teal); outline-offset:3px; border-radius:6px; }
 `;
 
-// These pages run no inline or third-party JavaScript: the only scripts are the
-// first-party /assets/footer.js, /assets/attribution.js and /viaduct/assets/nav.js,
-// so script-src is 'self' alone. frame-ancestors is ignored when a policy arrives
-// via <meta>, so framing is not covered here.
-const CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests";
+// These pages run no inline JavaScript: the scripts are the first-party
+// /assets/footer.js, /assets/attribution.js, /assets/analytics.js and
+// /viaduct/assets/nav.js, plus the Umami tracker analytics.js loads from
+// cloud.umami.is, which reports to gateway.umami.is. frame-ancestors is ignored
+// when a policy arrives via <meta>, so framing is not covered here.
+const CSP = "default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests";
 
 // Social card: one image for the whole section, cropped to the 1.91:1 the
 // scrapers want. JPEG rather than the .webp hero because several scrapers still
@@ -206,6 +207,7 @@ function head({ title, description, canonical, imageAlt, jsonld }) {
 <script type="application/ld+json">
 ${ldjson(jsonld)}
 </script>
+<script defer src="/assets/analytics.js"></script>
 </head>`;
 }
 

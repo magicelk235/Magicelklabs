@@ -6,7 +6,7 @@
      header control. frame-ancestors is ignored in meta form, so framing is not
      covered here; everything else is. Charset stays above it so the declaration
      lands inside the 1024-byte sniffing window. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>About Magicelk Labs</title>
 <meta name="description" content="Magicelk Labs, also written magicelklabs, is a one-person Mac studio. It makes Spyglass, Viaduct and Lector, and you pay for each once.">
@@ -86,6 +86,7 @@ h1{
 .prose strong{color:var(--ink);font-weight:600}
 .prose code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;color:var(--ink)}
 </style>
+<script defer src="/assets/analytics.js"></script>
 </head>
 <body>
 

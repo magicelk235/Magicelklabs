@@ -14,7 +14,7 @@ The site is static: hand-written HTML, no framework and no bundler. GitHub Pages
 - `index.html` is the studio landing page.
 - `spyglass/` holds the Spyglass product page and its legal pages (privacy, terms, license, security).
 - `viaduct/` holds the Viaduct product page, its legal pages, and `viaduct/extensions/`, a set of SEO guide pages with a hub index (one page per popular Chrome extension).
-- `assets/` holds the shared scripts (`motion.js`, `footer.js`, and `attribution.js`, which tags Gumroad buy links with where the visitor came from), the favicons, the web manifest, and `assets/tailwind/`, which holds the Tailwind configs the product stylesheets are built from.
+- `assets/` holds the shared scripts (`motion.js`, `footer.js`, `attribution.js`, which tags Gumroad buy links with where the visitor came from, and `analytics.js`, which loads Umami and counts Buy and Download clicks), the favicons, the web manifest, and `assets/tailwind/`, which holds the Tailwind configs the product stylesheets are built from.
 - `DESIGN.md` covers the brand and visual rules. Read it before editing any page.
 - `PRODUCT.md` explains what the site is for and how it converts.
 
@@ -63,6 +63,12 @@ npx tailwindcss@3.4.16 -c assets/tailwind/spyglass.config.js -i assets/tailwind/
 ```
 
 The config only scans its own page, so the stylesheet stays small. The `<link>` sits after the page's inline `<style>` on purpose: the Play CDN used to inject its stylesheet at the end of `<head>`, and the page was written expecting utilities to win over the inline rules.
+
+## Analytics
+
+Visits are counted with [Umami Cloud](https://cloud.umami.is), which uses no cookies, so the site has no consent banner. Every page loads `/assets/analytics.js` in its `<head>`. That file holds the website ID, loads Umami's tracker, and sends a `Buy` event for clicks on `gumroad.com/l/…` links and a `Download` event for clicks on GitHub release links, each tagged with the product. A new page needs the same `<script defer src="/assets/analytics.js"></script>` tag, and if it has a Content-Security-Policy, `https://cloud.umami.is` in `script-src` and `https://gateway.umami.is` in `connect-src`. The extension guides get both from `viaduct/extensions/build.js`.
+
+Only `magicelklabs.com` is counted, so local previews send nothing. To stop counting your own visits on the live site, run `localStorage.setItem("umami.disabled", 1)` in that browser's console.
 
 ## Deployment
 
