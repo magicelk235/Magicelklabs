@@ -9,7 +9,7 @@ zero build step except `viaduct/extensions/build.js`.
 ## Register
 
 Brand / marketing. Design IS the product here: the site must sell $9–$19
-one-time utilities, plus Spyglass's optional Pro + Drive subscription, to
+one-time utilities, plus Spyglass's optional Spyglass Drive subscription, to
 design-conscious Mac users. Pages: studio landing (`/`),
 three product pages (`/spyglass/`, `/viaduct/`, `/lector/`), 20 SEO extension guides
 + hub (`/viaduct/extensions/`), privacy pages.
@@ -26,9 +26,10 @@ they can't select or read (Lector).
 - Viaduct: Gumroad buy buttons (`data-gumroad-action="buy"`, product `uadrjp`).
   Landing is also embedded in Gumroad's iframe; do not break the postMessage wiring.
 - Spyglass: free GitHub download (every format free for 7 days) and two
-  Gumroad products, `spyglass-pro` ($12 once, linked with `?wanted=true`) and
-  `spyglass-drive` ($4/month or $36/year, linked to the product page so the
-  buyer picks monthly or yearly).
+  Gumroad products, both opened straight at checkout: `spyglass` ($12
+  once, `?wanted=true`) and `spyglass-drive` ($4/month,
+  `?monthly=true&wanted=true`). Like the other pages, the links carry no UTM
+  tags of their own; `attribution.js` adds them for tagged visits.
 - Lector: free GitHub download; Buy Text and Buy Translate go straight to
   checkout with the tier preselected (`?variant=Text|Translate&wanted=true`);
   the plain Buy buttons open the product page so Gumroad shows its tier picker;
