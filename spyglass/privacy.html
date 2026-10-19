@@ -5,14 +5,14 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Privacy Policy — Spyglass</title>
-<meta name="description" content="How Spyglass handles your files and data: previews are made on your Mac, Google Drive access is read-only and only on the Drive plan, and there are no servers or analytics.">
+<meta name="description" content="How Spyglass handles your files and data: previews are made on your Mac, Google Drive access is read-only and only on the Drive plan, and the only usage data shared is a few counts in the checkout link when you press Buy.">
 <link rel="icon" href="./assets/spyglass-appicon-dark-320.png">
 <link rel="canonical" href="https://magicelklabs.com/spyglass/privacy.html">
 <link rel="apple-touch-icon" href="/spyglass/assets/spyglass-appicon-dark-320.png">
 <link rel="manifest" href="/spyglass/assets/spyglass.webmanifest">
 <meta name="theme-color" content="#0A0908">
 <meta property="og:title" content="Privacy Policy — Spyglass">
-<meta property="og:description" content="How Spyglass handles your files and data: previews are made on your Mac, Google Drive access is read-only and only on the Drive plan, and there are no servers or analytics.">
+<meta property="og:description" content="How Spyglass handles your files and data: previews are made on your Mac, Google Drive access is read-only and only on the Drive plan, and the only usage data shared is a few counts in the checkout link when you press Buy.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://magicelklabs.com/spyglass/privacy.html">
 <meta property="og:site_name" content="Magicelk Labs">
@@ -23,7 +23,7 @@
 <meta property="og:image:alt" content="The Spyglass headline beside a Quick Look window showing a Jupyter notebook with a temperature chart">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Privacy Policy — Spyglass">
-<meta name="twitter:description" content="How Spyglass handles your files and data: previews are made on your Mac, Google Drive access is read-only and only on the Drive plan, and there are no servers or analytics.">
+<meta name="twitter:description" content="How Spyglass handles your files and data: previews are made on your Mac, Google Drive access is read-only and only on the Drive plan, and the only usage data shared is a few counts in the checkout link when you press Buy.">
 <meta name="twitter:image" content="https://magicelklabs.com/spyglass/assets/spyglass-og-2.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,7 +60,7 @@ footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);color:v
 footer a{text-decoration:none}
 </style>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Spyglass","description":"How Spyglass handles your files and data: previews are made on your Mac, Google Drive access is read-only and only on the Drive plan, and there are no servers or analytics.","url":"https://magicelklabs.com/spyglass/privacy.html","inLanguage":"en","dateModified":"2026-10-09","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Spyglass","description":"How Spyglass handles your files and data: previews are made on your Mac, Google Drive access is read-only and only on the Drive plan, and the only usage data shared is a few counts in the checkout link when you press Buy.","url":"https://magicelklabs.com/spyglass/privacy.html","inLanguage":"en","dateModified":"2026-10-19","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
 </script>
 </head>
 <body>
@@ -69,7 +69,7 @@ footer a{text-decoration:none}
   <a class="back" href="./index.html">← Spyglass</a>
 
   <h1>Privacy Policy</h1>
-  <p class="updated">Last updated: October 9, 2026</p>
+  <p class="updated">Last updated: October 19, 2026</p>
 
   <p>Spyglass is a macOS app that shows Quick&nbsp;Look previews for Markdown, source code, notebooks, archives, Google&nbsp;Drive files and other file types. This policy explains what data it accesses and how that data is handled. In short: previews are made on your Mac, Spyglass has no server and no analytics, and it only goes online to check a license key with Gumroad and, on the Pro&nbsp;+&nbsp;Drive plan, to fetch your own documents from Google.</p>
 
@@ -78,6 +78,10 @@ footer a{text-decoration:none}
 
   <h2>License keys</h2>
   <p>When you activate a license, Spyglass sends the key to Gumroad's license API to confirm the purchase. It may check the key again later, so that a renewed, cancelled or refunded purchase is picked up. Gumroad receives the key and the IP address the request comes from, and nothing about your files. Purchases happen on Gumroad's own site, and we never see or store your payment details. Gumroad's handling of your data is governed by <a href="https://gumroad.com/privacy">Gumroad's privacy policy</a>.</p>
+
+  <h2>Usage counts and the Buy button</h2>
+  <p>Spyglass keeps a tally of how many previews it showed on your Mac in the last seven days, grouped by format (for example, 12 Markdown and 4 Google&nbsp;Drive). It stores only those numbers, never file names or contents, and shows them in the menu-bar window.</p>
+  <p>When you press a Buy button in the app, it opens Gumroad checkout with a few of those numbers in the link: which button you pressed, how far into the free trial you are, your most-used format, and a rough range for this week's previews (such as "10-49"). Gumroad shows us these as totals per combination, so we can see which kinds of use lead to a purchase. Nothing is sent at any other time, and the tally never leaves your Mac otherwise.</p>
 
   <h2>What Google data Spyglass accesses</h2>
   <p>Spyglass accesses your Google data <strong>only if you are on the Pro&nbsp;+&nbsp;Drive plan (or use a Spyglass&nbsp;1.0 key) and sign in with Google</strong>. The free Google&nbsp;Drive info card and every format preview need no account and access no Google data at all. When you do sign in, Spyglass requests:</p>
@@ -92,7 +96,7 @@ footer a{text-decoration:none}
     <li>Rendered exports are cached locally on your Mac, inside the app's sandboxed container, so previews stay fast. A document's cache entry is refreshed when the document changes.</li>
     <li>Your email is used solely to label the signed-in account in the app's menu.</li>
   </ul>
-  <p>Spyglass does <strong>not</strong> use your data for anything else. There is no analytics, no tracking, no advertising, and no profiling.</p>
+  <p>Spyglass does <strong>not</strong> use your Google data for anything else. It is never used for analytics, tracking, advertising, or profiling.</p>
 
   <h2>Where your Google data goes</h2>
   <p><strong>Nowhere but your own Mac and Google.</strong> Spyglass has no backend server. Your documents and email are exchanged directly between your device and Google's APIs. We never receive, store, sell, or share your data with any third party. Google's own <a href="https://policies.google.com/privacy">Privacy Policy</a> governs their side of that exchange.</p>
@@ -105,6 +109,7 @@ footer a{text-decoration:none}
     <li><strong>Access and refresh tokens</strong> are stored in your macOS Keychain so you don't have to sign in repeatedly.</li>
     <li><strong>Rendered PDF exports</strong> are cached in the app's local container and can be cleared by the app at any time.</li>
     <li><strong>Your license key</strong> and the date your trial started are kept in the app's settings.</li>
+    <li><strong>The weekly preview tally</strong> is kept in the Quick&nbsp;Look extension's container and holds only the last seven days.</li>
     <li>All of this lives only on your device.</li>
   </ul>
 
