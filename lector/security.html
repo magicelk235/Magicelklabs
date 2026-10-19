@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Security Policy — Lector</title>
+<meta name="description" content="Lector security policy. How to report a vulnerability privately, what to expect, and what is in scope.">
+<link rel="icon" href="./assets/lector-appicon-dark-320.png">
+<link rel="canonical" href="https://magicelklabs.com/lector/security.html">
+<link rel="apple-touch-icon" href="/lector/assets/lector-appicon-dark-320.png">
+<link rel="manifest" href="/lector/assets/lector.webmanifest">
+<meta name="theme-color" content="#0C0808">
+<meta property="og:title" content="Security Policy — Lector">
+<meta property="og:description" content="Lector security policy. How to report a vulnerability privately, what to expect, and what is in scope.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://magicelklabs.com/lector/security.html">
+<meta property="og:site_name" content="Magicelk Labs">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://magicelklabs.com/lector/assets/lector-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A Japanese game menu on a Mac, with Lector's English translation painted over each line">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Security Policy — Lector">
+<meta name="twitter:description" content="Lector security policy. How to report a vulnerability privately, what to expect, and what is in scope.">
+<meta name="twitter:image" content="https://magicelklabs.com/lector/assets/lector-og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Font CSS loads async (media=print swap) so first paint isn't blocked on
+     two third-party stylesheets; display=swap shows fallback text meanwhile. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+</noscript>
+<style>
+/* Lector tokens. footer.js styles itself with --hair/--mute/--ink and hovers in --accent. */
+:root{color-scheme:dark;--canvas:#0C0808;--surface:#140E0D;--elevated:#1C1413;--card:#231917;--ink:#F4ECE7;--body:#B9A9A2;--mute:#908079;--hair:rgba(255,255,255,.075);--red:#C0544F;--red-press:#B04A45;--on-red:#FFFFFF;--red-text:#E58A82;--lip:inset 0 1px 0 rgba(255,255,255,.055);--accent:var(--red-text)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body::after{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--canvas);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:clamp(48px,8vh,96px) 24px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.back{display:inline-block;color:var(--red-text);text-decoration:none;font-size:15px;font-weight:600}
+.back:hover{text-decoration:underline}
+.actions{display:flex;align-items:center;gap:8px}
+.btn,.btn-ghost{display:inline-flex;align-items:center;font-size:13.5px;font-weight:600;line-height:1.4;padding:7px 14px;border-radius:999px;text-decoration:none;transition:transform .22s cubic-bezier(.2,.8,.2,1),background .2s,border-color .2s}
+.btn{background:var(--red);color:var(--on-red);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.btn:hover{background:var(--red-press);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--ink);border:1px solid rgba(255,255,255,.12);box-shadow:var(--lip)}
+.btn-ghost:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+.btn:active,.btn-ghost:active{transform:translateY(0) scale(.99)}
+h1{font-family:"Cabinet Grotesk",sans-serif;font-size:clamp(30px,5vw,42px);font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+.updated{color:var(--mute);font-size:15px;margin:0 0 36px}
+h2{font-family:"Cabinet Grotesk",sans-serif;font-size:clamp(19px,2.6vw,24px);font-weight:700;margin:36px 0 10px}
+p,li{color:var(--body)}
+strong{color:var(--ink);font-weight:600}
+p{margin:0 0 14px}
+ul{padding-left:22px;margin:0 0 14px}
+li{margin-bottom:8px}
+.muted{color:var(--mute)}
+code{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--surface);border:1px solid var(--hair);color:var(--red-text);padding:1px 6px;border-radius:4px;font-size:.86em;overflow-wrap:anywhere}
+a{color:var(--red-text)}
+footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--hair);color:var(--mute);font-size:14px}
+footer a{text-decoration:none}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"Security Policy — Lector","description":"How Lector handles your screen and your data: it reads and translates on your Mac, keeps nothing you capture, and has no analytics.","url":"https://magicelklabs.com/lector/security.html","inLanguage":"en","dateModified":"2026-10-07","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+</script>
+<script defer src="/assets/analytics.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <a class="back" href="./">← Lector</a>
+    <nav class="actions" aria-label="Get Lector">
+      <a class="btn-ghost" href="https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg">Download</a>
+      <a class="btn" href="https://magicelk235.gumroad.com/l/lector">Buy</a>
+    </nav>
+  </header>
+
+  <h1>Security Policy</h1>
+  <p class="updated">Last updated: October 7, 2026</p>
+
+  <h2>Supported versions</h2>
+  <p>
+    Lector is a rolling release. Only the latest version on the <code>main</code>
+    branch and the most recent published build get security fixes. If you're on
+    an older build, update before reporting.
+  </p>
+
+  <h2>Reporting a vulnerability</h2>
+  <p><strong>Please don't open a public GitHub issue for a security vulnerability.</strong> Report it privately instead:</p>
+  <ul>
+    <li><strong>GitHub Security Advisories.</strong> Open a draft advisory on <a href="https://github.com/magicelk235/Lector/security/advisories/new" rel="noopener">the repository's advisories page</a>. This is the preferred route.</li>
+    <li><strong>Email.</strong> Write to <a href="mailto:support@magicelklabs.com?subject=SECURITY%3A%20lector">support@magicelklabs.com</a> with the subject line <code>SECURITY: lector</code>.</li>
+  </ul>
+  <p>Please include:</p>
+  <ul>
+    <li>What the vulnerability is and what an attacker could do with it.</li>
+    <li>Steps to reproduce, with a proof of concept if you have one.</li>
+    <li>The Lector version, your macOS version, and your Mac's architecture.</li>
+  </ul>
+
+  <h2>What to expect</h2>
+  <ul>
+    <li>An acknowledgement within 5 business days, then an assessment.</li>
+    <li>If the issue is confirmed, a timeline for the fix. Most fixes ship in the next release.</li>
+    <li>Credit in the release notes, unless you'd rather stay anonymous.</li>
+  </ul>
+  <p>Please allow a reasonable window for a fix to ship before you disclose anything publicly.</p>
+
+  <h2>Scope</h2>
+  <p>
+    Lector is an unsandboxed menu bar app, built with the hardened runtime and
+    distributed directly rather than through the App Store. It holds the Screen
+    Recording permission and registers global hot keys. When you press a
+    shortcut, it captures part of the screen with macOS's screenshot tool, reads
+    the text with Apple's Vision and a bundled Tesseract, and translates it with
+    Apple's Translation or an offline Opus-MT model running on ONNX Runtime.
+  </p>
+  <p>These are in scope:</p>
+  <ul>
+    <li>Anything that lets the capture, its temporary file, or the recognised text outlive the shortcut, reach another process, or leave the Mac.</li>
+    <li>Crafted on-screen content, such as an image, font, or page, that crashes Lector or runs code in it through Vision, Tesseract, Leptonica, or the translation path.</li>
+    <li>Language pack downloads. Packs come from Hugging Face at pinned revisions and are checked against a size and SHA-256 hash before use. A way to get Lector to load a model that fails those checks, or to write outside its Application Support folder, is in scope.</li>
+    <li>Abuse of the Screen Recording grant or the global hot keys by another app through Lector.</li>
+  </ul>
+  <p>
+    Bugs in Tesseract, Leptonica, or ONNX Runtime themselves belong upstream.
+    Tell us as well if Lector ships an affected version.
+  </p>
+  <p>
+    Don't put real screenshots of private content in a report. Use a test image
+    or redact it.
+  </p>
+
+<div id="site-footer"></div>
+<script src="/assets/footer.js" data-product="Lector" data-links-only="1" data-links="Privacy|./privacy.html, Terms|./terms.html, Security|./security.html, License|./license.html, Contact|mailto:support@magicelklabs.com, Source|https://github.com/magicelk235/Lector"></script>
+<noscript>
+  <footer style="border-top:1px solid var(--hair);padding:40px 0 56px;font-size:14px;color:var(--mute)">
+    <div style="max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px">
+      <span style="font-family:'Cabinet Grotesk','Inter',sans-serif;font-size:16px;color:var(--ink)">Magicelk Labs · Lector <span style="color:var(--mute);font-family:Inter,sans-serif;font-size:13px">· © 2026</span></span>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <a href="./privacy.html" style="color:var(--mute);font-weight:500;text-decoration:none">Privacy</a>
+        <a href="./terms.html" style="color:var(--mute);font-weight:500;text-decoration:none">Terms</a>
+        <a href="./security.html" style="color:var(--mute);font-weight:500;text-decoration:none">Security</a>
+        <a href="./license.html" style="color:var(--mute);font-weight:500;text-decoration:none">License</a>
+        <a href="mailto:support@magicelklabs.com" style="color:var(--mute);font-weight:500;text-decoration:none">Contact</a>
+        <a href="https://github.com/magicelk235/Lector" style="color:var(--mute);font-weight:500;text-decoration:none">Source</a>
+      </div>
+    </div>
+  </footer>
+</noscript>
+
+</div>
+<script src="/assets/attribution.js"></script>
+</body>
+</html>

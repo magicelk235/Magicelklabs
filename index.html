@@ -6,7 +6,7 @@
      header control. frame-ancestors is ignored in meta form, so framing is not
      covered here; everything else is. Charset stays above it so the declaration
      lands inside the 1024-byte sniffing window. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
 <script>
   // Motion gate: hide [data-mm] only when we intend to animate. If GSAP never
   // arrives, strip the class after 2s so content is never lost.
@@ -18,8 +18,8 @@
   }catch(e){}
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Magicelk Labs: Spyglass and Viaduct, Mac apps you buy once</title>
-<meta name="description" content="Magicelk Labs (magicelklabs.com) is an independent Mac studio. Spyglass and Viaduct are native single-purpose apps you pay for once.">
+<title>Magicelk Labs: Spyglass, Viaduct and Lector, Mac apps you buy once</title>
+<meta name="description" content="Magicelk Labs (magicelklabs.com) is an independent Mac studio. Spyglass, Viaduct and Lector are native single-purpose apps you pay for once.">
 <link rel="canonical" href="https://magicelklabs.com/">
 <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
 <link rel="icon" type="image/png" href="./assets/favicon.png">
@@ -191,7 +191,7 @@ a:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:8p
       "alternateName": ["magicelklabs", "Magicelk", "Magic Elk Labs"],
       "url": "https://magicelklabs.com/",
       "logo": "https://magicelklabs.com/assets/apple-touch-icon.png",
-      "description": "An independent Mac studio that makes Spyglass and Viaduct, native single-purpose macOS apps you pay for once.",
+      "description": "An independent Mac studio that makes Spyglass, Viaduct and Lector, native single-purpose macOS apps you pay for once.",
       "email": "support@magicelklabs.com",
       "founder": { "@type": "Person", "name": "magicelk235", "url": "https://github.com/magicelk235" },
       "sameAs": [
@@ -213,13 +213,14 @@ a:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:8p
       "@type": "WebPage",
       "@id": "https://magicelklabs.com/#webpage",
       "url": "https://magicelklabs.com/",
-      "name": "Magicelk Labs: Spyglass and Viaduct, Mac apps you buy once",
+      "name": "Magicelk Labs: Spyglass, Viaduct and Lector, Mac apps you buy once",
       "isPartOf": { "@id": "https://magicelklabs.com/#website" },
       "about": { "@id": "https://magicelklabs.com/#organization" }
     }
   ]
 }
 </script>
+<script defer src="/assets/analytics.js"></script>
 </head>
 <body>
 
@@ -287,6 +288,14 @@ a:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:8p
           </div>
           <h2>Viaduct</h2>
           <p>Drop in a Chrome extension and get a signed Safari one back, without opening Xcode.</p>
+        </a>
+
+        <a class="book" href="./lector/">
+          <div class="cover">
+            <img src="./assets/lector-cover.webp" alt="The Lector cover: Japanese Wikipedia on a Mac with Lector's English translation painted over the article" width="1200" height="630" loading="lazy" decoding="async">
+          </div>
+          <h2>Lector</h2>
+          <p>Press a shortcut and the text on your screen is copied, or translated in place, on your Mac.</p>
         </a>
 
       </div>

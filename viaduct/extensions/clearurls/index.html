@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Run ClearURLs in Safari · Viaduct</title>
 <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
@@ -29,15 +29,16 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
 <style>
 /* The pages only ship dark. The canvas is a near-black with a trace of green in
    it, so the teal accent sits on it like something lit, not a sticker on grey. */
 :root {
   color-scheme:dark;
   --canvas:#070908; --surface:#0E1211; --elevated:#151A19; --card:#1B211F;
-  --ink:#ECF2F0; --body:#9DAAA7; --mute:#6B7A77; --ash:#4E5B58; --stone:#333D3B;
+  --ink:#ECF2F0; --body:#A3B0AD; --mute:#85938F; --ash:#4E5B58; --stone:#333D3B;
   --teal:#2DD4BF; --teal-press:#5FE3D2; --on-teal:#04211D;
-  --ok:#30D158; --bad:#FF6369;
+  --ok:#30D158; --bad:#FF7A7F;
   --hair:rgba(255,255,255,.075); --hair-soft:rgba(255,255,255,.045); --hair-strong:rgba(255,255,255,.14);
   --glow:rgba(45,212,191,.09); --brass:var(--teal);
   --lip:inset 0 1px 0 rgba(255,255,255,.055);
@@ -62,55 +63,18 @@ a:hover { text-decoration:underline; }
 code { font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular','SF Mono',Menlo,monospace; color:var(--teal); font-size:.92em; }
 .wrap { max-width:760px; margin:0 auto; padding:0 24px; }
 main.wrap { padding-top:110px; padding-bottom:24px; }
-/* Nav: a floating glass pill. Real glass here means an SVG displacement map fed
-   to backdrop-filter, so the pill refracts what passes under it and splits colour
-   at its edges. Chromium only, so .glassy is set by script and the blur below
-   stays as the fallback. The blur is kept in the chain (the original drops it) or
-   nav text sits on top of whatever is scrolling past and stops being readable. */
-#nav { position:fixed; top:12px; left:0; right:0; z-index:50; padding:0 12px; }
-@media (min-width:640px) { #nav { top:16px; padding:0 20px; } }
-.nav-pill {
-  position:relative; max-width:64rem; margin:0 auto; height:54px;
-  padding:0 8px 0 16px; display:flex; align-items:center; justify-content:space-between; gap:16px;
-  background:rgba(14,18,17,.55); border:1px solid rgba(255,255,255,.08);
-  border-radius:999px; box-shadow:var(--lip);
-  -webkit-backdrop-filter:blur(20px) saturate(160%); backdrop-filter:blur(20px) saturate(160%);
-  transition:background .3s, border-color .3s;
-}
-@media (min-width:640px) { .nav-pill { padding:0 10px 0 20px; } }
-#nav.scrolled .nav-pill { background:rgba(14,18,17,.82); border-color:rgba(255,255,255,.12); }
-.glass-defs { position:absolute; width:0; height:0; overflow:hidden; }
-html.glassy .nav-pill {
-  background:rgba(14,18,17,.30);
-  backdrop-filter:url(#nav-glass) blur(9px) saturate(1.25);
-  box-shadow:inset 0 0 1px 0 rgba(255,255,255,.20), inset 0 0 7px 2px rgba(255,255,255,.06), var(--lip);
-}
-html.glassy #nav.scrolled .nav-pill { background:rgba(14,18,17,.58); }
-.nav-link { color:var(--body); transition:color .2s; text-decoration:none; }
-.nav-link:hover { color:var(--ink); text-decoration:none; }
-.nav-brand { display:flex; align-items:center; gap:8px; flex-shrink:0; text-decoration:none; }
-.nav-brand:hover { text-decoration:none; }
-.nav-brand img { width:21px; height:21px; flex-shrink:0; display:block; }
-.nav-brand span { font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:700; font-size:19px; color:var(--ink); letter-spacing:-.02em; line-height:1; }
-.nav-mid { display:none; position:absolute; left:50%; transform:translateX(-50%); align-items:center; gap:28px; font-size:14px; font-weight:500; }
-@media (min-width:768px) { .nav-mid { display:flex; } }
-.nav-actions { display:flex; align-items:center; gap:8px; }
-.nav-dl { display:none; }
-@media (min-width:640px) { .nav-dl { display:inline-flex; } }
-.btn-teal, .btn-ghost, .btn-cyan {
+.btn-teal, .btn-ghost {
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
   font-size:15px; padding:11px 22px; text-decoration:none;
 }
-.btn-teal:hover, .btn-ghost:hover, .btn-cyan:hover { text-decoration:none; }
+.btn-sm { font-size:13.5px; padding:7px 14px; }
+.btn-teal:hover, .btn-ghost:hover { text-decoration:none; }
 .btn-teal { background:var(--teal); color:var(--on-teal); font-weight:600; border-radius:999px; box-shadow:inset 0 1px 0 rgba(255,255,255,.3); transition:transform .22s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .25s; }
 .btn-teal:hover { background:var(--teal-press); transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 6px 28px -6px rgba(45,212,191,.55); }
 .btn-teal:active { transform:translateY(0) scale(.99); }
 .btn-ghost { background:rgba(255,255,255,.05); color:var(--ink); border:1px solid rgba(255,255,255,.12); border-radius:999px; box-shadow:var(--lip); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); transition:transform .22s cubic-bezier(.2,.8,.2,1), border-color .2s, background .2s; }
 .btn-ghost:hover { background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.2); transform:translateY(-1px); }
 .btn-ghost:active { transform:translateY(0) scale(.99); }
-.btn-cyan { background:#0B7A70; color:#E8FCF8; font-weight:600; border-radius:999px; box-shadow:inset 0 1px 0 rgba(255,255,255,.16); transition:transform .22s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .25s; }
-.btn-cyan:hover { background:#0F958A; transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 6px 28px -6px rgba(15,149,138,.6); }
-.btn-cyan:active { transform:translateY(0) scale(.99); }
 .crumb { font-size:13px; color:var(--mute); margin:0 0 14px; }
 .crumb a { color:var(--mute); }
 .hero h1 { font-size:clamp(2.2rem,5.5vw,3.4rem); margin:0 0 16px; text-wrap:balance; }
@@ -176,39 +140,24 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   }
 }
 </script>
+<script defer src="/assets/analytics.js"></script>
 </head>
 <body>
-<svg class="glass-defs" aria-hidden="true" focusable="false">
-  <defs>
-    <filter id="nav-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
-      <feImage id="nav-glass-map" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" />
-      <feDisplacementMap in="SourceGraphic" in2="map" scale="-92" xChannelSelector="R" yChannelSelector="G" result="dRed" />
-      <feColorMatrix in="dRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red" />
-      <feDisplacementMap in="SourceGraphic" in2="map" scale="-88" xChannelSelector="R" yChannelSelector="G" result="dGreen" />
-      <feColorMatrix in="dGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green" />
-      <feDisplacementMap in="SourceGraphic" in2="map" scale="-84" xChannelSelector="R" yChannelSelector="G" result="dBlue" />
-      <feColorMatrix in="dBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue" />
-      <feBlend in="red" in2="green" mode="screen" result="rg" />
-      <feBlend in="rg" in2="blue" mode="screen" result="output" />
-      <feGaussianBlur in="output" stdDeviation="0.7" />
-    </filter>
-  </defs>
-</svg>
-<header id="nav">
+<header id="nav" class="nav">
   <nav class="nav-pill" aria-label="Primary">
-    <a href="/viaduct/" class="nav-brand" aria-label="Viaduct home">
-      <img src="/viaduct/assets/viaduct-appicon.png" alt="" aria-hidden="true" width="21" height="21" />
+    <a href="/viaduct/" class="brand" aria-label="Viaduct home">
+      <img src="/viaduct/assets/viaduct-appicon.png" width="21" height="21" alt="">
       <span>Viaduct</span>
     </a>
-    <div class="nav-mid">
-      <a href="/viaduct/#how" class="nav-link">How it works</a>
-      <a href="/viaduct/#features" class="nav-link">Features</a>
-      <a href="/viaduct/#pricing" class="nav-link">Pricing</a>
-      <a href="/viaduct/#faq" class="nav-link">FAQ</a>
+    <div class="nav-links">
+      <a href="/viaduct/#how">How it works</a>
+      <a href="/viaduct/#features">Features</a>
+      <a href="/viaduct/#pricing">Pricing</a>
+      <a href="/viaduct/#faq">FAQ</a>
     </div>
     <div class="nav-actions">
-      <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost nav-dl" style="font-size:13.5px;padding:7px 14px">Download</a>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-cyan" style="font-size:13.5px;padding:7px 14px">Get Pro</a>
+      <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
+      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
     </div>
   </nav>
 </header>
@@ -252,8 +201,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   runs inside Safari's own engine, you keep Safari's battery life. No second Chromium
   process runs in the background.</p>
   <p>Safari supports the same WebExtension API family that Chrome extensions are built
-  on, so most extensions work as-is. Some Chrome-only APIs have no Safari equivalent,
-  and Viaduct's built-in Analyze check tells you before you convert.</p>
+  on, so most extensions work as-is. Some Chrome-only APIs have no Safari equivalent, and
+  the features built on them won't work. If an extension can't work in Safari at all,
+  Viaduct tells you before you convert.</p>
 </section>
 <section>
   <h2>Questions</h2>
@@ -262,9 +212,13 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
     Chrome Web Store. Nothing is modified, hosted, or redistributed; the conversion
     happens locally on your Mac.</p></details>
   <details><summary>Will it stop working after a week?</summary>
-    <p>Free Apple accounts sign extensions for about 7 days. Viaduct Pro auto-re-signs
-    converted extensions in the background before they lapse, so they never silently
-    disappear.</p></details>
+    <p>On the free plan, yes: Viaduct removes converted extensions after 7 days.
+    Viaduct Pro keeps them installed for good.</p></details>
+  <details><summary>I already use ClearURLs in Chrome. Do my settings come with it?</summary>
+    <p>Usually, if it's installed in Chrome, Brave, Edge, Arc, Vivaldi, Opera or Chromium on
+    the same Mac. Viaduct reads its saved settings from the browser and brings them into
+    the Safari version. Import from Chrome in Viaduct lists everything you have installed
+    there and converts the ones you pick in one batch.</p></details>
   <details><summary>What do I need?</summary>
     <p>macOS 13+, on Apple Silicon or Intel. Viaduct is a universal app, so one download
     runs natively on either chip. Node is bundled inside Viaduct, so there's nothing
@@ -272,8 +226,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
     way to code-sign a Safari extension on a free account; Viaduct checks on first run and
     links the install if it's missing.</p></details>
   <details><summary>What does Viaduct cost?</summary>
-    <p>Free for your first 2 conversions. Pro is $19 one-time: unlimited conversions
-    plus auto-re-signing. The conversion engine is source-available (PolyForm Shield).</p></details>
+    <p>Free for your first 2 conversions, which Viaduct removes after 7 days. Pro is $19
+    one-time: unlimited conversions, and your extensions stay installed. The conversion
+    engine is source-available (PolyForm Shield).</p></details>
 </section>
 </main>
 <p class="legal">All extension names are trademarks of their respective owners. Viaduct is not
@@ -295,58 +250,7 @@ Google. Viaduct converts extensions locally on your Mac; nothing is redistribute
     </div>
   </footer>
 </noscript>
-<script>
-(function(){
-  'use strict';
-  var nav = document.getElementById('nav');
-  var onScroll = function(){ if(nav) nav.classList.toggle('scrolled', window.scrollY > 12); };
-  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
-
-  // Glass nav: a data-URI SVG is the displacement map (a red horizontal ramp and
-  // a blue vertical ramp, difference-blended, with a soft bright rect inset from
-  // the edges). Feeding that to feDisplacementMap once per colour channel at
-  // slightly different scales bends the backdrop at the pill's edges and splits
-  // it into colour fringes. Only Chromium resolves url() inside backdrop-filter,
-  // so everyone else keeps the plain blur.
-  (function(){
-    var pill = document.querySelector('.nav-pill');
-    var map = document.getElementById('nav-glass-map');
-    if (!pill || !map) return;
-    var ua = navigator.userAgent;
-    var probe = document.createElement('div');
-    probe.style.backdropFilter = 'url(#nav-glass)';
-    var supported = probe.style.backdropFilter !== '' &&
-      !(/Safari/.test(ua) && !/Chrome/.test(ua)) && !/Firefox/.test(ua);
-    if (!supported) return;
-    function buildMap(){
-      var r = pill.getBoundingClientRect();
-      var w = Math.round(r.width), h = Math.round(r.height);
-      if (!w || !h) return;
-      var radius = Math.min(999, h / 2);
-      var edge = Math.min(w, h) * 0.035;
-      var svg =
-        '<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">' +
-          '<defs>' +
-            '<linearGradient id="r" x1="100%" y1="0%" x2="0%" y2="0%">' +
-              '<stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="red"/></linearGradient>' +
-            '<linearGradient id="b" x1="0%" y1="0%" x2="0%" y2="100%">' +
-              '<stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="blue"/></linearGradient>' +
-          '</defs>' +
-          '<rect width="' + w + '" height="' + h + '" fill="black"/>' +
-          '<rect width="' + w + '" height="' + h + '" rx="' + radius + '" fill="url(#r)"/>' +
-          '<rect width="' + w + '" height="' + h + '" rx="' + radius + '" fill="url(#b)" style="mix-blend-mode:difference"/>' +
-          '<rect x="' + edge + '" y="' + edge + '" width="' + (w - edge * 2) + '" height="' + (h - edge * 2) + '"' +
-            ' rx="' + radius + '" fill="hsl(0 0% 50% / 0.93)" style="filter:blur(11px)"/>' +
-        '</svg>';
-      map.setAttribute('href', 'data:image/svg+xml,' + encodeURIComponent(svg));
-    }
-    buildMap();
-    document.documentElement.classList.add('glassy');
-    if (window.ResizeObserver) new ResizeObserver(buildMap).observe(pill);
-    else window.addEventListener('resize', buildMap);
-  })();
-})();
-</script>
+<script src="/viaduct/assets/nav.js?v=1"></script>
 <script src="/assets/attribution.js"></script>
 </body>
 </html>

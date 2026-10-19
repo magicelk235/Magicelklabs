@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
   <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privacy Policy — Viaduct</title>
@@ -28,48 +28,85 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- Font CSS loads async (media=print swap) so first paint isn't blocked on
-       a third-party stylesheet; display=swap shows fallback text meanwhile. -->
-  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+       two third-party stylesheets; display=swap shows fallback text meanwhile. -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
   <noscript>
-    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet" />
   </noscript>
+  <link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
   <style>
+    /* Viaduct's tokens, as in assets/viaduct.css. footer.js styles itself with
+       --hair/--mute/--ink and hovers in --accent. */
     :root {
       color-scheme: dark;
-      --ink: #F5F5F7; --body: #D4D4D8; --mute: #98989F;
-      --teal: #21AF9F; --bg: #0B0B0D; --hair: #26262A;
+      --canvas: #070908; --surface: #0E1211;
+      --ink: #ECF2F0; --body: #A3B0AD; --mute: #85938F;
+      --teal: #2DD4BF; --teal-press: #5FE3D2; --on-teal: #04211D;
+      --hair: rgba(255, 255, 255, .075);
+      --lip: inset 0 1px 0 rgba(255, 255, 255, .055);
+      --accent: var(--teal);
     }
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
     body {
-      margin: 0; background: var(--bg); color: var(--body);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      font-size: 17px; line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
+      margin: 0; background: var(--canvas); color: var(--body);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
     }
-    .wrap { max-width: 680px; margin: 0 auto; padding: 72px 24px 96px; }
+    /* Film grain, so the near-black doesn't band. */
+    body::after { content: ""; position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: .035; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"); }
+    ::selection { background: var(--teal); color: var(--on-teal); }
+    .wrap { max-width: 680px; margin: 0 auto; padding: 112px 24px clamp(48px, 8vh, 96px); }
     a { color: var(--teal); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    h1 { color: var(--ink); font-family: "Cabinet Grotesk", sans-serif; font-size: 34px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 6px; }
-    h2 { color: var(--ink); font-family: "Cabinet Grotesk", sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 40px 0 10px; }
-    .meta { color: var(--mute); font-size: 14px; margin: 0 0 8px; }
-    .back { display: inline-block; margin-bottom: 40px; font-size: 15px; }
+    a:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 6px; }
+    .btn-teal, .btn-ghost { display: inline-flex; align-items: center; font-size: 13.5px; font-weight: 600; line-height: 1.4; padding: 7px 14px; border-radius: 999px; transition: transform .22s cubic-bezier(.2, .8, .2, 1), background .2s, border-color .2s; }
+    .btn-teal:hover, .btn-ghost:hover { text-decoration: none; transform: translateY(-1px); }
+    .btn-teal:active, .btn-ghost:active { transform: translateY(0) scale(.99); }
+    .btn-teal { background: var(--teal); color: var(--on-teal); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); }
+    .btn-teal:hover { background: var(--teal-press); }
+    .btn-ghost { background: rgba(255, 255, 255, .05); color: var(--ink); border: 1px solid rgba(255, 255, 255, .12); box-shadow: var(--lip); }
+    .btn-ghost:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .2); }
+    h1 { color: var(--ink); font-family: "Cabinet Grotesk", sans-serif; font-size: clamp(30px, 5vw, 42px); font-weight: 800; letter-spacing: -.02em; margin: 0 0 8px; }
+    h2 { color: var(--ink); font-family: "Cabinet Grotesk", sans-serif; font-size: clamp(19px, 2.6vw, 24px); font-weight: 700; margin: 36px 0 10px; }
+    .meta { color: var(--mute); font-size: 15px; margin: 0 0 36px; }
     p { margin: 0 0 14px; }
     ul { margin: 0 0 14px; padding-left: 22px; }
-    li { margin: 0 0 6px; }
-    hr { border: none; border-top: 1px solid var(--hair); margin: 48px 0; }
-    footer { color: var(--mute); font-size: 14px; }
+    li { margin-bottom: 8px; }
+    strong { color: var(--ink); font-weight: 600; }
+    code { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--surface); border: 1px solid var(--hair); color: var(--teal); padding: 1px 6px; border-radius: 4px; font-size: .86em; overflow-wrap: anywhere; }
+    pre { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); border-radius: 10px; padding: 20px; overflow-x: auto; font-size: 13px; line-height: 1.6; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--body); white-space: pre-wrap; }
   </style>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Viaduct","description":"Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions entirely on your Mac. It collects no personal data.","url":"https://magicelklabs.com/viaduct/privacy.html","inLanguage":"en","dateModified":"2026-07-04","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+  {"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Viaduct","description":"Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions entirely on your Mac. It collects no personal data.","url":"https://magicelklabs.com/viaduct/privacy.html","inLanguage":"en","dateModified":"2026-10-19","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
   </script>
+<script defer src="/assets/analytics.js"></script>
 </head>
 <body>
+<header id="nav" class="nav">
+  <nav class="nav-pill" aria-label="Primary">
+    <a href="/viaduct/" class="brand" aria-label="Viaduct home">
+      <img src="/viaduct/assets/viaduct-appicon.png" width="21" height="21" alt="">
+      <span>Viaduct</span>
+    </a>
+    <div class="nav-links">
+      <a href="/viaduct/#how">How it works</a>
+      <a href="/viaduct/#features">Features</a>
+      <a href="/viaduct/#pricing">Pricing</a>
+      <a href="/viaduct/#faq">FAQ</a>
+    </div>
+    <div class="nav-actions">
+      <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
+      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
+    </div>
+  </nav>
+</header>
   <main class="wrap">
-    <a class="back" href="/viaduct/">&larr; Viaduct</a>
 
     <h1>Privacy Policy</h1>
-    <p class="meta">Last updated: July 4, 2026</p>
+    <p class="meta">Last updated: October 19, 2026</p>
 
     <p>
       Viaduct is a native macOS app that converts Google Chrome extensions into
@@ -81,7 +118,9 @@
     <p>
       Viaduct collects no personal data. All conversion happens locally on your
       Mac. Nothing about the extensions you convert, and nothing about you, is
-      sent to us.
+      sent to us. The one exception is a few anonymous usage counts that go
+      along with your purchase when you click "Buy a license" in the app (see
+      below).
     </p>
 
     <h2>What runs on your Mac</h2>
@@ -92,22 +131,46 @@
       and a bundled copy of the Node.js runtime. The extension source, the
       converted output, and your signing identity never leave your Mac.
     </p>
+    <p>
+      When you convert an extension that is also installed in Chrome or another
+      Chromium browser (Brave, Edge, Arc, Vivaldi, Opera, Chromium), Viaduct
+      reads that extension's saved settings from the browser's profile folder so
+      it can bring them over. Import from Chrome reads the same folders to list
+      the extensions you have. Recent versions of macOS ask for your permission
+      first, and none of it leaves your Mac.
+    </p>
 
     <h2>Data we collect</h2>
     <p>
-      None. Viaduct has no analytics, no telemetry, no accounts, and no servers
-      that receive your data.
+      Viaduct has no analytics, no telemetry, no accounts, and no servers that
+      receive your data. When you click "Buy a license" inside the app, the
+      Gumroad checkout link it opens carries the values below to Gumroad. If you
+      complete the purchase, Gumroad passes them to us with the sale:
+    </p>
+    <ul>
+      <li>how many free conversions you used;</li>
+      <li>how many converted extensions you have installed;</li>
+      <li>how many days ago Viaduct was first set up on your Mac;</li>
+      <li>whether you clicked from the paywall or from Settings; and</li>
+      <li>your Viaduct and macOS version numbers.</li>
+    </ul>
+    <p>
+      That is all the link carries. No extension names, file paths, or identifiers are
+      included, and nothing is sent unless you click that link.
     </p>
 
     <h2>Network access</h2>
     <p>
-      Viaduct works offline for conversion. It may reach the network only to:
+      Converting runs on your Mac. Viaduct reaches the network only to:
     </p>
     <ul>
-      <li>download the Node.js runtime and developer components it needs, from their official sources; and</li>
+      <li>download its conversion engine from npm on first launch, and check npm for a newer version each time it starts;</li>
+      <li>check for app updates once a day, after you allow it on first launch;</li>
+      <li>download an extension from the Chrome Web Store when you click "Add to Safari", and, if you turn on weekly updates in Pro, check the store once a week for new versions of those extensions;</li>
+      <li>check your license key with Gumroad when you activate Pro and when Viaduct starts; and</li>
       <li>open external links (such as this page or the store) in your browser when you click them.</li>
     </ul>
-    <p>These requests contain no personal information about you.</p>
+    <p>Apart from the license key sent to Gumroad, these requests contain no personal information about you.</p>
 
     <h2>Payments</h2>
     <p>
@@ -120,8 +183,18 @@
 
     <h2>Third parties</h2>
     <p>
-      Aside from Gumroad for payment, Viaduct shares no data with third parties,
-      because it collects none to share.
+      Aside from Gumroad for payment, Viaduct shares no data with third parties.
+    </p>
+
+    <h2>This website</h2>
+    <p>
+      magicelklabs.com counts its visitors with
+      <a href="https://umami.is" rel="noopener">Umami</a>. For each visit it
+      records the page, the site or link that sent you there, your country,
+      language, browser and device type, and whether you clicked a Buy or
+      Download button. Umami doesn't set cookies or store anything in your
+      browser, and it doesn't keep your IP address. The Viaduct app itself
+      sends none of this.
     </p>
 
     <h2>Children</h2>
@@ -141,7 +214,6 @@
       <a href="mailto:support@magicelklabs.com">support@magicelklabs.com</a>.
     </p>
 
-    <hr />
 <div id="site-footer"></div>
 <script src="/assets/footer.js" data-product="Viaduct" data-links-only="1" data-links="Privacy|/viaduct/privacy.html, Terms|/viaduct/terms.html, Security|/viaduct/security.html, License|/viaduct/license.html, Viaduct|/viaduct/"></script>
 <noscript>
@@ -159,5 +231,7 @@
   </footer>
 </noscript>
   </main>
+<script src="/viaduct/assets/nav.js?v=1"></script>
+<script src="/assets/attribution.js"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@ sells small engineered tools; Viaduct is literally named after a bridge).
 Always **Magicelk Labs** — "Magicelk" is one word, capital M. Never "Magic Elk",
 "MagicElk", or "magicelk labs".
 
-Individual apps keep their own casing: **Spyglass**, **Viaduct**.
+Individual apps keep their own casing: **Spyglass**, **Viaduct**, **Lector**.
 
 ## Typography
 
@@ -33,9 +33,12 @@ Every page shares one construction: a near-black canvas, a surface ladder
 hairlines at 7% white, and `--lip: inset 0 1px 0 rgba(255,255,255,.05)` on
 every raised edge instead of a cast shadow.
 
-The two product pages tint the canvas toward their own accent so it reads as
+The product pages tint the canvas toward their own accent so it reads as
 lit rather than stuck on: Viaduct `#070908` (green-black) under teal
-`#2DD4BF`, Spyglass `#0A0908` (brown-black) under brass `#D9B679`.
+`#2DD4BF`, Spyglass `#0F1413` (the green-black of its Quick Look glass) under
+brass `#B8945F` with `#EDC371` for brass text, Lector
+`#0C0808` (maroon-black) under lectern red `#C0544F`, with `#E58A82` for red
+text (the accent itself is 4.4:1 on the canvas) and vellum `#F8EAD2` ink.
 
 The house page carries no accent at all, and that is the point. It is a shelf:
 every app already has cover art, the covers hold all the colour, and the room
@@ -45,13 +48,13 @@ buttons, and the mark are ivory. Adding an app adds a cover, so it adds
 colour without touching the theme.
 
 **Committed color, not timid accents.** Viaduct's brand surfaces are drenched
-in deep teal (`linear-gradient(168deg,#0F4D48,#093732)` — the `.hero-band` /
-`.pro-panel` / `.cta` gradient). It carries the hero, the Pro pricing panel,
-and the closing CTA. Spyglass keeps its own teal band
-(`--teal-top` `#0B3D3A` / `--teal-bot` `#072826`) for its closing call to
-action, with a brass button on it. On-band text: near-white ink
+in deep teal (`linear-gradient(168deg,#0F4D48,#093732)`, the `--band-top` /
+`--band-bot` pair in `viaduct/assets/viaduct.css`). It floods the store act
+the moment the install button flips, and carries the Pro pricing panel. The
+rest of the page stays on the green-black canvas, so the flood is the one
+colour event on the page. On-band text: near-white ink
 `#F2FBF9`, body `#C6E3DE`, dim `#93C2BB`, bright accent `#6EE0D1`; on-band
-primary buttons are white with dark-teal text (Viaduct) or brass (Spyglass).
+primary buttons are white with dark-teal text.
 
 One accent per page. Dark is the only mode the site has: tokens are declared
 once in `:root` with `color-scheme:dark`, there is no light palette to override
@@ -66,18 +69,27 @@ scheme is a bug.
 - **Bare numerals.** Process steps use large bare Cabinet Grotesk numerals in
   the accent color, and index rows use small mono numbers. Never numbers
   inside circles or chips.
-- **Band bookends.** Product pages open and close on a drenched brand band.
-  The house page has none; it ends on the shelf.
+- **No closing band.** Product pages end on the FAQ, then the other apps, then
+  the footer. The closing CTA band each page used to have (centered headline,
+  Download and Buy) was cut: it repeated the hero's buttons, and the nav pill
+  keeps Buy in reach at every scroll position. Do not add one back. The house
+  page ends on the shelf.
 - **Ported ambients, not decoration.** WebGL backgrounds are lifted from React
   Bits onto plain WebGL (no React, no ogl): one fullscreen triangle and one
   fragment program, recoloured to the page's own palette, parked by an
   IntersectionObserver whenever the section is off screen or the tab is in the
   background. Viaduct runs SideRays in the hero; the root page runs Threads in
-  ivory at half opacity. Neither one follows the cursor. The hero is something
-  you read past, so the field drifts on its own clock and ignores the pointer.
+  ivory at half opacity; Lector runs LightRays. None of them follows the
+  cursor. The hero is something you read past, so the field drifts on its
+  own clock and ignores the pointer.
 - **Glass nav pill.** Every page's nav is the same floating pill with the
   GlassSurface displacement map (`#nav-glass`), Chromium-gated behind
-  `html.glassy`, plain `backdrop-filter: blur()` everywhere else.
+  `html.glassy`, plain `backdrop-filter: blur()` everywhere else. The product
+  pages draw it as a 16px-cornered bar; the root page keeps the full capsule.
+  Every Viaduct page (product, extension guides, legal) loads the one copy in
+  `viaduct/assets/nav.{css,js}`; `nav.js` injects the filter itself, so a page
+  only needs the `<header id="nav" class="nav">` markup, the two files, and
+  `.btn-teal`/`.btn-ghost` of its own.
 - **Buttons.** Every product page uses the same fully rounded pills:
   `.btn-ghost` (lit pane) for Download and the page's accent (`.btn-teal`,
   `.btn-red`, `.btn-brass`) for buying, in three sizes (`.btn-sm` 13.5px in
@@ -105,14 +117,18 @@ scheme is a bug.
 
 ## Layout
 
-- Content column: `max-width:1120px` (root and Spyglass), `1080px` (the legal
-  pages) or `max-w-6xl` (Viaduct); 24px side padding.
+- Content column: `max-width:1120px` (root), `680px` (the legal pages), or
+  `max-w-6xl` (product pages); 24px side padding.
+- Legal pages (privacy, terms, security, license) wear their product's
+  tokens, not a neutral grey: the same canvas, Inter body, Cabinet Grotesk
+  headings, accent links and grain as the product page. Viaduct's carry the
+  product nav; Lector's still use a back link with Download and Buy pills. No
+  `<hr>` before the footer; footer.js draws its own rule.
 - Root: a headline, one line under it, and the shelf. Nothing else. Every
   other block that has been tried here (stat ledger, fact rail, tenet list,
   approach paragraph, closing CTA band) restated the pricing or the pitch a
   second time and was cut. The whole page is 84 words.
 - Section headers: left-aligned h2, optional hairline `border-top` rule above.
-  Centered composition is reserved for band CTAs on the product pages.
 
 ### The shelf
 
@@ -125,9 +141,19 @@ price belongs on the product page where you can act on it.
 To add an app, copy one `<a class="book">` and change the cover, the name, the
 sentence, and the href. Nothing else. The grid reflows on its own.
 
+### More from Magicelk Labs
+
+Each product page ends with the other apps as shelf covers, between the FAQ
+and the footer, so a visitor on one app can find the rest.
+`assets/footer.js` renders it when the script tag carries `data-more="1"`,
+from its own `APPS` list minus the app named by `data-product`. Same cover,
+name and sentence as the shelf; hover is a 2px lift. Legal pages and the
+extension guides do not carry it. A new app is one entry in `APPS` plus one
+`<a class="book">` on the root shelf. The footer's "Magicelk Labs" links home.
+
 ## Motion
 
-Viaduct and the root page run Apple-grade scroll choreography via GSAP 3.13
+The root page runs Apple-grade scroll choreography via GSAP 3.13
 (+ ScrollTrigger + SplitText, jsDelivr CDN) driven by the shared runtime
 **`/assets/motion.js`**. Pages opt elements in with data attributes:
 
@@ -137,62 +163,10 @@ Viaduct and the root page run Apple-grade scroll choreography via GSAP 3.13
 - `data-mm-stagger` staggers direct children; `data-mm-parallax` slow drift;
   `data-mm-counter` count-up numerals.
 - `data-mm-replay` on a section: entrances inside re-run every time it
-  scrolls back into view (used on Viaduct's compat layer); default is once.
-- `data-mm-pin` + `data-mm-pin-stage/-item/-panel`: pinned walkthroughs
-  (Viaduct's Drop → Convert → Done). Pin engages only ≥1024px + fine pointer;
-  below that the CSS fallback is a static stack with per-panel captions.
-
-Spyglass does not use motion.js. It runs on the scroll-craft engine, copied
-into `spyglass/assets/scrollcraft.{css,js}` and never edited; the page's own
-behaviour is in `spyglass/assets/spyglass.{css,js}`.
-
-- **Background:** the brand's Quick Look glass, obsidian `#0F1413` grading up
-  to `#1B2422` behind the lens, under the film grain. Brass `#B8945F` fills
-  and `#EDC371` text accents, as in the media kit's BRAND.md.
-- **The lens (`#what`, pinned, the page's peak):** the headline sits beside a
-  brass-rimmed lens with the Markdown preview already in it. Scrolling moves
-  fourteen objects (thirteen formats, then Google Drive, which ends the act)
-  through the lens: each Finder icon queues to the right and fades as it
-  crosses the rim, and as it does its real preview fades in inside the glass
-  over the previous one, settling from a 6% zoom. Each `<figure>` says where
-  the lens looks (`data-focus`, fractions of width and height) and how much it
-  magnifies (`data-zoom`, preview height over lens diameter, default 1.3).
-  Pick the focus where the circle is full of content: the list previews
-  (Archives, Packages, Folders) keep everything in their top-left corner and
-  showed an empty circle when centred, so they sit at `0 0` with zoom 1.6,
-  and the Drive card uses zoom 1 so its whole title fits. The previews live
-  inside the lens element, which clips them to its circle with
-  `overflow: hidden`. The label beside the lens follows one schema: name,
-  extensions, one fact. An index of the fourteen names along the bottom jumps
-  to each object. The lens follows
-  the scroll linearly from the first pixel to the last: objects settle through
-  fade timing (each label holds while its object is nearest the glass and
-  swaps halfway to the next), never by slowing the scroll down. Two earlier
-  versions eased the scroll to a stop or near-stop at every object and sped
-  up between them, which felt like the page sticking and then jumping. Blurred Finder
-  icons behind the lens and above it move at 0.22x and 1.05x the queue's speed
-  for depth; the far plane is masked off the text column. Their blur is baked
-  into the sprites, never a CSS `filter`: blurring 28 moving layers at runtime
-  made Chrome drop about 40% of frames while scrolling the lens. Anything that
-  moves on this page animates only `transform` and `opacity`.
-
-  Keep everything in the lens moving at about scroll speed or slower. The
-  first draft slid each preview the full width of the lens, which moved it up
-  to 8x faster than the scroll: at Safari's 60Hz animation rate that is a jump
-  of hundreds of pixels per frame, and the text in the screenshots strobed
-  however fast the page rendered. The previews now drift at most 0.3 of the
-  lens radius per object.
-- **Google Drive (`#drive`, pinned):** the same `.gdoc` three ways, as real
-  Quick Look windows: the JSON stub, then an upward wipe to the free card,
-  then an iris onto the rendered document, each with its caption.
-- Below those, the trio, privacy, pricing and FAQ enter with `data-sc-in`.
-
-Both pins run only at 1024px and up, 620px tall, with a fine pointer and
-motion allowed. `spyglass.js` decides that once, before the engine mounts: it
-adds `html.lens.pin` and promotes the page's `data-pin-*` attributes to
-`data-sc-*`. Everywhere else the same markup is a static catalogue (icon,
-label, full preview per object, under a lens showing the Markdown preview)
-and the Drive act is the three windows stacked with their captions.
+  scrolls back into view; default is once.
+- `data-mm-pin` + `data-mm-pin-stage/-item/-panel`: pinned walkthroughs.
+  Pin engages only ≥1024px + fine pointer; below that the CSS fallback is a
+  static stack with per-panel captions.
 
 Continuous "premium" layer (all fine-pointer-gated, all dead under reduced
 motion):
@@ -212,6 +186,115 @@ motion):
 
 The Threads hero field lives in the root page's own inline script rather than
 motion.js, because no other page uses it.
+
+Lector, Viaduct and Spyglass do not use motion.js. Their scroll acts run on the
+scroll-craft engine, copied into each app's `assets/scrollcraft.{css,js}` and
+never edited; each page's own choreography is in its own
+`assets/<app>.{css,js}`. The engine publishes each act's progress as `--sc-p`
+and the pages drive their bespoke moves from that in CSS.
+
+Lector: clips scrubbed by the wheel, the pinned example drum, the keycap
+pause. Its hero lamp is React Bits' LightRays ported to plain WebGL, and its
+headline arrives in Japanese and scrambles into English letter by letter.
+Cabinet Grotesk is self-hosted there (`lector/assets/fonts/`).
+
+Viaduct follows one real extension, Dark Reader, through the page:
+
+- **Hero:** a centred headline under SideRays (React Bits, plain WebGL, in
+  `viaduct.js`), Download and Get Pro. No product imagery; a layered
+  two-screenshot hero was tried and rejected.
+- **The store act (`#how`, pinned, the page's peak):** the real Dark Reader
+  listing, captured from headless Chrome, which gets the same "Switch to
+  Chrome?" card, banner and disabled button that Safari does. The capture is
+  cut into planes: header, banner, listing, and the card. The install button
+  is markup over the space the capture left empty. The card is dismissed, the
+  button lifts out of the page, its word rolls from Chrome to Safari letter by
+  letter, the teal band floods in, the button settles back, and then the
+  banner fades and the listing (with the button) moves up into its place,
+  because with Viaduct installed the page has nothing to nag about. All of it
+  is CSS keyed off `--sc-p`; the timings are listed at the top of the `.flip`
+  block in `viaduct.css`. `viaduct.js` measures where the lifted button
+  travels to and each word's width, so the label stays centred while the
+  cell narrows from "Chrome" to "Safari".
+
+- **The install (after the store act, scrubbed):** the media kit's
+  `viaduct-install-from-chrome-web-store.mp4`, scrubbed by the wheel: Add to
+  Safari clicked, the build, "Installed", Remove from Safari, Dark Reader's
+  popup. A scrub clip plays across the stage's whole time on screen, so the
+  clip holds its first frame 3.3s and its last 4.4s longer than the
+  recording; with `data-sc-span="3"` that puts the click at the start of the
+  pin (p ≈ 0.05) and the popup near its end (p ≈ 0.89), and the captions are
+  keyed to those moments. Change the span and the holds have to be redone.
+- **Compatibility:** each break is struck through and answered as its row
+  enters the viewport (`data-sc-in`).
+- **Now try yours (`#try`):** the reader drops a .crx, a .zip or a folder
+  (onto the plate, in any state) or picks one of six sample extensions beside
+  it. `viaduct/assets/inspect.js` reads a dropped package in memory (ZIP
+  central directory, CRX2/3 headers, `DecompressionStream`); the samples were
+  read by the same script ahead of time, because the page can't fetch from
+  the Web Store (`viaduct/assets/samples/`, see the README). The plate shows
+  the listing, flips its button the same way, then four counts (permissions,
+  site access, Chrome APIs, files) and the names behind them as tags, long
+  lists cut short with a "+N more" button, and anything Viaduct will patch.
+  Nothing is uploaded.
+- **Features:** the heading sticks while the numbered rows scroll past it.
+  The grid must stretch its items (no `align-items: start`), or the sticky
+  heading's container is no taller than the heading and it never moves.
+
+Under reduced motion the hero rays are off, the flip still happens as a
+crossfade (colour, band and word change with scroll; nothing travels), the
+listing moves up in one step rather than sliding, and the install clip never
+loads: its still is the last frame, with the popup open.
+
+Spyglass: the page's own behaviour is in `spyglass/assets/spyglass.{css,js}`.
+
+- **Background:** the brand's Quick Look glass, obsidian `#0F1413` grading up
+  to `#1B2422` behind the lens, under the film grain. Brass `#B8945F` fills
+  and `#EDC371` text accents, as in the media kit's BRAND.md.
+- **The lens (`#what`, pinned, the page's peak):** the headline sits beside a
+  brass-rimmed lens with the Markdown preview already in it. Scrolling moves
+  fourteen objects (thirteen formats, then Google Drive, which ends the act)
+  through the lens: each Finder icon queues to the right and fades as it
+  crosses the rim, and as it does its real preview fades in inside the glass
+  over the previous one, settling from a 6% zoom. Each `<figure>` says where
+  the lens looks (`data-focus`, fractions of width and height) and how much it
+  magnifies (`data-zoom`, preview height over lens diameter, default 1.3).
+  Pick the focus where the circle is full of content: the list previews
+  (Archives, Packages, Folders) keep everything in their top-left corner and
+  showed an empty circle when centred, so they sit at `0 0` with zoom 1.6,
+  and the Drive card uses zoom 1 so its whole title fits. The previews live
+  inside the lens element, which clips them to its circle with
+  `overflow: hidden`. The label beside the lens follows one schema: name,
+  extensions, one fact. An index of the fourteen names along the bottom jumps
+  to each object. The lens follows the scroll linearly from the first pixel
+  to the last: objects settle through fade timing (each label holds while its
+  object is nearest the glass and swaps halfway to the next), never by
+  slowing the scroll down. Two earlier versions eased the scroll to a stop or
+  near-stop at every object and sped up between them, which felt like the
+  page sticking and then jumping. Blurred Finder icons behind the lens and
+  above it move at 0.22x and 1.05x the queue's speed for depth; the far plane
+  is masked off the text column. Their blur is baked into the sprites, never
+  a CSS `filter`: blurring 28 moving layers at runtime made Chrome drop about
+  40% of frames while scrolling the lens. Anything that moves on this page
+  animates only `transform` and `opacity`.
+
+  Keep everything in the lens moving at about scroll speed or slower. The
+  first draft slid each preview the full width of the lens, which moved it up
+  to 8x faster than the scroll: at Safari's 60Hz animation rate that is a jump
+  of hundreds of pixels per frame, and the text in the screenshots strobed
+  however fast the page rendered. The previews now drift at most 0.3 of the
+  lens radius per object.
+- **Google Drive (`#drive`, pinned):** the same `.gdoc` three ways, as real
+  Quick Look windows: the JSON stub, then an upward wipe to the free card,
+  then an iris onto the rendered document, each with its caption.
+- Below those, the trio, privacy, pricing and FAQ enter with `data-sc-in`.
+
+Both pins run only at 1024px and up, 620px tall, with a fine pointer and
+motion allowed. `spyglass.js` decides that once, before the engine mounts: it
+adds `html.lens.pin` and promotes the page's `data-pin-*` attributes to
+`data-sc-*`. Everywhere else the same markup is a static catalogue (icon,
+label, full preview per object, under a lens showing the Markdown preview)
+and the Drive act is the three windows stacked with their captions.
 
 Safety contract: an inline head script adds `html.mm` (skipped under
 `prefers-reduced-motion`) and CSS hides `[data-mm]` only under that class;
@@ -239,18 +322,27 @@ macOS 14+.
 **Viaduct** — Run Chrome extensions in Safari, natively. Drop in a `.zip`,
 `.crx`, or unpacked folder; Viaduct converts, signs, and installs it into
 Safari. Runs in Safari's own engine (keeps battery life). Free for 2
-conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
+conversions, which Viaduct removes after 7 days; then $19 one-time (unlimited,
+keeps extensions installed, opt-in weekly Web Store updates). macOS 13+. Beta.
+
+**Lector** — Copy or translate any text on your Mac's screen. ⌘⇧2 copies the
+text under a crosshair; ⌘⇧1 paints the translation over the original, in
+place. Reads Latin, CJK, Cyrillic plus Hebrew, Arabic, the Indic scripts and
+more (Apple Vision + bundled Tesseract); translates on the Mac (Apple
+Translation + offline Opus-MT packs). Free: 100 grabs and 10 translations a
+month. Text $9 one-time (unlimited grabs, 30 translations/month). Translate
+$15 one-time (unlimited, plus live translation in beta). Upgrade $6. macOS 15+.
 
 ## Assets
 
 - `spyglass/assets/spyglass-appicon-dark-320.png` — Spyglass icon.
 - `viaduct/assets/viaduct-icon-dark.png` — Viaduct icon (256px, web).
-- `assets/spyglass-cover.webp` and `assets/viaduct-cover.webp` (1200×630) are
-  the shelf covers on the root page, encoded from the media-kit social cards
-  with `cwebp -q 86`. A new app needs one at the same size. The Spyglass cover
-  is the same composition as its social card,
-  `spyglass/assets/spyglass-og-2.jpg` (1200×630 JPEG): the hero headline on
-  the canvas beside the media kit's framed notebook window.
+- `lector/assets/lector-appicon-dark-320.png` — Lector icon (favicon, touch
+  icon, manifest); `lector/assets/lector-mark.png` is the lectern alone, for
+  the nav pill.
+- `assets/spyglass-cover.webp`, `assets/viaduct-cover.webp` and
+  `assets/lector-cover.webp` (1200×630) are the shelf covers on the root page, encoded from the media-kit social cards
+  with `cwebp -q 86`. A new app needs one at the same size.
 - **The mark** is an elk rack rising from a single stem: two beams sweeping up
   and outward, five prongs a side, joined at one point above a short stem. No
   letterform, deliberately. An `M` sitting 9px from the word "Magicelk Labs"
@@ -298,8 +390,27 @@ conversions, then $19 one-time (unlimited + auto-resigning). macOS 13+. Beta.
     `viaduct-main-dark.webp` is the exception: re-encoded at 1400×848, cropped
     to the window rect and trimmed below the Choose extension button, because
     the app's own empty space below it was half the height of the slot.
-  - `viaduct/assets/viaduct-store-install.mp4` (1600w, ~1.9 MB) + poster: the
-    full uncut Chrome-Web-Store-to-Safari install capture.
+  - `viaduct/assets/viaduct-store-install.mp4` (900×614) + poster: the old
+    uncut Chrome-Web-Store-to-Safari install capture. Not on the page: the
+    store and the app have both changed since it was recorded.
+  - `viaduct/assets/viaduct-install.mp4` (1440×810) and `-m.mp4` (854×480):
+    the media kit's `videos/viaduct-install-from-chrome-web-store.mp4`, padded
+    and encoded for scrubbing at 20fps, no audio:
+    `ffmpeg -i <src> -an -vf "tpad=start_mode=clone:start_duration=3.3:stop_mode=clone:stop_duration=4.4,fps=20,scale=1440:810:flags=lanczos,format=yuv420p" -c:v libx264 -preset slow -tune stillimage -crf 25 -g 10 -keyint_min 10 -sc_threshold 0 -movflags +faststart viaduct-install.mp4`
+    (phone: `scale=854:480`, `-crf 27 -g 8 -keyint_min 8`).
+    `viaduct-install-poster.webp` and `viaduct-install-end.webp` are its first
+    and last frames.
+  - `viaduct/assets/viaduct-store-{top,banner,body}.webp` (2800 wide),
+    `viaduct-store-listing-m.webp` (1136×362, the title block for phones) and
+    `viaduct-store-nag.webp` (696×437): the Dark Reader listing on the Chrome
+    Web Store, captured at 1440×900 @2x in headless Chrome, which the store
+    treats like Safari, with the card and the install button hidden. `top` and
+    `banner` are rows 0-224 and 224-480 of that shot; `body` is rows 224-1160
+    of a second shot with the banner removed from layout, so the listing in it
+    sits 128 CSS px higher. The card is cut from a third shot at its own box.
+    Every position in the `.flip` CSS (plane offsets, the 128px shift, the
+    button and the card) is in units of that 1400px-wide crop, so a re-capture
+    has to re-measure them.
 
 ## Build
 

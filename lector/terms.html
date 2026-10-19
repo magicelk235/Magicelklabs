@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Terms of Service — Lector</title>
+<meta name="description" content="Lector terms of service. The rules for using the Lector app, including plans, license keys, acceptable use, and disclaimers.">
+<link rel="icon" href="./assets/lector-appicon-dark-320.png">
+<link rel="canonical" href="https://magicelklabs.com/lector/terms.html">
+<link rel="apple-touch-icon" href="/lector/assets/lector-appicon-dark-320.png">
+<link rel="manifest" href="/lector/assets/lector.webmanifest">
+<meta name="theme-color" content="#0C0808">
+<meta property="og:title" content="Terms of Service — Lector">
+<meta property="og:description" content="Lector terms of service. The rules for using the Lector app, including plans, license keys, acceptable use, and disclaimers.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://magicelklabs.com/lector/terms.html">
+<meta property="og:site_name" content="Magicelk Labs">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://magicelklabs.com/lector/assets/lector-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A Japanese game menu on a Mac, with Lector's English translation painted over each line">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Terms of Service — Lector">
+<meta name="twitter:description" content="Lector terms of service. The rules for using the Lector app, including plans, license keys, acceptable use, and disclaimers.">
+<meta name="twitter:image" content="https://magicelklabs.com/lector/assets/lector-og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Font CSS loads async (media=print swap) so first paint isn't blocked on
+     two third-party stylesheets; display=swap shows fallback text meanwhile. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet">
+</noscript>
+<style>
+/* Lector tokens. footer.js styles itself with --hair/--mute/--ink and hovers in --accent. */
+:root{color-scheme:dark;--canvas:#0C0808;--surface:#140E0D;--elevated:#1C1413;--card:#231917;--ink:#F4ECE7;--body:#B9A9A2;--mute:#908079;--hair:rgba(255,255,255,.075);--red:#C0544F;--red-press:#B04A45;--on-red:#FFFFFF;--red-text:#E58A82;--lip:inset 0 1px 0 rgba(255,255,255,.055);--accent:var(--red-text)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body::after{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--canvas);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:clamp(48px,8vh,96px) 24px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.back{display:inline-block;color:var(--red-text);text-decoration:none;font-size:15px;font-weight:600}
+.back:hover{text-decoration:underline}
+.actions{display:flex;align-items:center;gap:8px}
+.btn,.btn-ghost{display:inline-flex;align-items:center;font-size:13.5px;font-weight:600;line-height:1.4;padding:7px 14px;border-radius:999px;text-decoration:none;transition:transform .22s cubic-bezier(.2,.8,.2,1),background .2s,border-color .2s}
+.btn{background:var(--red);color:var(--on-red);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.btn:hover{background:var(--red-press);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--ink);border:1px solid rgba(255,255,255,.12);box-shadow:var(--lip)}
+.btn-ghost:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+.btn:active,.btn-ghost:active{transform:translateY(0) scale(.99)}
+h1{font-family:"Cabinet Grotesk",sans-serif;font-size:clamp(30px,5vw,42px);font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+.updated{color:var(--mute);font-size:15px;margin:0 0 36px}
+h2{font-family:"Cabinet Grotesk",sans-serif;font-size:clamp(19px,2.6vw,24px);font-weight:700;margin:36px 0 10px}
+p,li{color:var(--body)}
+strong{color:var(--ink);font-weight:600}
+p{margin:0 0 14px}
+ul{padding-left:22px;margin:0 0 14px}
+li{margin-bottom:8px}
+.muted{color:var(--mute)}
+code{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--surface);border:1px solid var(--hair);color:var(--red-text);padding:1px 6px;border-radius:4px;font-size:.86em;overflow-wrap:anywhere}
+a{color:var(--red-text)}
+footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--hair);color:var(--mute);font-size:14px}
+footer a{text-decoration:none}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"Terms of Service — Lector","description":"Lector terms of service. The rules for using the Lector app, including plans, license keys, acceptable use, and disclaimers.","url":"https://magicelklabs.com/lector/terms.html","inLanguage":"en","dateModified":"2026-10-17","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+</script>
+<script defer src="/assets/analytics.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <a class="back" href="./">← Lector</a>
+    <nav class="actions" aria-label="Get Lector">
+      <a class="btn-ghost" href="https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg">Download</a>
+      <a class="btn" href="https://magicelk235.gumroad.com/l/lector">Buy</a>
+    </nav>
+  </header>
+
+  <h1>Terms of Service</h1>
+  <p class="updated">Last updated: October 17, 2026</p>
+
+  <p>
+    These Terms of Service ("Terms") govern your use of Lector (the "App"), a
+    macOS menu bar app that copies and translates text from your screen,
+    published by Magicelk Labs ("we", "us"). By downloading, installing, or
+    using the App, you agree to these Terms. If you do not agree, do not use
+    the App.
+  </p>
+
+  <h2>1. License to use</h2>
+  <p>
+    Lector is source-available under the <a href="./license.html">PolyForm Shield
+    License 1.0.0</a>, which governs your rights to the code. These Terms govern
+    your use of the distributed App and its paid plans. Subject to these Terms,
+    we grant you a personal, non-exclusive, non-transferable right to use the App.
+  </p>
+
+  <h2>2. Eligibility</h2>
+  <p>
+    Lector is intended for users aged 13 or older. By using it you represent
+    that you meet this requirement and that your use complies with all laws that
+    apply to you.
+  </p>
+
+  <h2>3. Plans and purchases</h2>
+  <ul>
+    <li><strong>Free:</strong> 100 grabs and 10 translations a month.</li>
+    <li><strong>Text, $9 one-time:</strong> unlimited grabs and 30 translations a month.</li>
+    <li><strong>Translate, $15 one-time:</strong> unlimited grabs and translations, plus live translation (beta).</li>
+  </ul>
+  <p>
+    A Text license can be upgraded to Translate for $6 with the
+    <a href="https://magicelk235.gumroad.com/l/lector-upgrade?wanted=true" rel="noopener">upgrade</a>.
+    A grab counts once text is found, and a translation counts when it starts.
+    Looking up a word counts as neither.
+    Counts start over on the first of each month. When you reach a limit, the
+    shortcut opens the License window instead of the crosshair, and a capture
+    already under way always finishes.
+  </p>
+  <p>
+    Text and Translate are sold through
+    <a href="https://magicelk235.gumroad.com/l/lector" rel="noopener">Gumroad</a>.
+    Gumroad is the merchant of record: it processes your payment, and its
+    <a href="https://gumroad.com/terms" rel="noopener">terms</a> and
+    <a href="https://gumroad.com/refunds" rel="noopener">refund policy</a>
+    apply to your purchase. We do not see or store your payment details.
+    Refunds, where offered, are handled through Gumroad.
+  </p>
+
+  <h2>4. License keys</h2>
+  <p>
+    Your purchase comes with a license key. Paste it from your receipt into
+    Settings › License. For an upgrade, enter your Text key first, then the
+    upgrade key. Lector checks the key with Gumroad when you enter it and again
+    at each launch. A key Gumroad has confirmed keeps working for 30 days
+    without a connection. If Lector can't reach Gumroad for longer than that, it
+    removes the key, and you enter it again once you're back online.
+  </p>
+  <p>
+    A key for a purchase that was refunded, disputed or charged back stops
+    working. To move your license to another Mac, remove it in
+    Settings › License and enter it on the other Mac.
+  </p>
+
+  <h2>5. Acceptable use</h2>
+  <p>You agree not to:</p>
+  <ul>
+    <li>use the App to copy or translate content in a way that violates someone else's rights;</li>
+    <li>circumvent, disable, or tamper with the App's licensing, usage limits, or update mechanism;</li>
+    <li>reverse-engineer the App except to the extent the license or applicable law permits; or</li>
+    <li>use the App in any way that breaks the law or the terms of the apps and services it reads from.</li>
+  </ul>
+  <p>
+    You are responsible for what you capture and translate, and for how you use
+    the result.
+  </p>
+
+  <h2>6. Third-party components and services</h2>
+  <p>
+    The App relies on components and services it does not control, including
+    Apple's Vision, Translation and Dictionary, Tesseract, Leptonica, ONNX Runtime, the
+    Opus-MT models downloaded from Hugging Face, Gumroad for license checks,
+    and GitHub for updates. Their own licenses and terms apply to them, as set
+    out on the <a href="./license.html">License page</a>. Lector is not
+    affiliated with, endorsed by, or sponsored by Apple or any of these projects
+    and services.
+  </p>
+
+  <h2>7. Disclaimer of warranty</h2>
+  <p>
+    The App is provided "as is" and "as available", without warranty of any
+    kind, express or implied, including merchantability, fitness for a particular
+    purpose, and non-infringement. We do not warrant that the App will be
+    error-free, that it will read every text correctly, or that its translations
+    will be accurate. Handwriting, vertical Japanese and heavily stylised fonts
+    may read badly or not at all, and machine translation makes mistakes. Check
+    anything important with someone who reads the language.
+  </p>
+
+  <h2>8. Limitation of liability</h2>
+  <p>
+    To the maximum extent permitted by law, Magicelk Labs will not be liable for
+    any indirect, incidental, special, or consequential damages, or for lost data
+    or profits, arising out of your use of or inability to use the App. Our total
+    liability for any claim relating to the App will not exceed the amount you
+    paid for it in the twelve months before the claim.
+  </p>
+
+  <h2>9. Termination</h2>
+  <p>
+    You may stop using the App at any time. We may suspend or end your right to
+    use the App if you breach these Terms. The sections that by their nature
+    should survive termination (including Disclaimer, Limitation of Liability,
+    and Governing Law) will continue to apply.
+  </p>
+
+  <h2>10. Changes to these Terms</h2>
+  <p>
+    We may update these Terms from time to time. The updated version will be
+    posted on this page with a new date above. Your continued use of the App
+    after a change means you accept the revised Terms.
+  </p>
+
+  <h2>11. Governing law</h2>
+  <p>
+    These Terms are governed by the laws of the State of Israel, without regard
+    to its conflict-of-laws rules. The courts located in Israel will have
+    exclusive jurisdiction over any dispute arising from these Terms, unless
+    mandatory law in your place of residence provides otherwise.
+  </p>
+
+  <h2>12. Contact</h2>
+  <p>
+    Questions about these Terms? Email
+    <a href="mailto:support@magicelklabs.com">support@magicelklabs.com</a>.
+  </p>
+
+<div id="site-footer"></div>
+<script src="/assets/footer.js" data-product="Lector" data-links-only="1" data-links="Privacy|./privacy.html, Terms|./terms.html, Security|./security.html, License|./license.html, Contact|mailto:support@magicelklabs.com, Source|https://github.com/magicelk235/Lector"></script>
+<noscript>
+  <footer style="border-top:1px solid var(--hair);padding:40px 0 56px;font-size:14px;color:var(--mute)">
+    <div style="max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px">
+      <span style="font-family:'Cabinet Grotesk','Inter',sans-serif;font-size:16px;color:var(--ink)">Magicelk Labs · Lector <span style="color:var(--mute);font-family:Inter,sans-serif;font-size:13px">· © 2026</span></span>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <a href="./privacy.html" style="color:var(--mute);font-weight:500;text-decoration:none">Privacy</a>
+        <a href="./terms.html" style="color:var(--mute);font-weight:500;text-decoration:none">Terms</a>
+        <a href="./security.html" style="color:var(--mute);font-weight:500;text-decoration:none">Security</a>
+        <a href="./license.html" style="color:var(--mute);font-weight:500;text-decoration:none">License</a>
+        <a href="mailto:support@magicelklabs.com" style="color:var(--mute);font-weight:500;text-decoration:none">Contact</a>
+        <a href="https://github.com/magicelk235/Lector" style="color:var(--mute);font-weight:500;text-decoration:none">Source</a>
+      </div>
+    </div>
+  </footer>
+</noscript>
+
+</div>
+<script src="/assets/attribution.js"></script>
+</body>
+</html>

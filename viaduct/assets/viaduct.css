@@ -1,0 +1,487 @@
+/* Viaduct, in the magicelklabs house style: a near-black canvas tinted green
+   so the teal reads as lit, a surface ladder, hairlines and a lip on every
+   raised edge, Cabinet Grotesk display over Inter, one teal accent. The scroll
+   engine owns every [data-sc-*] selector; everything here is the page's own
+   markup. */
+
+/* The two flip values are registered so the extension plate can transition
+   them; the store act drives the same two from scroll position instead. */
+@property --roll { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --c { syntax: "<number>"; inherits: true; initial-value: 0; }
+
+:root {
+  color-scheme: dark;
+  --canvas: #070908;  --surface: #0E1211;  --elevated: #151A19;  --card: #1B211F;
+  --ink: #ECF2F0;     --body: #A3B0AD;     --mute: #85938F;
+  --teal: #2DD4BF;    --teal-press: #5FE3D2; --on-teal: #04211D;
+  /* The drenched band from DESIGN.md, and the text that sits on it. */
+  --band-top: #0F4D48; --band-bot: #093732;
+  --band-ink: #F2FBF9; --band-body: #C6E3DE; --band-bright: #6EE0D1;
+  --ok: #30D158; --bad: #FF7A7F;
+  --hair: rgba(255, 255, 255, .075); --hair-soft: rgba(255, 255, 255, .045);
+  --lip: inset 0 1px 0 rgba(255, 255, 255, .055);
+  --r-card: 14px; --r-inner: 9px;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --accent: var(--teal);
+
+  /* The engine's tokens, mapped onto the house ones. */
+  --sc-canvas: var(--canvas); --sc-surface: var(--surface);
+  --sc-ink: var(--ink); --sc-ink-soft: var(--body);
+  --sc-accent: var(--teal); --sc-accent-ink: var(--on-teal);
+  --sc-hairline: var(--hair);
+  --sc-font-display: "Cabinet Grotesk", Inter, system-ui, sans-serif;
+  --sc-font-text: Inter, system-ui, sans-serif;
+  --sc-font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --sc-track-tight: -0.025em;
+  --sc-shadow-color: 160 30% 2%;
+  --sc-r-md: var(--r-card);
+  --sc-z-chrome: 60;
+}
+
+html { scroll-padding-top: 86px; }
+body { color: var(--body); font-feature-settings: "cv11", "ss01"; }
+h1, h2, h3 { color: var(--ink); margin: 0; }
+h1, h2 {
+  font-family: var(--sc-font-display); font-weight: 800;
+  letter-spacing: -0.025em; line-height: 1.06; text-wrap: balance;
+}
+h2 { font-size: clamp(1.9rem, 4.5vw, 3rem); }
+h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+p { text-wrap: pretty; }
+code { font-family: var(--sc-font-mono); font-size: .86em; color: var(--ink); }
+b { color: var(--ink); font-weight: 600; }
+.teal { color: var(--teal); }
+.sc-grain { opacity: .035; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* Without the engine, everything it would reveal is simply there. */
+.no-js [data-sc-cue], .no-js [data-sc-in], .no-js [data-sc-stagger] > * { opacity: 1; transform: none; }
+.no-js video[data-sc-scrub] { display: none; }
+
+.skip {
+  position: fixed; top: 12px; left: 12px; z-index: 70;
+  padding: 8px 16px; background: var(--ink); color: var(--canvas);
+  border-radius: 999px; font-weight: 600; text-decoration: none;
+  transform: translateY(-200%);
+}
+.skip:focus-visible { transform: none; }
+/* The file inputs are visually hidden; their focus shows on the label that
+   follows each one, which is the button the reader sees. */
+a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible + label {
+  outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 8px;
+}
+
+/* ---------------------------------------------------------------- layout -- */
+.wrap { max-width: 1152px; margin-inline: auto; padding-inline: 24px; }
+.wrap--4 { max-width: 896px; }
+.wrap--2 { max-width: 672px; }
+.section { padding-block: clamp(80px, 9vw, 120px); }
+
+/* -------------------------------------------------------------- buttons -- */
+.btn-teal, .btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center;
+  font: 600 15px/1.2 var(--sc-font-text); text-decoration: none; white-space: nowrap;
+  border: 0; cursor: pointer; border-radius: 999px;
+  transition: transform .2s var(--ease), background-color .2s, border-color .2s;
+}
+.btn-sm { font-size: 13.5px; padding: 7px 14px; }
+.btn-lg { font-size: 15px; padding: 13px 26px; }
+.btn-block { width: 100%; font-size: 16px; padding: 14px; margin-top: auto; }
+.btn-teal { background: var(--teal); color: var(--on-teal); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3); }
+.btn-ghost { background: rgba(255, 255, 255, .05); color: var(--ink); border: 1px solid rgba(255, 255, 255, .12); box-shadow: var(--lip); }
+@media (hover: hover) {
+  .btn-teal:hover { background: var(--teal-press); transform: translateY(-1px); }
+  .btn-ghost:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .2); transform: translateY(-1px); }
+}
+.btn-teal:active, .btn-ghost:active { transform: translateY(0) scale(.98); }
+
+/* Above-the-fold entrances run at load. */
+.rise { animation: rise .9s var(--ease) both; animation-delay: var(--rise-delay, 0s); }
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.no-js .rise { animation: none; }
+
+/* ------------------------------------------------------------------ hero --
+   Floodlight raking in from off the top-right, over a centred headline.
+   Ambient only: the hero carries no illustration of its own. */
+.hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 112px 24px 96px; overflow: clip; }
+.hero__inner { position: relative; z-index: 1; width: 100%; max-width: 1024px; margin-inline: auto; text-align: center; }
+.hero h1 { font-size: clamp(2.6rem, 6.6vw, 4.9rem); line-height: 1.02; margin-bottom: 24px; }
+.hero__lede { max-width: 36rem; margin: 0 auto 36px; font-size: clamp(1.05rem, 2.2vw, 1.25rem); line-height: 1.62; }
+.hero__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.nowrap { white-space: nowrap; }
+.rays {
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+  opacity: 0; transition: opacity 1.2s ease .3s;
+  /* The hero clips at its bottom edge; fade the light out well before it so
+     there is no seam against the section below. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 52%, rgba(0, 0, 0, .5) 78%, transparent 97%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 52%, rgba(0, 0, 0, .5) 78%, transparent 97%);
+}
+.rays.lit { opacity: .82; }
+
+/* ---------------------------------------------------------------- flip --
+   The peak. Everything is keyed off the act's --sc-p:
+     nag    0.10 to 0.22  the Switch to Chrome card is dismissed
+     lift   0.14 to 0.28  the button lifts out of the page, toward the reader
+     roll   0.28 to 0.48  Chrome rolls into Safari, letter by letter
+     c      0.30 to 0.44  disabled grey becomes teal
+     band   0.30 to 0.52  the teal band floods in behind the page
+     lift   0.60 to 0.74  the button settles back into its slot
+     bn     0.72 to 0.78  the "Switch to Chrome" banner fades out
+     gone   0.76 to 0.88  the listing moves up into the banner's place, and
+                          the button with it
+     band   0.88 to 1     the band drains back to the canvas, so the stage
+                          leaves on the same ground the next act arrives on */
+.flip {
+  --p: var(--sc-p, 0);
+  --nag: clamp(0, (var(--p) - .10) / .12, 1);
+  --up: clamp(0, (var(--p) - .14) / .14, 1);
+  --down: clamp(0, (var(--p) - .60) / .14, 1);
+  --lin: calc(var(--up) - var(--down));
+  --lift: calc(var(--lin) * var(--lin) * (3 - 2 * var(--lin)));
+  --roll: clamp(0, (var(--p) - .28) / .20, 1);
+  --c: clamp(0, (var(--p) - .30) / .14, 1);
+  --bn: clamp(0, (var(--p) - .72) / .06, 1);
+  --gl: clamp(0, (var(--p) - .76) / .12, 1);
+  --gone: calc(var(--gl) * var(--gl) * (3 - 2 * var(--gl)));
+  --band: calc(clamp(0, (var(--p) - .30) / .22, 1) - clamp(0, (var(--p) - .88) / .12, 1));
+}
+.flip__stage { display: grid; place-items: center; padding: 96px clamp(20px, 4vw, 56px) 40px; }
+.flip__band {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(168deg, var(--band-top), var(--band-bot));
+  opacity: var(--band);
+}
+.flip__layout { position: relative; width: min(1180px, 100%, (100svh - 330px) * 2800 / 920); display: grid; gap: clamp(24px, 4vh, 40px); }
+/* Planes are placed in container units of the 1400px-wide capture, so they
+   line up at any size: 1cqw is 14 capture px. The banner block (banner plus
+   its margins) is 128px tall; that is how far the listing moves up when the
+   page lays out without it (--shift). */
+.flip__shot { position: relative; margin: 0; container-type: inline-size; --shift: calc(128 / 1400 * 100cqw); }
+.flip__page {
+  position: relative; border-radius: var(--r-card); overflow: hidden; isolation: isolate;
+  aspect-ratio: 2800 / 920; background: #fff;
+  border: 1px solid rgba(255, 255, 255, .1);
+  box-shadow: 0 4px 10px hsl(var(--sc-shadow-color) / .3), 0 30px 70px -20px hsl(var(--sc-shadow-color) / .6);
+}
+.flip__page img { position: absolute; left: 0; display: block; width: 100%; height: auto; }
+.flip__top { top: 0; z-index: 1; }
+.flip__banner { top: calc(112 / 1400 * 100cqw); z-index: 1; opacity: calc(1 - var(--bn)); }
+.flip__body { top: calc(112 / 1400 * 100cqw); transform: translateY(calc((1 - var(--gone)) * var(--shift))); }
+.flip__page .flip__mobile { display: none; }
+/* While the button is lifted, the page falls back so the button is the
+   only bright thing on the stage. */
+.flip__page::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: #04110F; opacity: calc(var(--lift) * .62);
+}
+/* The nag card, cut from the capture at its own box, so it can be dismissed. */
+.flip__nag {
+  position: absolute; left: 74.714%; top: 2.174%; width: 24.857%; height: auto;
+  border-radius: 8.05% / 12.81%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .14), 0 14px 36px -8px rgba(0, 0, 0, .32);
+  transform: translateY(calc(var(--nag) * -18%)) scale(calc(1 - var(--nag) * .05));
+  opacity: calc(1 - var(--nag));
+}
+
+/* The install button, shared by the store act and the extension plate.
+   --roll moves each letter (staggered by --i), --c moves the colour. */
+.flip__btn {
+  position: absolute; z-index: 2;
+  left: 76.644%; top: 56.957%; width: 10.499%; height: 8.696%;
+  display: grid; place-items: center; border-radius: 999px;
+  font: 500 calc(14 / 1400 * 100cqw) / 1 var(--sc-font-text); letter-spacing: .01em;
+  color: color-mix(in srgb, var(--on-teal) calc(var(--c) * 100%), #B9B9B9);
+  background: color-mix(in srgb, var(--teal) calc(var(--c) * 100%), #E1E1E1);
+  box-shadow: 0 calc(var(--lift, 0) * 10px) calc(var(--lift, 0) * 30px) calc(var(--lift, 0) * -6px) rgba(0, 0, 0, .55);
+  /* Lifted, it travels to the middle of the stage. At rest it sits in its
+     slot, which moves up with the listing once the banner has gone. */
+  transform:
+    translate(calc(var(--lx, 0px) * var(--lift, 0)),
+              calc(var(--ly, 0px) * var(--lift, 0) - var(--shift, 0px) * var(--gone, 0) * (1 - var(--lift, 0))))
+    scale(calc(1 + (var(--ls, 1) - 1) * var(--lift, 0)));
+  text-decoration: none; white-space: nowrap;
+}
+.flip__btn-in { display: inline-flex; align-items: baseline; }
+/* The two words share one cell. Once their widths are measured (--wf, --wt,
+   in em), the cell narrows from "Chrome" to "Safari" as the word rolls, so
+   the label stays centred in the button at every step. */
+.roll { display: inline-grid; overflow: hidden; margin-left: .28em; padding-bottom: .12em; margin-bottom: -.12em; }
+.roll.is-measured { width: calc(var(--wf) + (var(--wt) - var(--wf)) * var(--roll)); }
+.roll > span { grid-area: 1 / 1; display: inline-flex; justify-self: start; }
+.roll .ch { display: inline-block; --r: clamp(0, var(--roll) * 1.6 - var(--i) * .12, 1); }
+.roll__from .ch { transform: translateY(calc(var(--r) * -115%)); }
+.roll__to .ch { transform: translateY(calc((1 - var(--r)) * 115%)); }
+
+.flip__words { display: grid; }
+.flip__words > * { grid-area: 1 / 1; }
+.flip__lede { margin: 0; max-width: 34ch; font: 700 clamp(1.25rem, 2.2vw, 1.75rem)/1.3 var(--sc-font-display); letter-spacing: -0.015em; color: var(--ink); }
+.flip__copy { max-width: 40rem; }
+.flip__copy h2 { color: var(--band-ink); font-size: clamp(1.9rem, 3.8vw, 3rem); }
+.flip__copy p { margin: 16px 0 0; color: var(--band-body); font-size: 17px; line-height: 1.6; max-width: 34rem; }
+.no-js .flip__words > * { grid-area: auto; }
+.no-js .flip { --roll: 1; --c: 1; --band: 1; --nag: 1; --bn: 1; --gone: 1; }
+
+/* -------------------------------------------------------------- install --
+   The click, recorded, scrubbed by the wheel. Copy on the lead side, the
+   frame on the trail side; the frame is capped by the stage height so the
+   whole window stays on screen while it is pinned. */
+.install { --ar: 16 / 9; }
+.install__stage {
+  display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); align-items: center; gap: clamp(28px, 3.5vw, 48px);
+  max-width: 1440px; margin-inline: auto; padding: 100px clamp(24px, 4vw, 56px) 40px;
+}
+.install__copy h2 { font-size: clamp(1.9rem, 3vw, 2.6rem); margin-bottom: 24px; }
+.install__caps { display: grid; }
+.install__caps p { grid-area: 1 / 1; margin: 0; font-size: 17px; line-height: 1.6; color: var(--body); max-width: 30ch; }
+.no-js .install__caps p { grid-area: auto; margin-bottom: 12px; }
+.frame { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip), var(--sc-e2); border-radius: var(--r-card); padding: 6px; margin: 0; }
+.slot { position: relative; background: var(--elevated); border-radius: var(--r-inner); overflow: hidden; }
+.install__frame { width: min(100%, (100svh - 160px) * (var(--ar)) + 14px); justify-self: end; }
+.install__slot { aspect-ratio: var(--ar); }
+.install__slot video[data-sc-scrub], .install__slot .sc-stage__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* --------------------------------------------------------------- compat --
+   Each row arrives with its break stated plainly; a beat later the break is
+   struck through and the fix lands under it. */
+/* Grid items stretch to the row, so the sticky heading has the whole section
+   to travel in. */
+.compat__grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(40px, 5vw, 72px); }
+.compat__sticky { position: sticky; top: 112px; }
+.compat__sticky p { margin: 18px 0 0; font-size: 16px; line-height: 1.65; }
+.compat__sticky .stat { margin-top: 36px; display: flex; align-items: baseline; font: 800 clamp(3.4rem, 6vw, 4.5rem)/1 var(--sc-font-display); letter-spacing: -.035em; color: var(--teal); }
+.compat__sticky .stat__cap { margin-top: 8px; font-size: 15px; max-width: 28ch; }
+.fixes { border-top: 1px solid var(--hair); }
+.fix { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 4px 28px; padding: 28px 0; border-bottom: 1px solid var(--hair); }
+.fix b { grid-row: span 2; font: 700 19px/1.3 var(--sc-font-display); letter-spacing: -.01em; }
+.fix p { margin: 0; font-size: 15.5px; line-height: 1.6; }
+.fix p + p { margin-top: 10px; }
+.fix__lbl {
+  display: inline-block; min-width: 4.6rem; margin-right: 10px;
+  font: 500 11px/1 var(--sc-font-mono); letter-spacing: .12em; text-transform: uppercase; vertical-align: .14em;
+}
+.fix__break .fix__lbl { color: var(--bad); }
+.fix__fix .fix__lbl { color: var(--teal); }
+.fix__fix { color: var(--ink); }
+.fix__txt {
+  background: linear-gradient(currentColor, currentColor) 0 58% / 0% 1.5px no-repeat;
+  transition: background-size .8s var(--ease) .45s, color .5s ease .45s;
+}
+.fix.sc-in .fix__txt { background-size: 100% 1.5px; color: var(--mute); }
+.fix .fix__fix { opacity: 0; transform: translateY(8px); transition: opacity .6s var(--ease) 1.05s, transform .6s var(--ease) 1.05s; }
+.fix.sc-in .fix__fix { opacity: 1; transform: none; }
+.no-js .fix .fix__fix { opacity: 1; transform: none; }
+
+/* ------------------------------------------------------------------ try --
+   The plate is drawn in Viaduct's own idiom: the dashed drop zone from the
+   app's main window, then the listing the extension would get. The plate
+   takes a drop in any state, and the pickers beside it never go away, so
+   trying another is one click or one drop from anywhere. */
+.try__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(40px, 5vw, 72px); align-items: start; }
+.try__intro p { margin: 18px 0 0; font-size: 17px; line-height: 1.65; max-width: 34ch; }
+/* The reader's own file or folder: the same tiles as the samples below, so
+   the two ways in read as one set of choices. */
+.own { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 24px; }
+.picks { margin-top: 36px; }
+.picks__title { font: 600 15px/1.4 var(--sc-font-text); letter-spacing: 0; color: var(--ink); margin-bottom: 12px; }
+.picks__list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pick {
+  display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 12px;
+  font: 500 14.5px/1.25 var(--sc-font-text); color: var(--ink); text-align: left; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; box-shadow: var(--lip);
+  transition: border-color .2s, background-color .2s;
+}
+.pick img { width: 24px; height: 24px; flex: none; object-fit: contain; border-radius: 5px; }
+.pick__glyph { width: 24px; height: 24px; flex: none; fill: none; stroke: #4FB8AA; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+@media (hover: hover) { .pick:hover { border-color: rgba(255, 255, 255, .18); background: var(--elevated); } }
+.pick[aria-pressed="true"] { border-color: color-mix(in srgb, var(--teal) 60%, transparent); background: color-mix(in srgb, var(--teal) 9%, var(--surface)); }
+.pick:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+
+.plate {
+  position: relative; border-radius: 18px; padding: 10px;
+  background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip), var(--sc-e2);
+  min-height: 340px; display: grid;
+  transition: border-color .2s;
+}
+.plate.is-over { border-color: var(--teal); }
+.plate > * { display: none; }
+.plate[data-state="idle"] .plate__idle,
+.plate[data-state="busy"] .plate__busy,
+.plate[data-state="error"] .plate__error,
+.plate[data-state="result"] .plate__result { display: grid; }
+.plate__idle, .plate__busy, .plate__error {
+  place-items: center; align-content: center; gap: 14px; text-align: center; padding: 40px 24px;
+  border-radius: 12px; border: 1.5px dashed rgba(255, 255, 255, .2);
+  transition: border-color .2s, background-color .2s;
+}
+.plate__idle { cursor: pointer; }
+.plate.is-over .plate__idle { border-color: var(--teal); background: color-mix(in srgb, var(--teal) 7%, transparent); }
+.plate__icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, .1); background: var(--elevated); box-shadow: var(--lip); }
+.plate__icon svg { width: 30px; height: 30px; fill: #4FB8AA; }
+.plate__title { margin: 0; font: 600 18px/1.35 var(--sc-font-text); color: var(--ink); max-width: 32ch; }
+.plate__hint { margin: 0; font-size: 15px; color: var(--body); }
+.plate__busy .plate__title { color: var(--body); }
+.plate__result { padding: 22px 22px 6px; gap: 0; align-content: start; }
+
+.listing { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+.listing__icon { width: 64px; height: 64px; border-radius: 12px; object-fit: contain; background: var(--elevated); }
+.listing__name h3 { font: 700 21px/1.2 var(--sc-font-display); letter-spacing: -.015em; overflow-wrap: anywhere; }
+.listing__name p { margin: 4px 0 0; font-size: 14px; color: var(--body); }
+.listing__btn {
+  position: relative; inset: auto; width: auto; height: 40px; padding: 0 20px;
+  font-size: 14px; z-index: auto;
+  --c: 0; --roll: 0;
+}
+/* Only the flip to Safari animates. The transition lives on the flipped
+   state, so dropping the class (picking another extension) snaps back to
+   Chrome instantly instead of rolling backwards first. */
+.listing__btn.is-flipped {
+  --c: 1; --roll: 1;
+  transition: --c .45s ease .1s, --roll .9s cubic-bezier(.65, 0, .35, 1);
+}
+@media (hover: hover) { .listing__btn.is-flipped:hover { background: var(--teal-press); } }
+.listing__desc { margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: var(--body); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* The readout: four counts across, then the names behind the counts as
+   tags, long lists cut to a first handful with a button for the rest, then
+   anything Viaduct will patch or can't find. */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 20px 0 0; border-block: 1px solid var(--hair); }
+.stats > div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 6px; padding: 14px 12px 14px 0; }
+.stats > div + div { padding-left: 14px; border-left: 1px solid var(--hair-soft); }
+.stats dt { font: 500 11px/1.3 var(--sc-font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--mute); }
+.stats dd { margin: 0; font: 800 26px/1.05 var(--sc-font-display); letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.group { padding: 16px 0; border-bottom: 1px solid var(--hair-soft); }
+.group:last-child { border-bottom: 0; }
+.group__title { margin: 0 0 10px; font: 500 11px/1.3 var(--sc-font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--mute); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.tag { font: 500 12.5px/1.2 var(--sc-font-mono); color: var(--body); padding: 5px 9px; border-radius: 7px; background: var(--elevated); border: 1px solid var(--hair); }
+.tag--more { font: 600 12.5px/1.2 var(--sc-font-text); color: var(--teal); background: transparent; border-style: dashed; cursor: pointer; }
+@media (hover: hover) { .tag--more:hover { border-color: var(--teal); } }
+.tag--more:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.group__note { margin: 10px 0 0; font-size: 13.5px; color: var(--mute); }
+.note { display: grid; grid-template-columns: 5.2rem minmax(0, 1fr); gap: 12px; margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink); }
+.note + .note { margin-top: 12px; }
+.note b { font: 500 11px/2.2 var(--sc-font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--teal); }
+.note.is-bad b { color: var(--bad); }
+.note code { overflow-wrap: anywhere; }
+
+/* ------------------------------------------------------------- features -- */
+.feat__grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(40px, 5vw, 72px); }
+.feat__sticky { position: sticky; top: 112px; }
+.feat__sticky h2 { max-width: 14ch; }
+.feats { border-top: 1px solid var(--hair); }
+.feat { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 28px; padding: 28px 0; border-bottom: 1px solid var(--hair); }
+.feat__num { font: 500 12px/1.9 var(--sc-font-mono); letter-spacing: .1em; color: var(--mute); }
+.feat h3 { font: 700 19px/1.3 var(--sc-font-display); letter-spacing: -.01em; margin-bottom: 8px; }
+.feat p { margin: 0; font-size: 15.5px; line-height: 1.65; max-width: 60ch; }
+.eng { display: grid; grid-template-columns: 1fr 1fr; margin-top: 20px; border-top: 1px solid var(--hair-soft); }
+.eng__cell { padding: 16px 20px 0 0; }
+.eng__cell + .eng__cell { padding-left: 20px; border-left: 1px solid var(--hair-soft); }
+.eng__num { margin: 0; font: 800 44px/1 var(--sc-font-display); letter-spacing: -.03em; color: var(--ink); }
+.eng__num.teal { color: var(--teal); }
+.eng__cap { margin: 8px 0 0 !important; font-size: 14px !important; color: var(--body); }
+
+/* -------------------------------------------------------------- pricing -- */
+.pricing__title { margin-bottom: 40px; }
+.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
+.plan { display: flex; flex-direction: column; padding: 30px; border-radius: 16px; background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); }
+.plan h3 { font-size: 20px; font-weight: 700; }
+.price { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 24px; }
+.price-num { font: 800 46px/1 var(--sc-font-display); letter-spacing: -.035em; color: var(--ink); }
+.price-note { font-size: 14px; color: #7FA39D; }
+.plan__rows { list-style: none; margin: 0 0 28px; padding: 0; flex: 1; }
+.p-row { display: flex; gap: 11px; align-items: baseline; padding: 11px 0; border-top: 1px solid var(--hair-soft); font-size: 15px; line-height: 1.55; }
+.p-row:first-child { border-top: 0; }
+.p-row::before { content: "✓"; flex: none; font-size: 13px; color: var(--teal); }
+/* The paid tier: the one card lit from inside by the brand colour. Same box
+   as the free card; only the fill and the edge change. */
+.plan--pro {
+  position: relative;
+  background: linear-gradient(168deg, #0C302C 0%, #0A1E1C 58%, #08110F 100%);
+  border-color: rgba(45, 212, 191, .22); box-shadow: inset 0 1px 0 rgba(45, 212, 191, .16);
+}
+.plan--pro::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(120% 70% at 50% -10%, rgba(45, 212, 191, .14), transparent 62%);
+}
+.plan--pro > * { position: relative; }
+.plan--pro h3, .plan--pro .price-num, .plan--pro b { color: #EEFBF8; }
+.plan--pro .p-row { color: #BFDBD5; border-top-color: rgba(255, 255, 255, .07); }
+
+/* ------------------------------------------------------------------- faq -- */
+.section--faq { padding-bottom: 40px; }
+.faq__title { font-size: clamp(1.7rem, 4vw, 2.4rem); margin-bottom: 40px; }
+.faq details { padding: 20px 0; border-top: 1px solid var(--hair); }
+.faq details:last-child { border-bottom: 1px solid var(--hair); }
+.faq summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; list-style: none; cursor: pointer; font-weight: 600; font-size: 16px; color: var(--ink); }
+.faq summary::-webkit-details-marker { display: none; }
+.chev { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--mute); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s var(--ease); }
+.faq details[open] .chev { transform: rotate(180deg); }
+.faq details p { margin: 12px 0 0; font-size: 15px; line-height: 1.65; }
+
+/* ---------------------------------------------------------------- footer -- */
+.foot { border-top: 1px solid var(--hair); padding: 40px 24px 56px; font-size: 14px; color: var(--mute); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; max-width: 1080px; margin-inline: auto; }
+.foot nav { display: flex; flex-wrap: wrap; gap: 20px; }
+.foot a { color: var(--mute); text-decoration: none; font-weight: 500; }
+.foot p { margin: 0; }
+
+/* ------------------------------------------------------------ responsive -- */
+@media (max-width: 960px) {
+  .compat__grid, .feat__grid, .try__grid { grid-template-columns: 1fr; }
+  .install__stage { grid-template-columns: 1fr; align-content: center; gap: 24px; padding-top: 88px; }
+  .install__frame { width: min(100%, (100svh - 330px) * (var(--ar)) + 14px); justify-self: center; order: -1; }
+  .install__copy h2 { font-size: clamp(1.6rem, 6vw, 2.2rem); margin-bottom: 14px; }
+  .compat__sticky, .feat__sticky { position: static; }
+}
+/* On a phone the store act uses a tighter crop of the same capture (the
+   title block, which has no banner), with the nag card above it and the
+   button below it in markup, so every part is still legible at phone width. */
+@media (max-width: 720px) {
+  .hero { padding: 96px 20px 72px; }
+  .hero h1 { font-size: clamp(2.3rem, 10.5vw, 3rem); }
+  .br-wide { display: none; }
+  .flip__stage { padding: 76px 20px 24px; }
+  .flip__layout { width: 100%; gap: 22px; }
+  .flip__shot { display: flex; flex-direction: column; align-items: center; container-type: normal; --shift: 0px; }
+  .flip__page { width: 100%; padding: 14px 10px; aspect-ratio: auto; }
+  .flip__page .flip__top, .flip__page .flip__banner, .flip__page .flip__body { display: none; }
+  .flip__page .flip__mobile { display: block; position: static; }
+  /* The card overlaps the listing's top edge rather than sitting in the
+     column, so dismissing it doesn't leave a hole above the listing. */
+  .flip__nag { position: absolute; left: auto; top: auto; right: 0; bottom: calc(100% - 40px); width: min(78%, 280px); z-index: 1; }
+  .flip__btn { position: relative; left: auto; top: auto; width: auto; height: 46px; padding: 0 26px; margin-top: 18px; font-size: 15px; }
+  .flip__lede { font-size: 1.2rem; }
+  .flip__copy h2 { font-size: clamp(1.7rem, 7.6vw, 2.2rem); }
+  .flip__copy p { font-size: 16px; margin-top: 12px; }
+  .install__caps p { font-size: 16px; max-width: none; }
+  .fix { grid-template-columns: 1fr; padding: 22px 0; }
+  .fix b { grid-row: auto; margin-bottom: 6px; }
+  .plans { grid-template-columns: 1fr; }
+  .plate__result { padding: 16px 12px 4px; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stats > div:nth-child(3) { padding-left: 0; border-left: 0; }
+  .stats > div:nth-child(n+3) { border-top: 1px solid var(--hair-soft); }
+  .note { grid-template-columns: 1fr; gap: 0; }
+  .listing { grid-template-columns: 52px minmax(0, 1fr); }
+  .listing__icon { width: 52px; height: 52px; }
+  .listing__btn { grid-column: 1 / -1; justify-self: start; margin-top: 4px; }
+  .eng__cell { padding-right: 12px; }
+  .eng__cell + .eng__cell { padding-left: 12px; }
+  .foot { justify-content: center; text-align: center; }
+}
+
+/* ------------------------------------------------------- reduced motion --
+   The flip still happens, as a crossfade: the colour, the band and the word
+   all change with scroll, but nothing travels. The listing moves up in one
+   step once the banner has faded, instead of sliding. */
+@media (prefers-reduced-motion: reduce) {
+  .rise { animation: none; }
+  .rays { display: none; }
+  .flip { --lift: 0; --gone: clamp(0, (var(--p) - .8) * 1000, 1); }
+  .roll .ch { transform: none !important; }
+  .roll__from { opacity: calc(1 - var(--roll)); }
+  .roll__to { opacity: var(--roll); }
+  .flip__nag { transform: none; }
+  .fix__txt, .fix .fix__fix, .listing__btn.is-flipped { transition: none; }
+  .btn-teal, .btn-ghost, .chev { transition: none; }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Lector",
+  "short_name": "Lector",
+  "description": "Copy or translate the text in any part of your Mac's screen.",
+  "start_url": "/lector/",
+  "scope": "/lector/",
+  "display": "browser",
+  "theme_color": "#0C0808",
+  "background_color": "#0C0808",
+  "icons": [
+    {
+      "src": "/lector/assets/lector-appicon-dark-320.png",
+      "type": "image/png",
+      "sizes": "320x320"
+    }
+  ]
+}

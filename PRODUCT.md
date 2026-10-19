@@ -8,17 +8,18 @@ zero build step except `viaduct/extensions/build.js`.
 
 ## Register
 
-Brand / marketing. Design IS the product here: the site must sell $12–$19
+Brand / marketing. Design IS the product here: the site must sell $9–$19
 one-time utilities, plus Spyglass's optional Pro + Drive subscription, to
 design-conscious Mac users. Pages: studio landing (`/`),
-two product pages (`/spyglass/`, `/viaduct/`), 20 SEO extension guides
+three product pages (`/spyglass/`, `/viaduct/`, `/lector/`), 20 SEO extension guides
 + hub (`/viaduct/extensions/`), privacy pages.
 
 ## Audience
 
 Mac users who care how software looks and feels; developers and power users
 (Viaduct, and Spyglass's format previews), Google Drive users on macOS
-(Spyglass's Drive plan).
+(Spyglass's Drive plan), people who keep hitting text on their Mac's screen
+they can't select or read (Lector).
 
 ## Conversion paths
 
@@ -28,6 +29,10 @@ Mac users who care how software looks and feels; developers and power users
   Gumroad products, `spyglass-pro` ($12 once, linked with `?wanted=true`) and
   `spyglass-drive` ($4/month or $36/year, linked to the product page so the
   buyer picks monthly or yearly).
+- Lector: free GitHub download; Buy Text and Buy Translate go straight to
+  checkout with the tier preselected (`?variant=Text|Translate&wanted=true`);
+  the plain Buy buttons open the product page so Gumroad shows its tier picker;
+  the Text to Translate upgrade is its own product (`lector-upgrade`).
 - Checkout is Gumroad's own page, full tab. Don't frame it (modal/iframe):
   Gumroad rejects paid orders without its `_gumroad_guid` cookie, which Safari,
   iOS browsers, Brave and Chrome incognito block in a third-party frame.
@@ -38,6 +43,10 @@ Mac users who care how software looks and feels; developers and power users
   (what Gumroad's Referrers table shows) plus `utm_source`/`utm_medium`/
   `utm_campaign` (Gumroad's UTM links need all three; defaults `referral` /
   `magicelklabs`).
+- Analytics: Umami Cloud via `/assets/analytics.js` (cookieless, no consent
+  banner). Page views and sources come from Umami itself; the script adds
+  `Buy` (Gumroad `/l/` links) and `Download` (GitHub release links) events
+  with a `product` property. The privacy pages disclose it under "This website".
 
 ## Constraints
 
