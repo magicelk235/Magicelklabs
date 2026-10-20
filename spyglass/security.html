@@ -60,7 +60,7 @@ footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);color:v
 footer a{text-decoration:none}
 </style>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","name":"Security Policy — Spyglass","description":"Spyglass security policy. How to report a vulnerability and what to expect. Read-only Google Drive access, local-only, no servers.","url":"https://magicelklabs.com/spyglass/security.html","inLanguage":"en","dateModified":"2026-10-09","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+{"@context":"https://schema.org","@type":"WebPage","name":"Security Policy — Spyglass","description":"Spyglass security policy. How to report a vulnerability and what to expect. Read-only Google Drive access, local-only, no servers.","url":"https://magicelklabs.com/spyglass/security.html","inLanguage":"en","dateModified":"2026-10-20","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
 </script>
 <script defer src="/assets/analytics.js"></script>
 </head>
@@ -70,7 +70,7 @@ footer a{text-decoration:none}
   <a class="back" href="./index.html">← Spyglass</a>
 
   <h1>Security Policy</h1>
-  <p class="updated">Last updated: October 9, 2026</p>
+  <p class="updated">Last updated: October 20, 2026</p>
 
   <h2>Supported versions</h2>
   <p>
@@ -109,7 +109,9 @@ footer a{text-decoration:none}
     On the Spyglass Drive plan, the app signs into Google (OAuth) with the
     read-only <code>drive.readonly</code> scope to fetch rendered previews of
     Google Drive files, and caches them only on your Mac. License keys are
-    checked with Gumroad's license API. There is no Spyglass server.
+    checked with Gumroad's license API. The app checks GitHub for updates with
+    Sparkle, which verifies each update's signature before installing it.
+    There is no Spyglass server.
   </p>
   <p>
     In scope: files crafted to make a preview read, write or run something it

@@ -1,7 +1,7 @@
 {
   "name": "Spyglass",
   "short_name": "Spyglass",
-  "description": "Real Quick Look previews for Google Workspace files on macOS.",
+  "description": "Better Quick Look for your Mac, including Google Drive.",
   "start_url": "/spyglass/",
   "scope": "/spyglass/",
   "display": "browser",
