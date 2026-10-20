@@ -1,7 +1,7 @@
 {
   "name": "Magicelk Labs",
   "short_name": "Magicelk",
-  "description": "An independent Mac studio. Native single-purpose apps you pay for once.",
+  "description": "An independent Mac studio. Native single-purpose Mac apps.",
   "start_url": "/",
   "scope": "/",
   "display": "browser",

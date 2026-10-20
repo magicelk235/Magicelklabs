@@ -8,12 +8,14 @@ The site is static: hand-written HTML, no framework and no bundler. GitHub Pages
 
 - **Viaduct** converts Chrome extensions into native Safari ones.
 - **Spyglass** gives Quick Look proper previews for Markdown, code, notebooks, archives, apps, Google Drive files and more.
+- **Lector** copies or translates the text in any part of the Mac's screen.
 
 ## Structure
 
 - `index.html` is the studio landing page.
 - `spyglass/` holds the Spyglass product page and its legal pages (privacy, terms, license, security).
 - `viaduct/` holds the Viaduct product page, its legal pages, and `viaduct/extensions/`, a set of SEO guide pages with a hub index (one page per popular Chrome extension).
+- `lector/` holds the Lector product page and its legal pages.
 - `assets/` holds the shared scripts (`motion.js`, `footer.js`, `attribution.js`, which tags Gumroad buy links with where the visitor came from, and `analytics.js`, which loads Umami and counts Buy and Download clicks), the favicons, the web manifest, and `assets/tailwind/`, which holds the Tailwind configs the product stylesheets are built from.
 - `DESIGN.md` covers the brand and visual rules. Read it before editing any page.
 - `PRODUCT.md` explains what the site is for and how it converts.

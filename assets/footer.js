@@ -32,15 +32,15 @@
       name: "Spyglass",
       href: "/spyglass/",
       cover: "/assets/spyglass-cover.webp",
-      alt: "Spyglass showing a Google Doc in Quick Look instead of raw JSON",
-      line: "Press Space on a .gdoc and read the document instead of the JSON sitting on disk."
+      alt: "The Spyglass cover: Press Space, see what's inside, beside a Jupyter notebook open in Quick Look",
+      line: "Press Space on a notebook, a zip or a Google Doc and see what's inside."
     },
     {
       name: "Viaduct",
       href: "/viaduct/",
       cover: "/assets/viaduct-cover.webp",
       alt: "The Viaduct cover: Run any Chrome extension, now native in Safari, beside the app window's drop zone",
-      line: "Drop in a Chrome extension and get a signed Safari one back, without opening Xcode."
+      line: "Get Chrome extensions into Safari straight from the Chrome Web Store, or drop one in, without opening a terminal."
     },
     {
       name: "Lector",
