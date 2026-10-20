@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lector: copy and translate any text on your Mac's screen</title>
-<meta name="description" content="Press a shortcut and draw a box. Lector copies the text, or paints a translation over it in place, without sending anything off your Mac.">
+<meta name="description" content="Press a shortcut and draw a box. Lector copies the text, or paints a translation over it in place, all on your Mac.">
 <link rel="canonical" href="https://magicelklabs.com/lector/">
 <meta name="theme-color" content="#0C0808">
 <meta name="color-scheme" content="dark">
@@ -164,7 +164,7 @@
       <div class="slot grab__slot">
         <picture>
           <source media="(max-width: 720px)" srcset="./assets/lector-grab-poster-m.webp">
-          <img class="sc-stage__poster" src="./assets/lector-grab-poster.webp" width="1555" height="1080" alt="A scanned cookbook page on a Mac. Lector's crosshair is drawn around the recipe and two lines of it are selected.">
+          <img class="sc-stage__poster" src="./assets/lector-grab-poster.webp" width="1555" height="1080" alt="A scanned cookbook page on a Mac, before Lector copies from it.">
         </picture>
         <video data-sc-scrub data-sc-src="./assets/lector-grab.mp4" data-sc-src-mobile="./assets/lector-grab-m.mp4" muted playsinline preload="none" aria-hidden="true"></video>
       </div>
@@ -251,6 +251,14 @@
         <h3>Wrong guess? Press Tab</h3>
         <p class="body">Lector tries the next likely language and remembers your choice for that app, so a Japanese game stays Japanese next time.</p>
       </div>
+      <div class="fact">
+        <h3>A glossary per app</h3>
+        <p class="body">Keep a name as written, so a character called Cloud stays Cloud instead of becoming the weather.</p>
+      </div>
+      <div class="fact">
+        <h3>Look up a word</h3>
+        <p class="body">Right-click a word to see how it's read, what it means in your language and what your Mac's dictionaries say about it.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -282,7 +290,7 @@
       </div>
       <div class="row">
         <b>Language packs</b>
-        <p class="body">100 to 250 MB each. Lector downloads one only for a language Apple's Translation doesn't cover, or for every language if you turn on instant drafts in Settings.</p>
+        <p class="body">100 to 250 MB each. Lector downloads one only for a language Apple's Translation doesn't cover, or for any language you translate if you turn on instant drafts in Settings.</p>
       </div>
     </div>
   </div>
@@ -345,11 +353,11 @@
       </div>
       <div class="row">
         <b>Live stays in memory</b>
-        <p class="body">Live translation watches only the area you drew, only until you stop it, and saves nothing.</p>
+        <p class="body">Live translation watches only the area you drew, only until you stop it, and never saves what it reads.</p>
       </div>
       <div class="row">
         <b>Nothing kept</b>
-        <p class="body">Lector stores its settings, your license key and this month's counts. It never stores the text.</p>
+        <p class="body">Lector stores its settings, your license key, the day it first ran and this month's counts. It never stores the text.</p>
       </div>
       <div class="row">
         <b>Three connections</b>
@@ -374,7 +382,7 @@
       </details>
       <details>
         <summary>What counts as a grab or a translation?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body">A grab counts once text is found, and a translation counts when it starts. At a limit, the shortcut opens the License window instead of the crosshair. A capture already under way always finishes.</p>
+        <p class="body">A grab counts once text is found, and a translation counts when it starts. Looking up a word counts as neither. At a limit, the shortcut opens the License window instead of the crosshair. A capture already under way always finishes.</p>
       </details>
       <details>
         <summary>I have Text. Can I upgrade to Translate?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
