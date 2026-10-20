@@ -121,7 +121,7 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(15, 20, 19, .58); }
 /* ─────────────────────────── The collection ───────────────────────────
    One DOM for both modes. Static: a title block, a lens showing the first
    preview, then a catalogue of objects. Lens mode (html.lens, set before the
-   engine mounts on wide fine-pointer screens with motion allowed): the
+   engine mounts on screens tall enough to pin, with motion allowed): the
    section pins, every object is laid over one stage, and spyglass.js moves
    the icons, the previews and the labels from scroll position. */
 
@@ -165,7 +165,7 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(15, 20, 19, .58); }
 .gx-lens .gx-lens-back img { position: absolute; height: 100%; width: auto; max-width: none; left: 50%; top: 0; translate: -50% 0; }
 
 /* Static catalogue */
-.gx-index { display: none; }
+.gx-index, .gx-pager { display: none; }
 .gx-objs { list-style: none; margin: 0 auto; padding: 72px 24px 24px; max-width: 1152px; display: grid; gap: 56px 40px; }
 @media (min-width: 900px) { .gx-objs { grid-template-columns: 1fr 1fr; } }
 .gx-obj { display: grid; grid-template-columns: 56px 1fr; gap: 6px 16px; align-content: start; scroll-margin-top: 96px; }
@@ -173,8 +173,6 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(15, 20, 19, .58); }
 .gx-lbl { grid-column: 2; grid-row: 1; }
 .gx-pv { grid-column: 1 / -1; margin: 14px 0 0; }
 .gx-pv img { width: 100%; height: auto; border-radius: var(--r-card); border: 1px solid var(--hair); background: #1E1E1E; }
-.gx-pv--icon { display: grid; place-items: center; aspect-ratio: 16 / 10; background: #121615; border: 1px solid var(--hair); border-radius: var(--r-card); }
-.gx-pv--icon img { width: 34%; height: auto; border: 0; background: none; }
 .gx-pv--fit img { aspect-ratio: 16 / 10; object-fit: cover; object-position: top center; }
 
 .gx-lbl h3 { font: 800 clamp(1.4rem, 2.4vw, 1.75rem)/1.08 var(--display); letter-spacing: -0.02em; }
@@ -226,15 +224,13 @@ html.lens .gx-lens-rim.lone { z-index: 7; }
 
 html.lens .gx-objs { position: absolute; inset: 0; padding: 0; margin: 0; max-width: none; display: block; z-index: 3; }
 html.lens .gx-obj { position: static; display: block; }
-html.lens .gx-icon { position: absolute; left: 0; top: 0; width: 120px; height: 120px; z-index: 4; will-change: transform, opacity; }
+html.lens .gx-icon { position: absolute; left: 0; top: 0; width: var(--ic, 120px); height: var(--ic, 120px); z-index: 4; will-change: transform, opacity; }
 html.lens .gx-pv {
   position: absolute; left: 0; top: 0; margin: 0;
   visibility: hidden; will-change: transform, opacity;
 }
 html.lens .gx-pv img { width: 100%; height: 100%; object-fit: cover; object-position: top left; border: 0; border-radius: 0; }
 html.lens .gx-pv--fit img { object-fit: cover; object-position: center 30%; aspect-ratio: auto; }
-html.lens .gx-pv--icon { border: 0; border-radius: 0; background: #121615; aspect-ratio: auto; }
-html.lens .gx-pv--icon img { width: calc(var(--r) * .9); height: auto; object-fit: contain; }
 html.lens .gx-lbl {
   position: absolute; z-index: 6; left: var(--col); top: 50%; translate: 0 -50%;
   width: calc(var(--lx) - var(--r) - var(--col) - 56px); max-width: 30rem;
@@ -243,6 +239,21 @@ html.lens .gx-lbl {
 html.lens .gx-lbl h3 { font-size: clamp(2rem, 3.4vw, 3.1rem); }
 html.lens .gx-lbl .fact { font-size: 17px; margin-top: 14px; }
 html.lens .gx-lbl .ext { font-size: 12.5px; margin-top: 10px; }
+
+/* Upright lens (html.tall: phones and tablets held portrait). The headline,
+   then each label, take a band under the nav; spyglass.js sizes the lens to
+   the room left below it and sets --tt, the band's top. */
+html.tall .gx-intro, html.tall .gx-lbl {
+  left: var(--col); right: var(--col); top: var(--tt); translate: none;
+  width: auto; max-width: 34rem;
+}
+html.tall .gx-intro h1 { font-size: clamp(2.2rem, 9.6vw, 3.6rem); }
+html.tall .gx-intro .lede { font-size: 16px; margin-top: 14px; }
+html.tall .gx-cta { margin-top: 22px; }
+html.tall .gx-lbl h3 { font-size: clamp(1.75rem, 8vw, 2.6rem); }
+html.tall .gx-lbl .ext { margin-top: 8px; }
+html.tall .gx-lbl .fact { font-size: 15.5px; margin-top: 10px; }
+html.tall .gx-index { display: none; }
 
 /* ─────────────────────────── Google Drive ─────────────────────────── */
 .dv-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 48px; }
@@ -267,6 +278,22 @@ html.pin .dv-steps .dv-cap { display: none; }
 .dv-caps { display: none; }
 html.pin .dv-caps { display: grid; margin-top: 36px; }
 html.pin .dv-caps > div { grid-area: 1 / 1; }
+
+/* Upright Drive act: the heading gives way to the captions in one band, and
+   the windows stack under it, as large as the rest of the screen allows. */
+html.tall.pin .dv-stage {
+  grid-template-columns: none; grid-template-rows: auto minmax(0, 1fr); gap: 24px; align-items: stretch;
+  padding-block: 82px 24px;
+}
+html.tall.pin .dv-stage > div:first-child { display: grid; }
+html.tall.pin .dv .intro, html.tall.pin .dv-caps { grid-area: 1 / 1; margin: 0; }
+html.tall.pin .dv .intro h2 { font-size: clamp(1.7rem, 7.4vw, 2.6rem); }
+html.tall.pin .dv .intro p { font-size: 16px; margin-top: 12px; }
+html.tall.pin .dv-steps { aspect-ratio: auto; max-height: none; height: 100%; container-type: size; }
+html.tall.pin .dv-steps li {
+  inset: auto; left: 0; top: calc((100cqh - min(100cqw / 1.259, 100cqh)) / 2);
+  width: min(100cqw, 100cqh * 1.259); aspect-ratio: 1200 / 953;
+}
 
 /* -------------------------------------------------------------- settings --
    The real Settings window, Formats in front of Appearance, the way two
@@ -336,6 +363,83 @@ html.pin .dv-caps > div { grid-area: 1 / 1; }
   .nav-pill { height: 50px; }
   .nav-download { display: none; }
   .foot { justify-content: center; text-align: center; }
+}
+/* Phones held upright. Every screenshot here sits in a crop frame cut to the
+   part that matters: the Drive windows and the Settings window are cut to
+   their content, and without the lens (reduced motion) the formats become a
+   swipeable row of window cards.
+   A crop frame takes --fa (its own width over height), --ar (the image's
+   width over height), --z (image height over frame height) and --fx/--fy (the
+   point to centre, as fractions of the image, kept inside so the frame is
+   always full). The format cards get theirs from data-focus and data-zoom via
+   spyglass.js, scaled a further --zm, and always start at the top. */
+@media (max-width: 640px) {
+  html:not(.lens) .gx-pv, .dv-shot, .tune__windows {
+    container-type: inline-size; position: relative; overflow: hidden; isolation: isolate;
+    aspect-ratio: var(--fa, 1); background: #1E1E1E;
+  }
+  html:not(.lens) .gx-pv > img, .dv-shot > img, .tune__windows > .tune__front {
+    --fh: calc(100cqw / var(--fa, 1));
+    --ih: calc(var(--fh) * var(--z, 1.3) * var(--zm, 1));
+    --iw: calc(var(--ih) * var(--ar, 1.6));
+    position: absolute; max-width: none; margin: 0; border: 0; border-radius: 0; filter: none;
+    width: var(--iw); height: var(--ih); aspect-ratio: auto; object-fit: fill;
+    left: clamp(calc(100cqw - var(--iw)), calc(50cqw - var(--fx, .5) * var(--iw)), 0px);
+    top: clamp(calc(var(--fh) - var(--ih)), calc(var(--fh) / 2 - var(--fy, .5) * var(--ih)), 0px);
+  }
+
+  /* The formats: one card per format, swiped sideways, the next one peeking
+     in. The first card is Markdown, so the hero's lens would only repeat it. */
+  .gx-lens { display: none; }
+  /* The hero's settle gradient sits behind the rail, not over its cards. */
+  html:not(.lens) .gx-stage { isolation: isolate; }
+  html:not(.lens) .gx-stage::after { z-index: -1; }
+  html:not(.lens) .gx-objs {
+    display: flex; align-items: stretch; gap: 12px; padding: 40px 24px 0; margin: 0;
+    overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory;
+    scroll-padding-inline: 24px; scrollbar-width: none;
+  }
+  html:not(.lens) .gx-objs::-webkit-scrollbar { display: none; }
+  html:not(.lens) .gx-obj {
+    flex: 0 0 calc(100% - 20px); scroll-snap-align: start;
+    grid-template-columns: 40px 1fr; grid-template-rows: auto 1fr; gap: 0 12px;
+    padding: 6px 18px 22px; border-radius: 18px;
+    background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip);
+  }
+  html:not(.lens) .gx-pv { --fa: 1.3333; --zm: 1.03; grid-row: 1; grid-column: 1 / -1; margin: 0 -12px 18px; border-radius: 12px; }
+  html:not(.lens) .gx-pv > img { --fy: 0; }
+  html:not(.lens) .gx-icon { grid-row: 2; width: 40px; height: 40px; }
+  html:not(.lens) .gx-lbl { grid-row: 2; }
+  html:not(.lens) .gx-lbl h3 { font-size: 1.3rem; }
+  html:not(.lens) .gx-lbl .fact { font-size: 15px; margin-left: -52px; }
+  .gx-pager:not([hidden]) { display: flex; align-items: center; gap: 10px; padding: 18px 24px 0; }
+  .gx-count { margin-right: auto; font: 500 13px/1 var(--mono); letter-spacing: .06em; color: var(--mute); font-variant-numeric: tabular-nums; }
+  .gx-count b { color: var(--ink); font-weight: 500; }
+  .gx-step {
+    display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 50%;
+    color: var(--ink); background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); box-shadow: var(--lip);
+    transition: opacity .2s var(--ease);
+  }
+  .gx-step:disabled { opacity: .35; }
+  .gx-step svg { width: 18px; height: 18px; }
+
+  /* Google Drive: each window cut to its point. */
+  .dv-steps { gap: 36px; }
+  .dv-shot { --ar: 1.2592; border-radius: var(--r-card); border: 1px solid var(--hair); }
+  /* Pinned, the windows share one frame and wipe over each other. The stub
+     keeps its strip, cut to the JSON line, at the top of that frame. */
+  html.tall.pin .dv-steps li { width: min(100cqw, 100cqh * 1.25); aspect-ratio: 1.25; top: calc((100cqh - min(100cqw / 1.25, 100cqh)) / 2); }
+  html.tall.pin .dv-steps li:first-child { aspect-ratio: 2.6; }
+  html.tall.pin .dv-steps .dv-shot { position: absolute; inset: 0; aspect-ratio: auto; }
+  html.tall.pin .dv-steps .dv-shot > img {
+    inset: auto; width: var(--iw); height: var(--ih); object-fit: fill;
+    left: clamp(calc(100cqw - var(--iw)), calc(50cqw - var(--fx, .5) * var(--iw)), 0px);
+    top: clamp(calc(var(--fh) - var(--ih)), calc(var(--fh) / 2 - var(--fy, .5) * var(--ih)), 0px);
+  }
+
+  /* Settings: the Formats pane alone, cut to its switches. */
+  .tune__back { display: none; }
+  .tune__windows { border-radius: var(--r-card); border: 1px solid var(--hair); }
 }
 /* The nav's logo and buttons are smaller than a fingertip; widen what
    catches the tap without changing how they look. */

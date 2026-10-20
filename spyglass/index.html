@@ -31,7 +31,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./assets/scrollcraft.css?v=1">
-<link rel="stylesheet" href="./assets/spyglass.css?v=2">
+<link rel="stylesheet" href="./assets/spyglass.css?v=3">
 <script>document.documentElement.classList.remove('no-js');</script>
 <script type="application/ld+json">
 {
@@ -95,7 +95,7 @@
 <main id="main">
 
 <!-- THE COLLECTION. Static catalogue by default; spyglass.js pins it and
-     runs the lens on wide screens with motion allowed. -->
+     runs the lens on any screen tall enough, with motion allowed. -->
 <section id="what" class="gx" data-pin-act="pin" data-pin-span="8.6" aria-labelledby="gx-h">
   <div class="gx-stage" data-sc-stage>
     <div class="gx-far" aria-hidden="true">
@@ -212,6 +212,11 @@
         <figure class="gx-pv gx-pv--fit" data-focus="0 0.5" data-zoom="1"><img src="./assets/drive/card.webp" width="1200" height="953" loading="lazy" decoding="async" alt="The free Spyglass card for a Google Doc: its title, Google Docs, the owner and an Open in Google Docs button" /></figure>
       </li>
     </ol>
+    <div class="gx-pager" hidden>
+      <p class="gx-count" aria-live="polite"><b>1</b> of 14</p>
+      <button type="button" class="gx-step" data-step="-1" aria-label="Previous format"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <button type="button" class="gx-step" data-step="1" aria-label="Next format"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
     <div class="gx-lens-rim lone" aria-hidden="true"></div>
 
     <div class="gx-near" aria-hidden="true">
@@ -241,10 +246,10 @@
 </section>
 
 <!-- GOOGLE DRIVE -->
-<section id="drive" class="dv section" data-pin-act="pin" data-pin-span="2.6" aria-labelledby="dv-h">
+<section id="drive" class="dv section" data-pin-act="pin" data-pin-span="2.6" data-tall-span="3.2" aria-labelledby="dv-h">
   <div class="dv-stage wrap" data-sc-stage>
     <div>
-      <div class="intro">
+      <div class="intro" data-tall-cue="0 0.14 0 0.4">
         <h2 id="dv-h">Google Docs, Sheets and Slides, right in Quick Look.</h2>
         <p class="body">Google Drive for desktop fills Finder with .gdoc and .gsheet files, and Quick Look shows each one as a line of JSON.</p>
       </div>
@@ -252,15 +257,15 @@
     </div>
     <ol class="dv-steps">
       <li>
-        <img src="./assets/drive/stub.webp" width="1200" height="953" loading="lazy" decoding="async" alt="Quick Look showing a .gdoc file as one line of JSON: a warning not to edit it, the document ID and an email address">
-        <div class="dv-cap" data-pin-cue="0 0.36 0"><b>Without Spyglass</b><p>The file's own contents: a warning, an ID and an email address.</p></div>
+        <div class="dv-shot" style="--fa:2.6;--z:4.13;--fx:0;--fy:0"><img src="./assets/drive/stub.webp" width="1200" height="953" loading="lazy" decoding="async" alt="Quick Look showing a .gdoc file as one line of JSON: a warning not to edit it, the document ID and an email address"></div>
+        <div class="dv-cap" data-pin-cue="0 0.36 0" data-tall-cue="0.13 0.38"><b>Without Spyglass</b><p>The file's own contents: a warning, an ID and an email address.</p></div>
       </li>
       <li data-pin-reveal="up" data-pin-reveal-at="0.28 0.44">
-        <img src="./assets/drive/card.webp" width="1200" height="953" loading="lazy" decoding="async" alt="The free Spyglass card for the same file: the title macOS 26 App Icon Research, Google Docs, the owner and an Open in Google Docs button">
+        <div class="dv-shot" style="--fa:1.25;--z:1.49;--fx:0;--fy:0"><img src="./assets/drive/card.webp" width="1200" height="953" loading="lazy" decoding="async" alt="The free Spyglass card for the same file: the title macOS 26 App Icon Research, Google Docs, the owner and an Open in Google Docs button"></div>
         <div class="dv-cap" data-pin-cue="0.3 0.68"><b>Free: a card you can open</b><p>The title, the owner and a button that opens the file in your browser. It works offline, needs no Google sign-in, and stays free after the trial.</p></div>
       </li>
       <li data-pin-reveal="iris" data-pin-reveal-at="0.6 0.78">
-        <img src="./assets/drive/doc.webp" width="1200" height="953" loading="lazy" decoding="async" alt="The same file on the Drive plan: the Google Doc itself, with its title, headings and body text, rendered in Quick Look">
+        <div class="dv-shot" style="--fa:1.25;--z:1.4;--fx:.47;--fy:0"><img src="./assets/drive/doc.webp" width="1200" height="953" loading="lazy" decoding="async" alt="The same file on the Drive plan: the Google Doc itself, with its title, headings and body text, rendered in Quick Look"></div>
         <div class="dv-cap" data-pin-cue="0.62 1 0.1 0.04"><b>Drive plan: the document itself</b><p>Spyglass fetches Docs, Sheets, Slides and Drawings from your Drive, read-only, and draws them in Quick Look. The first page also becomes the file's thumbnail in Finder. Forms and Sites keep the free card.</p></div>
       </li>
     </ol>
@@ -275,7 +280,7 @@
       <p class="body">Every kind of file has its own switch in Settings. Previews follow your Mac's light or dark appearance, or stay one way, and code gets its own font size.</p>
       <p class="body">Leave a preview open while you work. It redraws every time you save.</p>
     </div>
-    <div class="tune__windows" data-sc-in>
+    <div class="tune__windows" style="--fa:.93;--ar:1.115;--z:1.25;--fx:.655;--fy:.5" data-sc-in>
       <img class="tune__back" src="./assets/settings/appearance.webp" width="999" height="896" loading="lazy" decoding="async" alt="Spyglass Settings, Appearance pane: the preview theme set to Match System and a code font size slider at 12 pt">
       <img class="tune__front" src="./assets/settings/formats.webp" width="999" height="896" loading="lazy" decoding="async" alt="Spyglass Settings, Formats pane: a switch for each kind of file, from Markdown and Jupyter notebooks to executables and folders, all on">
     </div>
@@ -393,7 +398,7 @@
   </footer>
 </noscript>
 <script src="./assets/scrollcraft.js?v=2"></script>
-<script src="./assets/spyglass.js?v=2"></script>
+<script src="./assets/spyglass.js?v=3"></script>
 <script src="/assets/footer.js" data-product="Spyglass" data-more="1" data-links-only="1" data-links="Privacy|./privacy.html, Terms|./terms.html, Security|./security.html, License|./license.html, Contact|mailto:support@magicelklabs.com, Source|https://github.com/magicelk235/spyglass"></script>
 <script src="/assets/attribution.js"></script>
 </body>

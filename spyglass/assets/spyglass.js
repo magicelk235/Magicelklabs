@@ -5,23 +5,87 @@
 
   var html = document.documentElement;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // Pins are for wide screens with a fine pointer. Everywhere else, and under
-  // reduced motion, the same markup reads as a plain catalogue.
-  var pinned = !reduce && matchMedia('(min-width: 1024px) and (min-height: 620px) and (hover: hover) and (pointer: fine)').matches;
+  // The pinned acts run on any screen tall enough to hold them: the wide
+  // layout from 1024px, and an upright one (html.tall) on phones and tablets
+  // held portrait. Landscape phones are too short to pin, and under reduced
+  // motion the same markup reads as a plain catalogue.
+  var wideMQ = matchMedia('(min-width: 1024px) and (min-height: 620px)');
+  var tallMQ = matchMedia('(max-width: 1023px) and (orientation: portrait) and (min-height: 500px)');
+  var tall = !reduce && tallMQ.matches;
+  var pinned = !reduce && (wideMQ.matches || tall);
+  // The mode is set once, so a rotation or a resize that crosses into another
+  // one reloads the page rather than leave it in the wrong layout.
+  if (!reduce) {
+    [wideMQ, tallMQ].forEach(function (mq) {
+      var was = mq.matches;
+      var check = function () { if (mq.matches !== was) location.reload(); };
+      if (mq.addEventListener) mq.addEventListener('change', check); else mq.addListener(check);
+    });
+  }
 
   if (pinned) {
     html.classList.add('lens', 'pin');
+    if (tall) html.classList.add('tall');
     // Drive captions move out of the steps into one stack beside the windows.
     var caps = document.querySelector('.dv-caps');
     Array.prototype.forEach.call(document.querySelectorAll('.dv-steps .dv-cap'), function (c) { caps.appendChild(c); });
     caps.removeAttribute('hidden');
     // The pinned markup is authored as data-pin-*; promote it for the engine.
+    // The upright layout has its own timing where it needs one, as data-tall-*.
     ['act', 'span', 'cue', 'reveal', 'reveal-at'].forEach(function (k) {
-      Array.prototype.forEach.call(document.querySelectorAll('[data-pin-' + k + ']'), function (el) {
-        el.setAttribute('data-sc-' + k, el.getAttribute('data-pin-' + k));
+      Array.prototype.forEach.call(document.querySelectorAll('[data-pin-' + k + '], [data-tall-' + k + ']'), function (el) {
+        var v = (tall && el.getAttribute('data-tall-' + k)) || el.getAttribute('data-pin-' + k);
+        if (v) el.setAttribute('data-sc-' + k, v);
       });
     });
   }
+
+  // Each preview's focus point and zoom, from its data-focus and data-zoom,
+  // also as CSS variables: the scroll lens reads the attributes, the phone
+  // cards (spyglass.css, max-width 640px) read the variables.
+  Array.prototype.forEach.call(document.querySelectorAll('.gx-pv'), function (pv) {
+    var f = (pv.getAttribute('data-focus') || '0.5 0.5').split(' ');
+    var img = pv.querySelector('img');
+    pv.style.setProperty('--fx', f[0]);
+    pv.style.setProperty('--fy', f[1]);
+    pv.style.setProperty('--z', pv.getAttribute('data-zoom') || '1.3');
+    pv.style.setProperty('--ar', (img.getAttribute('width') / img.getAttribute('height')).toFixed(4));
+  });
+
+  // ── Phone rail ──
+  // Without the lens (reduced motion), phones get the formats as a sideways
+  // rail. The pager under it counts the card in view and steps one card at a
+  // time; swiping works without it.
+  (function () {
+    var rail = document.querySelector('.gx-objs');
+    var pager = document.querySelector('.gx-pager');
+    if (pinned || !rail || !pager || !window.IntersectionObserver) return;
+    var cards = rail.children;
+    var count = pager.querySelector('.gx-count b');
+    var prev = pager.querySelector('[data-step="-1"]');
+    var next = pager.querySelector('[data-step="1"]');
+    var at = 0;
+    var show = function () {
+      count.textContent = at + 1;
+      prev.disabled = at === 0;
+      next.disabled = at === cards.length - 1;
+    };
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) at = Array.prototype.indexOf.call(cards, e.target);
+      });
+      show();
+    }, { root: rail, threshold: 0.6 });
+    Array.prototype.forEach.call(cards, function (c) { io.observe(c); });
+    pager.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-step]');
+      if (!b) return;
+      var i = Math.max(0, Math.min(cards.length - 1, at + Number(b.getAttribute('data-step'))));
+      rail.scrollTo({ left: cards[i].offsetLeft - cards[0].offsetLeft, behavior: reduce ? 'auto' : 'smooth' });
+    });
+    pager.hidden = false;
+    show();
+  })();
 
   var sc = window.ScrollCraft ? ScrollCraft.mount(document.body) : null;
 
@@ -50,7 +114,7 @@
       // height, and how much it magnifies (preview height over lens diameter).
       var f = (pv.getAttribute('data-focus') || '0.5 0.5').split(' ').map(parseFloat);
       var z = parseFloat(pv.getAttribute('data-zoom')) || 1.3;
-      return { li: li, icon: li.querySelector('.gx-icon'), pv: pv, lbl: li.querySelector('.gx-lbl'), fx: f[0], fy: f[1], zoom: Math.max(z, 1), shown: null };
+      return { li: li, icon: li.querySelector('.gx-icon'), pv: pv, lbl: li.querySelector('.gx-lbl'), fx: f[0], fy: f[1], zoom: Math.max(z, 1), fit: pv.classList.contains('gx-pv--fit'), shown: null };
     });
     // Every preview lives inside the lens, which clips them to its circle once,
     // statically, instead of a clip-path recomputed every frame.
@@ -65,7 +129,7 @@
     // headline steps aside; T1 leaves the last object a little settled room.
     var T0 = -0.6, T1 = n - 1 + 0.25;
 
-    var W, H, r, lx, ly, si, drift, top, travel;
+    var W, H, r, lx, ly, si, ic, drift, top, travel;
     var farPos = [], nearPos = [];
     var lastY = -1, dirty = true, current = -1;
 
@@ -74,27 +138,51 @@
 
     function layout() {
       W = stage.clientWidth; H = stage.clientHeight;
-      r = Math.round(Math.min(H * 0.29, W * 0.2, 300));
-      // Text column on the site's 1152px grid, so the headline lines up with every section below.
-      var col = Math.round(Math.max(24, W / 2 - 552));
-      // The lens sits right of the headline at its natural width, so
-      // "See what's inside." never wraps onto a third line.
-      var h1 = intro.querySelector('h1');
-      h1.style.width = 'max-content';
-      var textW = Math.max(h1.getBoundingClientRect().width, 360);
-      h1.style.width = '';
-      lx = Math.round(Math.max(W * 0.63, col + textW + 56 + r));
-      ly = Math.round(H * 0.5);
-      si = r * 1.25;
+      var col, tb = 0;
+      if (tall) {
+        // Upright: the headline and then each label take a band under the
+        // nav, and the lens fills the space below it, against the text
+        // column, so the icons queue in from the right edge.
+        col = 24;
+        var tt = Math.round(nav.getBoundingClientRect().bottom + 20);
+        stage.style.setProperty('--tt', tt + 'px');
+        var th = intro.offsetHeight;
+        objs.forEach(function (o) { th = Math.max(th, o.lbl.offsetHeight); });
+        tb = tt + th;
+        var pad = 24;
+        r = Math.round(Math.max(Math.min(W * 0.37, (H - tb - pad - 20) / 2, 300), W * 0.26));
+        lx = col + r;
+        ly = Math.round(Math.max(tb + 20 + r, (tb + H - pad) / 2));
+        si = r * 1.1;
+        ic = Math.round(Math.min(Math.max(r * 0.48, 52), 96));
+      } else {
+        r = Math.round(Math.min(H * 0.29, W * 0.2, 300));
+        // Text column on the site's 1152px grid, so the headline lines up with every section below.
+        col = Math.round(Math.max(24, W / 2 - 552));
+        // The lens sits right of the headline at its natural width, so
+        // "See what's inside." never wraps onto a third line.
+        var h1 = intro.querySelector('h1');
+        h1.style.width = 'max-content';
+        var textW = Math.max(h1.getBoundingClientRect().width, 360);
+        h1.style.width = '';
+        lx = Math.round(Math.max(W * 0.63, col + textW + 56 + r));
+        ly = Math.round(H * 0.5);
+        si = r * 1.25;
+        ic = 120;
+      }
       drift = r * 0.3;
       stage.style.setProperty('--lx', lx + 'px');
       stage.style.setProperty('--ly', ly + 'px');
       stage.style.setProperty('--r', r + 'px');
       stage.style.setProperty('--col', col + 'px');
+      stage.style.setProperty('--ic', ic + 'px');
       // Size each preview for its zoom, and keep its focus point far enough
-      // inside that the glass is always full.
+      // inside that the glass is always full. A phone's lens is half the
+      // desktop one, so its screenshots are drawn closer to keep their text
+      // readable; a tablet's lens is near desktop size and needs no boost.
+      var boost = tall ? Math.min(Math.max(240 / r, 1), 1.6) : 1;
       objs.forEach(function (o) {
-        var ph = Math.round(r * 2 * o.zoom), pw = Math.round(ph * 1.6);
+        var ph = Math.round(r * 2 * o.zoom * (o.fit ? 1 : boost)), pw = Math.round(ph * 1.6);
         var mx = r / pw, my = r / ph;
         o.cx = Math.min(Math.max(o.fx, mx), 1 - mx) * pw;
         o.cy = Math.min(Math.max(o.fy, my), 1 - my) * ph;
@@ -102,23 +190,31 @@
         o.pv.style.height = ph + 'px';
         o.pv.style.transformOrigin = o.cx.toFixed(1) + 'px ' + o.cy.toFixed(1) + 'px';
       });
-      // The text column stays on plain glass: the far field starts past it.
-      var fade = (lx - r - 40) / W * 100;
-      var mask = 'linear-gradient(to right, transparent ' + (fade - 6).toFixed(1) + '%, #000 ' + (fade + 8).toFixed(1) + '%)';
+      // The text stays on plain glass: the far field starts past it.
+      var mask;
+      if (tall) {
+        mask = 'linear-gradient(to bottom, transparent ' + (tb - 10) + 'px, #000 ' + (ly - r + 10) + 'px)';
+      } else {
+        var fade = (lx - r - 40) / W * 100;
+        mask = 'linear-gradient(to right, transparent ' + (fade - 6).toFixed(1) + '%, #000 ' + (fade + 8).toFixed(1) + '%)';
+      }
       sec.querySelector('.gx-far').style.webkitMaskImage = mask;
       sec.querySelector('.gx-far').style.maskImage = mask;
       farPos = far.map(function (img, i) {
         var s = Math.round(34 + rand(i) * 40);
         // Sprites are padded 1.4x around the icon so the baked blur isn't clipped.
         img.style.width = img.style.height = Math.round(s * 1.4) + 'px';
-        return { x: rand(i + 40) * (W + 400), y: 90 + rand(i + 80) * (H - 240 - s), s: s };
+        var y = tall ? tb + rand(i + 80) * (H - tb - s - 20) : 90 + rand(i + 80) * (H - 240 - s);
+        return { x: rand(i + 40) * (W + 400), y: y, s: s };
       });
       // Near plane: big, out-of-focus icons passing just under the top edge,
-      // clear of the labels and the index.
+      // clear of the labels and the index. Upright, the labels own the top,
+      // so they pass along the bottom edge instead.
       nearPos = near.map(function (img, i) {
         var s = Math.round(r * (0.9 + rand(i + 7) * 0.4));
         img.style.width = img.style.height = Math.round(s * 1.5) + 'px';
-        return { x: (i + rand(i + 3) * 0.5) * (W + s * 2) / near.length, y: -s * (0.5 + rand(i + 11) * 0.12), s: s };
+        var dip = 0.5 + rand(i + 11) * 0.12;
+        return { x: (i + rand(i + 3) * 0.5) * (W + s * 2) / near.length, y: tall ? H - s * (1.15 - dip) : -s * dip, s: s };
       });
       var rect = sec.getBoundingClientRect();
       top = rect.top + scrollY;
@@ -152,7 +248,7 @@
         // The first object's preview is already in the glass, so its icon never queues.
         var io = k === 0 || xi <= 0 ? 0 : clamp01((xi - r * 0.55) / (r * 0.5)) * clamp01(1 - (xi - (W - lx)) / 160);
         o.icon.style.opacity = io.toFixed(3);
-        o.icon.style.transform = 'translate3d(' + (lx + xi - 60).toFixed(1) + 'px,' + (ly - 60) + 'px,0)';
+        o.icon.style.transform = 'translate3d(' + (lx + xi - ic / 2).toFixed(1) + 'px,' + (ly - ic / 2) + 'px,0)';
 
         // d < 0: still arriving; it fades in over the previous preview while
         // its icon crosses the rim. d >= 0: settled, and it stays put under

@@ -295,12 +295,41 @@ Spyglass: the page's own behaviour is in `spyglass/assets/spyglass.{css,js}`.
   link carries are in the privacy policy, linked from the footer.
 - Those, pricing and the FAQ enter with `data-sc-in`.
 
-Both pins run only at 1024px and up, 620px tall, with a fine pointer and
-motion allowed. `spyglass.js` decides that once, before the engine mounts: it
-adds `html.lens.pin` and promotes the page's `data-pin-*` attributes to
-`data-sc-*`. Everywhere else the same markup is a static catalogue (icon,
+Both pins run wherever the screen can hold them and motion is allowed, touch
+or not: the wide layout at 1024px and up, 620px tall, and an upright one
+(`html.tall`) below 1024px held portrait, 500px tall or more. `spyglass.js`
+decides once, before the engine mounts: it adds `html.lens.pin` (plus
+`html.tall`) and promotes the page's `data-pin-*` attributes to `data-sc-*`,
+taking `data-tall-*` instead where the upright layout has its own timing. A
+rotation or resize that crosses into another mode reloads the page. Landscape
+phones and reduced motion get the same markup as a static catalogue (icon,
 label, full preview per object, under a lens showing the Markdown preview)
-and the Drive act is the three windows stacked with their captions.
+with the Drive act as the three windows stacked with their captions.
+
+Upright, the headline and then each label take a band under the nav, and
+`spyglass.js` sizes the lens to the room left below it (`--tt`, `--r`, `--ic`
+for the icon size), left on the text column so the icons queue in from the
+right edge. The near plane passes along the bottom edge instead of the top,
+the far plane is masked off the text band, and the index is hidden. A phone
+lens is about half the desktop one, so non-card previews are drawn up to 1.6x
+closer (scaled to 240px over the lens radius) to keep their text readable; a
+tablet's lens needs no boost. In the Drive act the heading gives way to the
+captions in that same band (`data-tall-cue`, span 3.2) and the windows share
+one frame below it, centred in the remaining height.
+
+At 640px and below, full screenshots would shrink past reading size, so they
+crop. In the static catalogue the hero lens is hidden and the formats become
+a horizontal scroll-snap rail of window cards (surface panel, 4:3 preview
+inset 6px, icon and label, the next card peeking in), each preview starting
+at the top of the window, at the `data-focus` x, a little closer than the
+full window; a pager under the rail (count plus previous and next) is wired
+by `spyglass.js` and hidden without it. The Drive windows sit in `.dv-shot`
+frames cropped to the stub's JSON line, the card's title and the doc's
+heading; pinned, the card and doc share a 1.25 frame and the stub keeps its
+strip at the top of it. Settings shows only the Formats pane, cropped to its
+switch list. One container-query crop drives all of these: `spyglass.js`
+copies each preview's `data-focus`, `data-zoom` and image size into `--fx`,
+`--fy`, `--z` and `--ar`, and frames set `--fa` (frame aspect) inline.
 
 Safety contract: an inline head script adds `html.mm` (skipped under
 `prefers-reduced-motion`) and CSS hides `[data-mm]` only under that class;
