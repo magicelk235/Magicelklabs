@@ -358,7 +358,7 @@ macOS 14+.
 `.crx`, or unpacked folder; Viaduct converts, signs, and installs it into
 Safari. Runs in Safari's own engine (keeps battery life). Free for 2
 conversions, which Viaduct removes after 7 days; then $19 one-time (unlimited,
-keeps extensions installed, opt-in weekly Web Store updates). macOS 13+. Beta.
+keeps extensions installed, opt-in weekly Web Store updates). macOS 13+.
 
 **Lector** — Copy or translate any text on your Mac's screen. ⌘⇧2 copies the
 text under a crosshair; ⌘⇧1 paints the translation over the original, in
@@ -450,4 +450,4 @@ $15 one-time (unlimited, plus live translation in beta). Upgrade $6. macOS 15+.
 ## Build
 
 Static, zero build step, except `viaduct/extensions/build.js` which generates
-the 20 extension guides + hub + sitemap: `node build.js` after editing it.
+the 21 extension guides + hub + sitemap: `node build.js` after editing it.
