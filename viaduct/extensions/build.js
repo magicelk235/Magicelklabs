@@ -13,13 +13,21 @@ const SITE = 'https://magicelklabs.com';
 const STORE = (id) => `https://chromewebstore.google.com/detail/${id}`;
 
 // official = an official Safari version exists; the page must say so and link it.
+// offStore = gone from the Chrome Web Store; the steps link the developer's own
+// package instead of the store listing.
+// limit = what the extension can't do once it runs in Safari; shown before the steps.
 const EXTENSIONS = [
   { slug: 'claude-in-chrome', name: 'Claude in Chrome', id: 'fcoeoabgfenejglbffodgkkbkcdhcgfn',
     desc: 'Anthropic’s AI assistant that works right in your browser', category: 'AI assistants' },
   { slug: 'ublock-origin', name: 'uBlock Origin', id: 'cjpalhdlnbpafiamejdnhcphjbkeiagm',
-    desc: 'the wide-spectrum content blocker', category: 'Privacy & ad blocking' },
+    desc: 'the wide-spectrum content blocker', category: 'Privacy & ad blocking',
+    official: { label: 'uBlock Origin Lite (Mac App Store)', url: 'https://apps.apple.com/us/app/ublock-origin-lite/id6745342698',
+      note: 'uBlock Origin’s developer makes uBlock Origin Lite for Safari, free on the Mac App Store, and it blocks requests for real. The full uBlock Origin blocks requests in a way Safari doesn’t allow, so converted it can hide ads on a page but can’t stop them loading.' },
+    offStore: { label: 'uBlock Origin releases on GitHub', url: 'https://github.com/gorhill/uBlock/releases' } },
   { slug: 'tampermonkey', name: 'Tampermonkey', id: 'dhdgffkkebhmkfjojejmpbldmpobfkfo',
-    desc: 'the most popular userscript manager', category: 'Userscripts' },
+    desc: 'the most popular userscript manager', category: 'Userscripts',
+    official: { label: 'Tampermonkey (Mac App Store)', url: 'https://apps.apple.com/us/app/tampermonkey/id6738342400',
+      note: 'Tampermonkey ships an official paid Safari version. If you just want Tampermonkey, buy it; it supports the developer. Viaduct is for running the free Chrome build, or for extensions with no Safari port at all.' } },
   { slug: 'violentmonkey', name: 'Violentmonkey', id: 'jinjaccalgkegednnccohejagnlnfdag',
     desc: 'the open-source userscript manager', category: 'Userscripts' },
   { slug: 'metamask', name: 'MetaMask', id: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
@@ -27,7 +35,9 @@ const EXTENSIONS = [
   { slug: 'return-youtube-dislike', name: 'Return YouTube Dislike', id: 'gebbhagfogifgggkldgodflihgfeippi',
     desc: 'the extension that restores dislike counts on YouTube', category: 'YouTube' },
   { slug: 'sponsorblock', name: 'SponsorBlock', id: 'mnjggcdmjocbbbhaepdhchncahnbgone',
-    desc: 'the extension that auto-skips sponsor segments in YouTube videos', category: 'YouTube' },
+    desc: 'the extension that auto-skips sponsor segments in YouTube videos', category: 'YouTube',
+    official: { label: 'SponsorBlock for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/sponsorblock-for-safari/id1573461917',
+      note: 'SponsorBlock ships an official paid Safari version. If you just want SponsorBlock, buy it; it supports the developer. Viaduct is for running the free Chrome build, or for extensions with no Safari port at all.' } },
   { slug: 'stylus', name: 'Stylus', id: 'clngdbkpkpeebahjckkjfobafhncgmne',
     desc: 'custom CSS themes for any website', category: 'Customization' },
   { slug: 'dark-reader', name: 'Dark Reader', id: 'eimadpbcbfnmbkopoojfekhnkhdbieeh',
@@ -35,7 +45,9 @@ const EXTENSIONS = [
     official: { label: 'Dark Reader for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/dark-reader-for-safari/id1438243180',
       note: 'Dark Reader ships an official paid Safari version. If you just want Dark Reader, buy it; it supports the developer. Viaduct is for running the free Chrome build, or for the day you want an extension that has no Safari port at all.' } },
   { slug: 'clearurls', name: 'ClearURLs', id: 'lckanjgmijmafbedllaakclkaicjfmnk',
-    desc: 'the extension that strips tracking parameters from links', category: 'Privacy & ad blocking' },
+    desc: 'the extension that strips tracking parameters from links', category: 'Privacy & ad blocking',
+    offStore: { label: 'ClearURLs releases on GitHub', url: 'https://github.com/ClearURLs/Addon/releases' },
+    limit: 'ClearURLs cleans most links by rewriting requests as they leave the browser, and Safari doesn’t let extensions do that. Converted, it installs and opens, but most links go through uncleaned.' },
   { slug: 'decentraleyes', name: 'Decentraleyes', id: 'ldpochfccmkkmhdbclfhpagapcfdljkj',
     desc: 'local CDN emulation that blocks tracking requests', category: 'Privacy & ad blocking' },
   { slug: 'i-still-dont-care-about-cookies', name: "I still don't care about cookies", id: 'edibdbjcniadpccecjdfdjjppcpchdlm',
@@ -59,11 +71,15 @@ const EXTENSIONS = [
     official: { label: 'uBlacklist for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/ublacklist-for-safari/id1547912640',
       note: 'uBlacklist has an official Safari port on the Mac App Store. If that covers you, use it. Viaduct is for running the Chrome build directly, or for extensions with no port at all.' } },
   { slug: 'web-archives', name: 'Web Archives', id: 'hkligngkgcpcolhcnkgccglchdafcnao',
-    desc: 'one-click lookup of archived page versions (Wayback Machine and more)', category: 'Research' },
+    desc: 'one-click lookup of archived page versions (Wayback Machine and more)', category: 'Research',
+    official: { label: 'Web Archives for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/web-archives-for-safari/id1603181853',
+      note: 'Web Archives ships an official paid Safari version. If you just want Web Archives, buy it; it supports the developer. Viaduct is for running the free Chrome build, or for extensions with no Safari port at all.' } },
   { slug: 'user-agent-switcher', name: 'User-Agent Switcher and Manager', id: 'bhchdcejhohfmigjafbampogmaanbfkg',
     desc: 'spoof or rotate your browser’s user agent', category: 'Developer tools' },
   { slug: 'xbrowsersync', name: 'xBrowserSync', id: 'lcbjdhceifofjlpecfpeimnnphbcjgnc',
-    desc: 'encrypted bookmark sync across browsers', category: 'Sync' },
+    desc: 'encrypted bookmark sync across browsers', category: 'Sync',
+    offStore: { label: 'xBrowserSync releases on GitHub', url: 'https://github.com/xbrowsersync/app/releases' },
+    limit: 'xBrowserSync syncs through the browser’s bookmarks API, which Safari doesn’t give extensions. Converted, it installs and opens, but it can’t read or change your Safari bookmarks.' },
 ];
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -261,12 +277,12 @@ Google. Viaduct converts extensions locally on your Mac; nothing is redistribute
 }
 
 function extensionPage(x) {
-  const store = STORE(x.id);
+  const store = x.offStore ? x.offStore.url : STORE(x.id);
   const canonical = `${SITE}/viaduct/extensions/${x.slug}/`;
   const title = `Run ${x.name} in Safari · Viaduct`;
   const description = x.official
     ? `${x.name} on Safari: what the official option covers, and how to run the Chrome version natively in Safari with Viaduct.`
-    : `${x.name} has no Safari version. Viaduct converts the real Chrome extension into a native Safari extension. One click, no terminal.`;
+    : `${x.name} has no Safari version. Viaduct converts the real Chrome extension into a native Safari extension. ${x.offStore ? 'You never open a terminal.' : 'One click, no terminal.'}`;
 
   // The card image is Viaduct's own window, so the alt describes that, but names
   // the extension this page is about so no two pages ship the same string.
@@ -302,6 +318,14 @@ function extensionPage(x) {
   </div>
 </section>` : '';
 
+  const limitBlock = x.limit ? `
+<section>
+  <div class="card callout">
+    <strong style="color:var(--ink)">What won't work in Safari</strong>
+    <p style="margin:8px 0 0">${esc(x.limit)}</p>
+  </div>
+</section>` : '';
+
   const noPortLede = x.official
     ? `There's an official Safari option for ${x.name} (linked below). There's also
        Viaduct, which runs the actual Chrome build in Safari, the same way it runs the
@@ -310,6 +334,23 @@ function extensionPage(x) {
        extensions: it uses its own native <code>.appex</code> format that must be built,
        code-signed, and registered with macOS. Viaduct does all of that for you.`;
 
+  // Off the store, the package comes from the developer and gets dropped on
+  // Viaduct; on it, the store's "Add to Safari" button does the work.
+  const steps = x.offStore ? `
+    <li><strong><a href="/viaduct/">Get Viaduct</a></strong>. Free for your first 2 conversions.</li>
+    <li><strong>Download ${esc(x.name)}'s Chromium package from its developer.</strong> It's no longer on the Chrome Web Store.<br />
+        <a href="${store}" rel="noopener">${esc(x.offStore.label)} →</a></li>
+    <li><strong>Drop it on Viaduct.</strong> Viaduct converts ${esc(x.name)} to a native Safari extension, signs it, and installs it. Switch it on once in Safari's settings and it appears in the toolbar, like any other extension.</li>` : `
+    <li><strong><a href="/viaduct/">Get Viaduct</a></strong>. Free for your first 2 conversions. Turn on its small Safari extension once, and it upgrades the Chrome Web Store.</li>
+    <li><strong>Open ${esc(x.name)}'s Chrome Web Store page in Safari.</strong><br />
+        <a href="${store}" rel="noopener">${esc(x.name)} on the Chrome Web Store →</a></li>
+    <li><strong>Click "Add to Safari."</strong> The store's "Add to Chrome" button becomes "Add to Safari." ${x.official
+      ? 'If Viaduct points you to the official version first, choose Convert Anyway. It then fetches'
+      : 'One click: Viaduct fetches'} ${esc(x.name)}, converts it to a native Safari extension, signs it, and installs it. Switch it on once in Safari's settings and it appears in the toolbar, like any other extension.</li>`;
+  const source = x.offStore
+    ? `takes the exact ${esc(x.name)} package its developers publish`
+    : `downloads the exact ${esc(x.name)} package published on the Chrome Web Store`;
+
   return head({ title, description, canonical, imageAlt, jsonld }) + chrome(`
 <div class="crumb"><a href="/viaduct/extensions/">Extensions</a> / ${esc(x.name)}</div>
 <div class="hero">
@@ -317,14 +358,10 @@ function extensionPage(x) {
   <h1>Run ${esc(x.name)} in Safari</h1>
   <p class="lede">${noPortLede}</p>
 </div>
-${officialBlock}
+${officialBlock}${limitBlock}
 <section>
   <h2>The whole process, three steps</h2>
-  <ol class="steps">
-    <li><strong><a href="/viaduct/">Get Viaduct</a></strong>. Free for your first 2 conversions, and it installs a small Safari extension that upgrades the Chrome Web Store.</li>
-    <li><strong>Open ${esc(x.name)}'s Chrome Web Store page in Safari.</strong><br />
-        <a href="${store}" rel="noopener">${esc(x.name)} on the Chrome Web Store →</a></li>
-    <li><strong>Click "Add to Safari."</strong> The store's "Add to Chrome" button becomes "Add to Safari." One click: Viaduct fetches ${esc(x.name)}, converts it to a native Safari extension, signs it, and installs it. It appears in Safari's toolbar like any native extension.</li>
+  <ol class="steps">${steps}
   </ol>
 </section>
 
@@ -340,23 +377,23 @@ ${officialBlock}
 
 <section>
   <h2>What's actually happening</h2>
-  <p>Viaduct downloads the exact ${esc(x.name)} package published on the Chrome Web
-  Store (same code, same version) and rebuilds it as a native Safari Web Extension
+  <p>Viaduct ${source} (same code, same version) and rebuilds it as a native Safari Web Extension
   (<code>.appex</code>). It handles the conversion, the code-signing, and the macOS
   registration that normally require Xcode wrangling and a terminal. Because the result
   runs inside Safari's own engine, you keep Safari's battery life. No second Chromium
   process runs in the background.</p>
   <p>Safari supports the same WebExtension API family that Chrome extensions are built
-  on, so most extensions work as-is. Some Chrome-only APIs have no Safari equivalent, and
+  on, and Viaduct patches the places where Safari behaves differently, so most extensions
+  work. Some Chrome-only APIs have no Safari equivalent, and
   the features built on them won't work. If an extension can't work in Safari at all,
   Viaduct tells you before you convert.</p>
 </section>
 <section>
   <h2>Questions</h2>
   <details><summary>Is this the real ${esc(x.name)}, or a clone?</summary>
-    <p>The real one. Viaduct converts the exact package its developers published on the
-    Chrome Web Store. Nothing is modified, hosted, or redistributed; the conversion
-    happens locally on your Mac.</p></details>
+    <p>The real one. Viaduct converts the exact package its developers published${x.offStore ? '' : ' on the Chrome Web Store'}
+    and adds the fixes Safari needs to run it. Nothing is hosted or redistributed; the
+    conversion happens locally on your Mac.</p></details>
   <details><summary>Will it stop working after a week?</summary>
     <p>On the free plan, yes: Viaduct removes converted extensions after 7 days.
     Viaduct Pro keeps them installed for good.</p></details>
@@ -368,9 +405,9 @@ ${officialBlock}
   <details><summary>What do I need?</summary>
     <p>macOS 13+, on Apple Silicon or Intel. Viaduct is a universal app, so one download
     runs natively on either chip. Node is bundled inside Viaduct, so there's nothing
-    to install. Xcode is required (free, from the App Store) because Apple offers no other
-    way to code-sign a Safari extension on a free account; Viaduct checks on first run and
-    links the install if it's missing.</p></details>
+    to install. Xcode is required (free, from the App Store), with an Apple ID signed in
+    (a free one works), because Apple offers no other way to code-sign a Safari extension
+    on a free account. Viaduct's first-launch setup walks you through both.</p></details>
   <details><summary>What does Viaduct cost?</summary>
     <p>Free for your first 2 conversions, which Viaduct removes after 7 days. Pro is $19
     one-time: unlimited conversions, and your extensions stay installed. The conversion

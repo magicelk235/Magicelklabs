@@ -182,10 +182,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 <section>
   <h2>The whole process, three steps</h2>
   <ol class="steps">
-    <li><strong><a href="/viaduct/">Get Viaduct</a></strong>. Free for your first 2 conversions, and it installs a small Safari extension that upgrades the Chrome Web Store.</li>
+    <li><strong><a href="/viaduct/">Get Viaduct</a></strong>. Free for your first 2 conversions. Turn on its small Safari extension once, and it upgrades the Chrome Web Store.</li>
     <li><strong>Open Zotero Connector's Chrome Web Store page in Safari.</strong><br />
         <a href="https://chromewebstore.google.com/detail/ekhagklcjbdpajgpjgmbionohlpdbjgc" rel="noopener">Zotero Connector on the Chrome Web Store →</a></li>
-    <li><strong>Click "Add to Safari."</strong> The store's "Add to Chrome" button becomes "Add to Safari." One click: Viaduct fetches Zotero Connector, converts it to a native Safari extension, signs it, and installs it. It appears in Safari's toolbar like any native extension.</li>
+    <li><strong>Click "Add to Safari."</strong> The store's "Add to Chrome" button becomes "Add to Safari." If Viaduct points you to the official version first, choose Convert Anyway. It then fetches Zotero Connector, converts it to a native Safari extension, signs it, and installs it. Switch it on once in Safari's settings and it appears in the toolbar, like any other extension.</li>
   </ol>
 </section>
 
@@ -201,23 +201,23 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 
 <section>
   <h2>What's actually happening</h2>
-  <p>Viaduct downloads the exact Zotero Connector package published on the Chrome Web
-  Store (same code, same version) and rebuilds it as a native Safari Web Extension
+  <p>Viaduct downloads the exact Zotero Connector package published on the Chrome Web Store (same code, same version) and rebuilds it as a native Safari Web Extension
   (<code>.appex</code>). It handles the conversion, the code-signing, and the macOS
   registration that normally require Xcode wrangling and a terminal. Because the result
   runs inside Safari's own engine, you keep Safari's battery life. No second Chromium
   process runs in the background.</p>
   <p>Safari supports the same WebExtension API family that Chrome extensions are built
-  on, so most extensions work as-is. Some Chrome-only APIs have no Safari equivalent, and
+  on, and Viaduct patches the places where Safari behaves differently, so most extensions
+  work. Some Chrome-only APIs have no Safari equivalent, and
   the features built on them won't work. If an extension can't work in Safari at all,
   Viaduct tells you before you convert.</p>
 </section>
 <section>
   <h2>Questions</h2>
   <details><summary>Is this the real Zotero Connector, or a clone?</summary>
-    <p>The real one. Viaduct converts the exact package its developers published on the
-    Chrome Web Store. Nothing is modified, hosted, or redistributed; the conversion
-    happens locally on your Mac.</p></details>
+    <p>The real one. Viaduct converts the exact package its developers published on the Chrome Web Store
+    and adds the fixes Safari needs to run it. Nothing is hosted or redistributed; the
+    conversion happens locally on your Mac.</p></details>
   <details><summary>Will it stop working after a week?</summary>
     <p>On the free plan, yes: Viaduct removes converted extensions after 7 days.
     Viaduct Pro keeps them installed for good.</p></details>
@@ -229,9 +229,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <details><summary>What do I need?</summary>
     <p>macOS 13+, on Apple Silicon or Intel. Viaduct is a universal app, so one download
     runs natively on either chip. Node is bundled inside Viaduct, so there's nothing
-    to install. Xcode is required (free, from the App Store) because Apple offers no other
-    way to code-sign a Safari extension on a free account; Viaduct checks on first run and
-    links the install if it's missing.</p></details>
+    to install. Xcode is required (free, from the App Store), with an Apple ID signed in
+    (a free one works), because Apple offers no other way to code-sign a Safari extension
+    on a free account. Viaduct's first-launch setup walks you through both.</p></details>
   <details><summary>What does Viaduct cost?</summary>
     <p>Free for your first 2 conversions, which Viaduct removes after 7 days. Pro is $19
     one-time: unlimited conversions, and your extensions stay installed. The conversion
