@@ -338,7 +338,11 @@ arrives. motion.js also neutralizes CSS `scroll-behavior:smooth` during
 ScrollTrigger refresh, pauses Lenis while ScrollTrigger measures, and calls
 `ScrollTrigger.sort()` before refresh (pins are created after entrance
 triggers; without the sort, everything below a pin fires ~2000px early).
-Re-refreshes on `load`.
+Re-refreshes on `load`. Only the load-time hero (`data-mm="lines"` and the
+other `data-mm-load` entrances) waits for the fonts (up to 900ms), because
+SplitText needs the final line breaks; scroll entrances such as the shelf
+start as soon as motion.js runs, so the first cover (the page's LCP image) isn't
+held back by the font CDN. The GSAP scripts and motion.js load with `defer`.
 Videos pause off-screen and gain controls (no autoplay/loop) under reduced
 motion. Hover stays 1–2px lifts; no other decorative loops beyond the ambient
 band light.

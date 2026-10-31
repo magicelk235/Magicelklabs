@@ -135,9 +135,13 @@
     gsap.fromTo(el, from, to);
   }
 
-  function run() {
-    if (!late) {
-    // ---- lines: masked line-by-line headline reveal with blur-in ----
+  // ---- lines: masked line-by-line headline reveal with blur-in ----
+  // Split lines depend on the final font metrics, so the headline waits for
+  // the fonts (see the bottom of the file), and the other load-time entrances
+  // ([data-mm-load]) wait with it to keep their order. Scroll entrances run at
+  // once, so images on the first screen aren't held back by a slow font CDN.
+  function runHero() {
+    if (late) return;
     document.querySelectorAll('[data-mm="lines"]').forEach(function (el) {
       var immediate = el.hasAttribute('data-mm-load');
       if (!hasSplit) {
@@ -163,17 +167,26 @@
       if (immediate) gsap.to(split.lines, vars);
       else gsap.to(split.lines, Object.assign(vars, { scrollTrigger: stFor(el) }));
     });
+    simple(true);
+  }
 
-    // ---- rise / fade / media ----
-    document.querySelectorAll('[data-mm="rise"]').forEach(function (el) {
-      enter(el, { from: { autoAlpha: 0, y: 26 }, to: { autoAlpha: 1, y: 0, duration: 0.95 } }, el.hasAttribute('data-mm-load'));
+  // ---- rise / fade / media ----
+  function simple(atLoad) {
+    var pick = atLoad ? '[data-mm-load]' : ':not([data-mm-load])';
+    document.querySelectorAll('[data-mm="rise"]' + pick).forEach(function (el) {
+      enter(el, { from: { autoAlpha: 0, y: 26 }, to: { autoAlpha: 1, y: 0, duration: 0.95 } }, atLoad);
     });
-    document.querySelectorAll('[data-mm="fade"]').forEach(function (el) {
-      enter(el, { from: { autoAlpha: 0 }, to: { autoAlpha: 1, duration: 0.9 } }, el.hasAttribute('data-mm-load'));
+    document.querySelectorAll('[data-mm="fade"]' + pick).forEach(function (el) {
+      enter(el, { from: { autoAlpha: 0 }, to: { autoAlpha: 1, duration: 0.9 } }, atLoad);
     });
-    document.querySelectorAll('[data-mm="media"]').forEach(function (el) {
-      enter(el, { from: { autoAlpha: 0, y: 34, scale: 1.045 }, to: { autoAlpha: 1, y: 0, scale: 1, duration: 1.25 } }, el.hasAttribute('data-mm-load'));
+    document.querySelectorAll('[data-mm="media"]' + pick).forEach(function (el) {
+      enter(el, { from: { autoAlpha: 0, y: 34, scale: 1.045 }, to: { autoAlpha: 1, y: 0, scale: 1, duration: 1.25 } }, atLoad);
     });
+  }
+
+  function run() {
+    if (!late) {
+    simple(false);
 
     // ---- staggered children ----
     document.querySelectorAll('[data-mm-stagger]').forEach(function (parent) {
@@ -357,13 +370,15 @@
     }, 700);
   }
 
+  run();
+
   // Fonts change line breaks — wait for them before splitting headlines.
   if (document.fonts && document.fonts.ready) {
     var started = false;
-    var kick = function () { if (!started) { started = true; run(); } };
+    var kick = function () { if (!started) { started = true; runHero(); } };
     document.fonts.ready.then(kick);
     setTimeout(kick, 900); // don't wait forever on a slow font CDN
   } else {
-    run();
+    runHero();
   }
 })();

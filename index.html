@@ -276,7 +276,7 @@ a:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:8p
 
         <a class="book" href="./spyglass/">
           <div class="cover">
-            <img src="./assets/spyglass-cover.webp" alt="The Spyglass cover: Press Space, see what's inside, beside a Jupyter notebook open in Quick Look" width="1200" height="630" decoding="async">
+            <img src="./assets/spyglass-cover.webp" alt="The Spyglass cover: Press Space, see what's inside, beside a Jupyter notebook open in Quick Look" width="1200" height="630" decoding="async" fetchpriority="high">
           </div>
           <h2>Spyglass</h2>
           <p>Press Space on a notebook, a zip or a Google Doc and see what's inside.</p>
@@ -322,11 +322,11 @@ a:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:8p
 
 <!-- Pinned versions with SRI. jsdelivr sends CORS headers, so crossorigin plus
      integrity works here and a tampered CDN response gets refused. -->
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js" integrity="sha384-FKTX0CNJ8ngN1oGMBReVu7mvjTJyjFiD5etb1NKnYxc+8eFI2O0KWnksTN+oTFcu" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" integrity="sha384-xb96EMJeax+NLXMC88ZBa1xAeAW+kn+horHh/zFlbMLG2UPWhMJJSlv7fi57hS+Q" crossorigin="anonymous"></script>
-<script src="./assets/motion.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js" integrity="sha384-FKTX0CNJ8ngN1oGMBReVu7mvjTJyjFiD5etb1NKnYxc+8eFI2O0KWnksTN+oTFcu" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" integrity="sha384-xb96EMJeax+NLXMC88ZBa1xAeAW+kn+horHh/zFlbMLG2UPWhMJJSlv7fi57hS+Q" crossorigin="anonymous"></script>
+<script defer src="./assets/motion.js?v=2"></script>
 
 <script>
 (function () {
