@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Spyglass: better Quick Look previews for your Mac</title>
+<title>Spyglass: Quick Look extension for Markdown, code and zips on Mac</title>
 <meta name="description" content="Spyglass gives Quick Look proper previews for Markdown, code, notebooks, archives, apps, SQLite and Google Drive files on your Mac. Free for 7 days.">
 <link rel="canonical" href="https://magicelklabs.com/spyglass/">
-<meta property="og:title" content="Spyglass: a better Quick Look for your Mac">
+<meta property="og:title" content="Spyglass: Quick Look extension for Markdown, code and zips on Mac">
 <meta property="og:description" content="Press Space on Markdown, code, a notebook, a zip, an app or a Google Doc and see what's inside. Free for 7 days, then $12 once.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://magicelklabs.com/spyglass/">
@@ -18,7 +18,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The Spyglass headline beside a Quick Look window showing a Jupyter notebook with a temperature chart">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Spyglass: a better Quick Look for your Mac">
+<meta name="twitter:title" content="Spyglass: Quick Look extension for Markdown, code and zips on Mac">
 <meta name="twitter:description" content="Press Space on Markdown, code, a notebook, a zip, an app or a Google Doc and see what's inside. Free for 7 days, then $12 once.">
 <meta name="twitter:image" content="https://magicelklabs.com/spyglass/assets/spyglass-og-2.jpg">
 <meta name="theme-color" content="#0F1413">
@@ -35,18 +35,32 @@
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  "@id": "https://magicelklabs.com/spyglass/#app",
   "name": "Spyglass",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "macOS 14.0 or later",
   "url": "https://magicelklabs.com/spyglass/",
   "downloadUrl": "https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg",
-  "description": "Spyglass gives Quick Look real previews for Markdown, code, notebooks, archives, apps, SQLite and Google Drive files on your Mac.",
+  "description": "Spyglass gives Quick Look real previews for Markdown, code, notebooks, archives, apps, SQLite and Google Drive files on your Mac. Free for 7 days, then $12 once.",
+  "softwareVersion": "2.0.0",
+  "datePublished": "2026-07-30",
+  "dateModified": "2026-10-19",
+  "releaseNotes": "https://github.com/magicelk235/Spyglass/releases/tag/v2.0.0",
   "image": "https://magicelklabs.com/spyglass/assets/spyglass-og-2.jpg",
-  "publisher": { "@type": "Organization", "name": "Magicelk Labs", "url": "https://magicelklabs.com/" },
+  "publisher": { "@type": "Organization", "@id": "https://magicelklabs.com/#organization", "name": "Magicelk Labs", "url": "https://magicelklabs.com/" },
+  "sameAs": [
+    "https://github.com/magicelk235/spyglass",
+    "https://magicelk235.gumroad.com/l/spyglass"
+  ],
   "offers": [
-    { "@type": "Offer", "name": "Free trial", "price": "0", "priceCurrency": "USD", "url": "https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg" },
-    { "@type": "Offer", "name": "Spyglass Pro", "price": "12", "priceCurrency": "USD", "url": "https://magicelk235.gumroad.com/l/spyglass" },
-    { "@type": "Offer", "name": "Spyglass Drive", "price": "4", "priceCurrency": "USD", "url": "https://magicelk235.gumroad.com/l/spyglass-drive" }
+    { "@type": "Offer", "name": "Spyglass Pro", "price": "12", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://magicelk235.gumroad.com/l/spyglass" },
+    {
+      "@type": "Offer", "name": "Spyglass Drive", "price": "4", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://magicelk235.gumroad.com/l/spyglass-drive",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification", "price": "4", "priceCurrency": "USD", "billingDuration": "P1M", "unitCode": "MON",
+        "referenceQuantity": { "@type": "QuantitativeValue", "value": 1, "unitCode": "MON" }
+      }
+    }
   ]
 }
 </script>
@@ -129,16 +143,18 @@
       <div class="gx-cta">
         <a class="btn-ghost btn-lg" href="https://github.com/magicelk235/spyglass/releases/latest/download/Spyglass.dmg">Download</a>
         <a class="btn-brass btn-lg" href="https://magicelk235.gumroad.com/l/spyglass?wanted=true">Get Pro</a>
+        <span class="gx-req">For macOS 14 Sonoma and later</span>
       </div>
     </div>
 
     <div class="gx-lens" aria-hidden="true">
-      <div class="gx-lens-back"><img src="./assets/formats/markdown-1000.webp" width="1000" height="625" alt=""></div>
+      <div class="gx-lens-back"><img src="./assets/formats/markdown-1000.webp" width="1000" height="625" loading="lazy" decoding="async" alt=""></div>
       <div class="gx-lens-rim"></div>
     </div>
 
     <div class="gx-lens-back lone" aria-hidden="true"></div>
-    <ol class="gx-objs" aria-label="What Spyglass previews">
+    <h2 id="gx-list-h" class="vh">What Spyglass previews in Quick Look</h2>
+    <ol class="gx-objs" aria-labelledby="gx-list-h">
       <li class="gx-obj" id="f-markdown">
         <img class="gx-icon" src="./assets/files/md.webp" width="256" height="256" alt="" decoding="async" />
         <div class="gx-lbl"><h3>Markdown</h3><p class="ext">.md .markdown .mdx</p><p class="fact">Rendered the way GitHub shows it: tables, task lists, footnotes, alerts, math and Mermaid diagrams. Images next to the file show up too.</p></div>
@@ -337,6 +353,7 @@
         <a class="btn-ghost btn-block" href="https://magicelk235.gumroad.com/l/spyglass-drive?monthly=true&amp;wanted=true">Get Drive</a>
       </div>
     </div>
+    <p class="release" data-sc-in>Version 2.0.0&nbsp;· <time datetime="2026-10-19">October 19, 2026</time>&nbsp;· <a href="https://github.com/magicelk235/Spyglass/releases/tag/v2.0.0">Release notes</a></p>
   </div>
 </section>
 
@@ -346,16 +363,16 @@
     <h2 class="faq__title" data-sc-in>Questions</h2>
     <div class="faq" data-sc-in>
       <details>
-        <summary>Which Macs does it run on?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body">Any Mac running macOS 14 Sonoma or later.</p>
+        <summary>Does Spyglass work on macOS Sequoia and Tahoe?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="body">Yes. Spyglass is a Quick Look extension, not one of the old .qlgenerator plugins that stopped working in macOS 15 Sequoia. It runs on macOS 14 Sonoma and later.</p>
       </details>
       <details>
-        <summary>How does the free trial work?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <summary>How does the Spyglass free trial work?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <p class="body">The 7 days start the first time you open Spyglass, and every format preview works during that week. You don't need a card or an account.</p>
         <p class="body">When the week is up, those files fall back to plain text or a short file summary with a note, until you add a license. Google Drive cards stay free either way.</p>
       </details>
       <details>
-        <summary>How do I activate my license?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <summary>How do I activate my Spyglass license?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <p class="body">Your Gumroad receipt has a license key in it. Click the Spyglass icon in the menu bar, choose Settings, paste the key under Plan and click Unlock. The same key works on each of your Macs.</p>
       </details>
       <details>
@@ -367,11 +384,11 @@
         <p class="body">You can cancel from your Gumroad receipt whenever you like, and everything keeps working until the end of the period you've paid for. After that, Drive files go back to the free card, and format previews need a Pro license.</p>
       </details>
       <details>
-        <summary>Why do CSV and .txt files look the same as before?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body">macOS keeps those two types for its own preview and never passes them to a Quick Look extension, so no app can take them over. TSV and JSON Lines files do get Spyglass's table view.</p>
+        <summary>Why do CSV and .txt files look the same with Spyglass?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="body">macOS keeps those two types for its own preview and never passes them to a Quick Look extension, so neither Spyglass nor any other app can take them over. TSV and JSON Lines files do get Spyglass's table view.</p>
       </details>
       <details>
-        <summary>Space still shows the old preview. What's wrong?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <summary>Space still shows the old preview, not Spyglass. What's wrong?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <p class="body">First, check that Spyglass is in your Applications folder and that you've opened it once. If another Quick Look app is installed, it may be handling the same file types, and macOS only uses one extension per type.</p>
         <p class="body">On macOS 15 or later, open System Settings, General, Login Items &amp; Extensions, find Quick Look under Extensions and turn off the other app's extension. On macOS 14 the same list is under System Settings, Privacy &amp; Security, Extensions, Quick Look.</p>
       </details>
@@ -398,7 +415,7 @@
   </footer>
 </noscript>
 <script src="./assets/scrollcraft.js?v=2"></script>
-<script src="./assets/spyglass.js?v=3"></script>
+<script src="./assets/spyglass.js?v=4"></script>
 <script src="/assets/footer.js" data-product="Spyglass" data-more="1" data-links-only="1" data-links="Privacy|./privacy.html, Terms|./terms.html, Security|./security.html, License|./license.html, Contact|mailto:support@magicelklabs.com, Source|https://github.com/magicelk235/spyglass"></script>
 <script src="/assets/attribution.js"></script>
 </body>

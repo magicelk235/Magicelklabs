@@ -120,6 +120,11 @@
     // statically, instead of a clip-path recomputed every frame.
     var glass = sec.querySelector('.gx-lens-back.lone');
     objs.forEach(function (o) { glass.appendChild(o.pv); });
+    // In the lens every preview counts as on screen, so loading="lazy" alone
+    // fetched all thirteen at once. Previews further along stay out of
+    // layout, and their lazy images unrequested, until the lens is two
+    // objects away (draw()).
+    objs.forEach(function (o, k) { o.near = k < 2; if (!o.near) o.pv.style.display = 'none'; });
     var links = Array.prototype.slice.call(sec.querySelectorAll('.gx-index a'));
     var far = Array.prototype.slice.call(sec.querySelectorAll('.gx-far img'));
     var near = Array.prototype.slice.call(sec.querySelectorAll('.gx-near img'));
@@ -254,6 +259,7 @@
         // its icon crosses the rim. d >= 0: settled, and it stays put under
         // the next one until that one fully covers it.
         var d = t - k;
+        if (!o.near && d > -2.2 && d < 1) { o.near = true; o.pv.style.display = ''; }
         var a = k === 0 && d < 0 ? 1 : d < 0 ? smooth((d + 0.62) / 0.36) : (d < 0.8 ? 1 : 0);
         var vis = a > 0.001;
         if (vis !== o.shown) { o.shown = vis; o.pv.style.visibility = vis ? 'visible' : 'hidden'; }

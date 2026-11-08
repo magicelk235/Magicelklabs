@@ -55,6 +55,7 @@ a { color: inherit; }
   transform: translateY(-200%);
 }
 .skip:focus-visible { transform: none; }
+.vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 
 /* ---------------------------------------------------------------- layout -- */
 .wrap { max-width: 1152px; margin-inline: auto; padding-inline: 24px; }
@@ -143,6 +144,7 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(15, 20, 19, .58); }
 .gx-intro h1 em { font-style: normal; color: var(--brass-lit); }
 .gx-intro .lede { font-size: clamp(1.05rem, 1.6vw, 1.2rem); line-height: 1.6; max-width: 34rem; margin-top: 20px; }
 .gx-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; align-items: center; }
+.gx-req { font-size: 14px; color: var(--mute); }
 
 /* The lens: a brass-rimmed objective. The back disc sits under the previews,
    the rim and the glass highlight sit over them. */
@@ -331,6 +333,11 @@ html.tall.pin .dv-steps li {
 .p-row:first-child { border-top: none; }
 .p-row::before { content: "✓"; flex: none; font-size: 13px; color: var(--brass-lit); }
 .p-row b { color: var(--ink); font-weight: 600; }
+
+/* The current version, under the cards. */
+.release { margin: 28px 0 0; font-size: 14px; line-height: 1.6; color: var(--mute); }
+.release a { padding-block: 6px; color: var(--body); font-weight: 500; text-underline-offset: 4px; text-decoration-thickness: 1px; text-decoration-color: rgba(237, 195, 113, .45); }
+@media (hover: hover) { .release a:hover { color: var(--ink); text-decoration-color: var(--brass-lit); } }
 
 /* ------------------------------------------------------------------- faq -- */
 .section--faq { padding-block: 80px; }
