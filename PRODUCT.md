@@ -25,11 +25,10 @@ they can't select or read (Lector).
 
 - Viaduct: Gumroad buy buttons (`data-gumroad-action="buy"`, product `uadrjp`).
   Landing is also embedded in Gumroad's iframe; do not break the postMessage wiring.
-- Spyglass: free GitHub download (every format free for 7 days) and two
-  Gumroad products, both opened straight at checkout: `spyglass` ($12
-  once, `?wanted=true`) and `spyglass-drive` ($4/month,
-  `?monthly=true&wanted=true`). Like the other pages, the links carry no UTM
-  tags of their own; `attribution.js` adds them for tagged visits.
+- Spyglass: free GitHub download (every format free for 7 days); Get Pro
+  ($12 once) and Get Drive ($4/month, 7-day trial) each open their own Polar
+  checkout link as Polar's embedded checkout, set up the same way as Lector's
+  below. Gumroad keys bought before the move still activate.
 - Lector: free GitHub download; Buy Text, Buy Translate and the $6 Text to
   Translate upgrade each open their own Polar checkout link
   (`buy.polar.sh/polar_cl_…`, one product each) as Polar's embedded checkout:
