@@ -1,13 +1,41 @@
 /* Lector page behaviour on top of the scrollcraft engine. The engine owns
-   scroll. This file owns the nav, the autoplaying demo, the translating
-   headline, the glass nav, the hero lamp and the band light. */
+   scroll. This file owns the nav, the translating headline, the glass nav,
+   the hero lamp and when the first clip may load. */
 (function () {
   'use strict';
 
   var root = document.documentElement;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  ScrollCraft.mount(document.body);
+  var sc = ScrollCraft.mount(document.body);
+
+  /* ---- The first clip waits for the page -----------------------------------------
+     The engine fetches every clip within three screens of the reader, and the
+     demo sits right under the hero, so its 2 to 5 MB would download alongside
+     the page itself. Its sources wait in data-src and data-src-mobile, which the
+     engine doesn't read, until the page has loaded or the reader scrolls, taps
+     or presses a key. With Save-Data on, only the reader starts it. */
+  (function () {
+    var held = document.querySelectorAll('video[data-src]');
+    if (!held.length || reduce) return;
+    var GESTURES = ['scroll', 'pointerdown', 'keydown'];
+    var released = false;
+    function release() {
+      if (released) return;
+      released = true;
+      removeEventListener('load', release);
+      GESTURES.forEach(function (t) { removeEventListener(t, release); });
+      for (var i = 0; i < held.length; i++) {
+        var v = held[i];
+        v.setAttribute('data-sc-src', v.getAttribute('data-src'));
+        var m = v.getAttribute('data-src-mobile');
+        if (m) v.setAttribute('data-sc-src-mobile', m);
+      }
+      sc.read();
+    }
+    GESTURES.forEach(function (t) { addEventListener(t, release, { passive: true }); });
+    if (!(navigator.connection && navigator.connection.saveData)) addEventListener('load', release);
+  })();
 
   /* ---- Nav weight on scroll ------------------------------------------------ */
   var nav = document.getElementById('nav');

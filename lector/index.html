@@ -4,27 +4,26 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lector: copy and translate any text on your Mac's screen</title>
-<meta name="description" content="Press a shortcut and draw a box. Lector copies the text, or paints a translation over it in place, all on your Mac.">
+<title>Lector: OCR and screen translator for your Mac</title>
+<meta name="description" content="Lector copies the text in any part of your screen, or paints a translation over it in place, all on your Mac. Press a shortcut and draw a box.">
 <link rel="canonical" href="https://magicelklabs.com/lector/">
 <meta name="theme-color" content="#0C0808">
 <meta name="color-scheme" content="dark">
 <link rel="icon" type="image/png" href="./assets/lector-appicon-dark-320.png">
 <link rel="apple-touch-icon" href="/lector/assets/lector-appicon-dark-320.png">
 <link rel="manifest" href="/lector/assets/lector.webmanifest">
-<meta property="og:title" content="Lector">
+<meta property="og:title" content="Lector: OCR and screen translator for your Mac">
 <meta property="og:description" content="Copy or translate the text in any part of your Mac's screen, from game menus to video subtitles.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://magicelklabs.com/lector/">
 <meta property="og:site_name" content="Magicelk Labs">
-<meta property="og:locale" content="en_US">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://magicelklabs.com/lector/assets/lector-og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Japanese Wikipedia on a Mac, with Lector's English translation painted over the article">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Lector">
+<meta name="twitter:title" content="Lector: OCR and screen translator for your Mac">
 <meta name="twitter:description" content="Copy or translate the text in any part of your Mac's screen, from game menus to video subtitles.">
 <meta name="twitter:image" content="https://magicelklabs.com/lector/assets/lector-og.jpg">
 <link rel="preload" href="./assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin>
@@ -33,7 +32,32 @@
 <link rel="stylesheet" href="./assets/lector.css?v=5">
 <script>document.documentElement.classList.remove('no-js');</script>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Lector","operatingSystem":"macOS 15 or later","applicationCategory":"UtilitiesApplication","description":"Lector is a Mac menu-bar app that copies the text from any part of your screen, or paints a translation over it in place, entirely on your Mac.","url":"https://magicelklabs.com/lector/","downloadUrl":"https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg","offers":[{"@type":"Offer","price":"0","priceCurrency":"USD","name":"Free","url":"https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg"},{"@type":"Offer","price":"9","priceCurrency":"USD","name":"Text","url":"https://magicelk235.gumroad.com/l/lector?variant=Text&wanted=true"},{"@type":"Offer","price":"15","priceCurrency":"USD","name":"Translate","url":"https://magicelk235.gumroad.com/l/lector?variant=Translate&wanted=true"}],"author":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://magicelklabs.com/lector/#app",
+  "name": "Lector",
+  "operatingSystem": "macOS 15 or later",
+  "applicationCategory": "UtilitiesApplication",
+  "description": "Lector is a Mac menu-bar app that copies the text from any part of your screen, or paints a translation over it in place, entirely on your Mac.",
+  "url": "https://magicelklabs.com/lector/",
+  "image": "https://magicelklabs.com/lector/assets/lector-og.jpg",
+  "downloadUrl": "https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg",
+  "softwareVersion": "1.1.0",
+  "datePublished": "2026-10-06",
+  "dateModified": "2026-10-17",
+  "releaseNotes": "https://github.com/magicelk235/Lector/releases/tag/v1.1.0",
+  "publisher": { "@type": "Organization", "@id": "https://magicelklabs.com/#organization", "name": "Magicelk Labs", "url": "https://magicelklabs.com/" },
+  "sameAs": [
+    "https://github.com/magicelk235/Lector",
+    "https://magicelk235.gumroad.com/l/lector"
+  ],
+  "offers": [
+    { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD", "url": "https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg" },
+    { "@type": "Offer", "name": "Text", "price": "9", "priceCurrency": "USD", "url": "https://magicelk235.gumroad.com/l/lector?variant=Text&wanted=true" },
+    { "@type": "Offer", "name": "Translate", "price": "15", "priceCurrency": "USD", "url": "https://magicelk235.gumroad.com/l/lector?variant=Translate&wanted=true" }
+  ]
+}
 </script>
 <script defer src="/assets/analytics.js"></script>
 </head>
@@ -110,7 +134,7 @@
         h1.dataset.translate = '1';
       })();
     </script>
-    <p class="hero__lede rise" style="--rise-delay: .45s">Copy or translate the text in any part of your Mac's screen, from game menus to video subtitles.</p>
+    <p class="hero__lede rise" style="--rise-delay: .45s">Lector is a menu-bar app that copies any text on your Mac's screen, or translates it in place.</p>
     <div class="hero__actions rise" style="--rise-delay: .55s">
       <a href="https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg" class="btn-ghost btn-lg">Download</a>
       <a href="https://magicelk235.gumroad.com/l/lector" class="btn-red btn-lg">Buy</a>
@@ -119,7 +143,9 @@
 </section>
 
 <!-- DEMO: the game menu, translated under the hand. The clip ends when the
-     pin does and holds its last frame on the way out. -->
+     pin does and holds its last frame on the way out. Its sources wait in
+     data-src until the page has loaded (lector.js), so the clip doesn't
+     download alongside the page. -->
 <section id="demo" class="demo" data-sc-act="scrub" data-sc-span="2.8" data-sc-dwell="0.3" data-sc-clip-map="travel" aria-label="Lector translating a game menu">
   <div data-sc-stage class="demo__stage">
     <figure class="frame demo__frame">
@@ -128,7 +154,7 @@
           <source media="(max-width: 720px)" srcset="./assets/lector-demo-poster-m.webp">
           <img class="sc-stage__poster" src="./assets/lector-demo-poster.webp" width="1728" height="1080" alt="A Japanese RPG menu on a Mac, before Lector translates it.">
         </picture>
-        <video data-sc-scrub data-sc-src="./assets/lector-demo.mp4" data-sc-src-mobile="./assets/lector-demo-m.mp4" muted playsinline preload="none" aria-hidden="true"></video>
+        <video data-sc-scrub data-src="./assets/lector-demo.mp4" data-src-mobile="./assets/lector-demo-m.mp4" muted playsinline preload="none" aria-hidden="true"></video>
       </div>
     </figure>
   </div>
@@ -214,7 +240,7 @@
   <div class="wrap wrap--5">
     <div class="intro" data-sc-in data-sc-stagger="70">
       <h2>The translation sits where the text was.</h2>
-      <p class="body">It works the same in a native window as on a web page: each paragraph is covered in its own background colour and rewritten in a matching text colour.</p>
+      <p class="body">It works the same in a native window as on a web page: each paragraph is covered in its own background color and rewritten in a matching text color.</p>
     </div>
 
     <figure class="frame" data-sc-in>
@@ -233,7 +259,7 @@
       </div>
       <div class="fact">
         <h3>Buttons stay buttons</h3>
-        <p class="body">Labels are centred on their buttons, and neighbouring text is translated together, so "Save" comes out as the button and not the verb "rescue".</p>
+        <p class="body">Labels are centered on their buttons, and neighboring text is translated together, so "Save" comes out as the button and not the verb "rescue".</p>
       </div>
       <div class="fact">
         <h3>Right-to-left reads right</h3>
@@ -336,6 +362,7 @@
         <a class="btn-red btn-block" href="https://magicelk235.gumroad.com/l/lector?variant=Translate&wanted=true">Buy Translate</a>
       </div>
     </div>
+    <p class="release" data-sc-in>Version 1.1.0 · <time datetime="2026-10-17">October 17, 2026</time><span class="release__sep"> · </span><a href="https://github.com/magicelk235/Lector/releases/tag/v1.1.0">Release notes</a></p>
   </div>
 </section>
 
@@ -373,8 +400,12 @@
     <h2 class="faq__title" data-sc-in>Questions</h2>
     <div class="faq" data-sc-in>
       <details>
+        <summary>How is Lector different from Live Text?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p class="body">Live Text reads text in photos and images, in the apps that support it such as Preview, Photos and Safari. Lector reads any part of the screen in any app, including game menus and buttons, and paints its translation over the original.</p>
+      </details>
+      <details>
         <summary>Which Macs does it run on?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body">macOS 15 or later, on Apple Silicon or Intel.</p>
+        <p class="body">Lector needs macOS 15 or later, on Apple Silicon or Intel.</p>
       </details>
       <details>
         <summary>Why does it ask for Screen Recording?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
@@ -390,11 +421,11 @@
       </details>
       <details>
         <summary>How do I enter my license, or move it to another Mac?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body">Paste the key from your Gumroad receipt into Settings › License. For an upgrade, enter the Text key first, then the upgrade key. To move a license, remove it there and enter it on the other Mac.</p>
+        <p class="body">Paste the key from your Gumroad receipt into Lector's Settings › License. For an upgrade, enter the Text key first, then the upgrade key. To move a license, remove it there and enter it on the other Mac.</p>
       </details>
       <details>
         <summary>What doesn't it read well?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body">Handwriting and vertical Japanese, and heavily stylised game fonts sometimes. Offline translation between two languages that aren't English goes through English, which loses some nuance.</p>
+        <p class="body">Lector doesn't read handwriting or vertical Japanese reliably, and sometimes misreads heavily stylized game fonts. Offline translation between two languages that aren't English goes through English, which loses some nuance.</p>
       </details>
       <details>
         <summary>How does it update?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
