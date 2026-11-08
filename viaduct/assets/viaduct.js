@@ -100,7 +100,9 @@
     var picks = document.querySelectorAll('.pick[data-sample]');
     var errEl = document.getElementById('plate-error');
     var icon = document.getElementById('r-icon');
-    var nameEl = document.getElementById('r-name');
+    // The extension's name. The heading is made on the first render, so the
+    // page never ships an empty one.
+    var nameEl = null;
     var metaEl = document.getElementById('r-meta');
     var descEl = document.getElementById('r-desc');
     var stats = document.getElementById('r-stats');
@@ -178,6 +180,7 @@
     function render(r) {
       current = r;
       icon.src = r.iconUrl || PUZZLE;
+      if (!nameEl) { nameEl = el('h3'); metaEl.parentNode.insertBefore(nameEl, metaEl); }
       nameEl.textContent = r.name || 'Unnamed extension';
       var meta = [];
       if (r.version) meta.push('Version ' + r.version);
@@ -266,8 +269,21 @@
         throw new Error('That sample is missing.');
       }, function (e) { samples = null; throw e; });
     }
+    // Each sample is a link to its guide, which is what it stays without this
+    // script. Here it becomes a toggle that reads the sample onto the plate; a
+    // click with a modifier key still opens the guide.
     Array.prototype.forEach.call(picks, function (b) {
-      b.addEventListener('click', function () { press(b); run(sample(b.getAttribute('data-sample'))); });
+      function pick() { press(b); run(sample(b.getAttribute('data-sample'))); }
+      b.setAttribute('role', 'button');
+      b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', function (e) {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        pick();
+      });
+      // A link answers Enter on its own; a button also answers Space.
+      b.addEventListener('keydown', function (e) { if (e.key === ' ') e.preventDefault(); });
+      b.addEventListener('keyup', function (e) { if (e.key === ' ') pick(); });
     });
 
     // Copy the files out before clearing the input, so picking the same file

@@ -38,14 +38,20 @@
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  "@id": "https://magicelklabs.com/viaduct/#app",
   "name": "Viaduct",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "macOS 13.0 or later",
   "url": "https://magicelklabs.com/viaduct/",
   "downloadUrl": "https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg",
   "description": "Viaduct converts any Chrome extension into a native Safari Web Extension. One click, and you never open a terminal.",
+  "softwareVersion": "1.4.0",
+  "datePublished": "2026-06-25",
+  "dateModified": "2026-10-17",
+  "releaseNotes": "https://github.com/magicelk235/Viaduct-app/releases/tag/v1.4.0",
   "image": "https://magicelklabs.com/viaduct/assets/viaduct-og.jpg",
-  "publisher": { "@type": "Organization", "name": "Magicelk Labs", "url": "https://magicelklabs.com/" },
+  "publisher": { "@type": "Organization", "@id": "https://magicelklabs.com/#organization", "name": "Magicelk Labs", "url": "https://magicelklabs.com/" },
+  "sameAs": ["https://github.com/magicelk235/viaduct-app", "https://magicelk235.gumroad.com/l/viaduct"],
   "offers": [
     { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD", "url": "https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" },
     { "@type": "Offer", "name": "Viaduct Pro", "price": "19", "priceCurrency": "USD", "url": "https://gumroad.com/l/viaduct" }
@@ -214,12 +220,12 @@
       <div class="picks" data-sc-in>
         <h3 class="picks__title" id="picks-h">Or look inside one of these</h3>
         <div class="picks__list" role="group" aria-labelledby="picks-h">
-          <button class="pick" type="button" data-sample="dark-reader" aria-pressed="false"><img src="./assets/samples/dark-reader.png" width="24" height="24" alt="" loading="lazy">Dark Reader</button>
-          <button class="pick" type="button" data-sample="tampermonkey" aria-pressed="false"><img src="./assets/samples/tampermonkey.png" width="24" height="24" alt="" loading="lazy">Tampermonkey</button>
-          <button class="pick" type="button" data-sample="sponsorblock" aria-pressed="false"><img src="./assets/samples/sponsorblock.png" width="24" height="24" alt="" loading="lazy">SponsorBlock</button>
-          <button class="pick" type="button" data-sample="return-youtube-dislike" aria-pressed="false"><img src="./assets/samples/return-youtube-dislike.png" width="24" height="24" alt="" loading="lazy">Return YouTube Dislike</button>
-          <button class="pick" type="button" data-sample="video-speed-controller" aria-pressed="false"><img src="./assets/samples/video-speed-controller.png" width="24" height="24" alt="" loading="lazy">Video Speed Controller</button>
-          <button class="pick" type="button" data-sample="stylus" aria-pressed="false"><img src="./assets/samples/stylus.png" width="24" height="24" alt="" loading="lazy">Stylus</button>
+          <a class="pick" href="/viaduct/extensions/dark-reader/" data-sample="dark-reader"><img src="./assets/samples/dark-reader.png" width="24" height="24" alt="" loading="lazy">Dark Reader</a>
+          <a class="pick" href="/viaduct/extensions/tampermonkey/" data-sample="tampermonkey"><img src="./assets/samples/tampermonkey.png" width="24" height="24" alt="" loading="lazy">Tampermonkey</a>
+          <a class="pick" href="/viaduct/extensions/sponsorblock/" data-sample="sponsorblock"><img src="./assets/samples/sponsorblock.png" width="24" height="24" alt="" loading="lazy">SponsorBlock</a>
+          <a class="pick" href="/viaduct/extensions/return-youtube-dislike/" data-sample="return-youtube-dislike"><img src="./assets/samples/return-youtube-dislike.png" width="24" height="24" alt="" loading="lazy">Return YouTube Dislike</a>
+          <a class="pick" href="/viaduct/extensions/video-speed-controller/" data-sample="video-speed-controller"><img src="./assets/samples/video-speed-controller.png" width="24" height="24" alt="" loading="lazy">Video Speed Controller</a>
+          <a class="pick" href="/viaduct/extensions/stylus/" data-sample="stylus"><img src="./assets/samples/stylus.png" width="24" height="24" alt="" loading="lazy">Stylus</a>
         </div>
       </div>
     </div>
@@ -237,7 +243,6 @@
         <div class="listing">
           <img class="listing__icon" id="r-icon" width="64" height="64" alt="">
           <div class="listing__name">
-            <h3 id="r-name"></h3>
             <p id="r-meta"></p>
           </div>
           <a class="flip__btn listing__btn" id="r-btn" href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg">
@@ -345,6 +350,10 @@
         <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-block">Get Viaduct Pro</a>
       </div>
     </div>
+    <div class="release" data-sc-in>
+      <p>Version 1.4.0&nbsp;· <time datetime="2026-10-17">October 17, 2026</time>&nbsp;· <a href="https://github.com/magicelk235/Viaduct-app/releases/tag/v1.4.0">Release notes</a></p>
+      <p><a href="https://www.macg.co/logiciels/2026/09/viaduct-porte-les-extensions-chrome-dans-safari-en-un-seul-clic-311321" hreflang="fr">MacGeneration</a>, in French: “Viaduct brings Chrome extensions to Safari in a single click.”</p>
+    </div>
   </div>
 </section>
 
@@ -354,27 +363,27 @@
     <h2 id="faq-h" class="faq__title" data-sc-in>Questions</h2>
     <div class="faq" data-sc-in>
       <details>
-        <summary>Will my Chrome extension actually work?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <summary>Will my Chrome extension actually work in Safari?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <p>Most do. Before converting, Viaduct checks the extension and tells you if it can't work in Safari, for example when a file it needs is missing. Features built on Chrome-only APIs, like some OAuth sign-in flows, still won't work after conversion. If the maker ships an official Safari version, Viaduct points you to it.</p>
       </details>
       <details>
-        <summary>What do I need to run it?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p>A Mac on macOS 13 or later, and Xcode, which is free from Apple. Apple requires Xcode to sign extensions. Viaduct's setup walks you through signing in to it once with your Apple ID (a free one works), so Safari keeps your extensions on after it quits. After that, Viaduct drives Xcode for you. Free and Pro need the same.</p>
+        <summary>What do I need to run Viaduct?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p>Viaduct needs a Mac on macOS 13 or later, and Xcode, which is free from Apple. Apple requires Xcode to sign extensions. Viaduct's setup walks you through signing in to it once with your Apple ID (a free one works), so Safari keeps your extensions on after it quits. After that, Viaduct drives Xcode for you. Free and Pro need the same.</p>
       </details>
       <details>
-        <summary>Do I need to know how to code?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <summary>Do I need to know how to code to use Viaduct?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <p>No. Drop an extension in and get it in Safari. Viaduct does the building and the signing.</p>
       </details>
       <details>
-        <summary>Does it run on an Intel Mac?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <summary>Does Viaduct run on an Intel Mac?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <p>Yes. Viaduct is a universal app, so the same download runs natively on Intel and Apple Silicon. There's one build, not two, and Rosetta never comes into it.</p>
       </details>
       <details>
-        <summary>What's the difference between Free and Pro?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p>Free gives you <b>2 conversions</b> that are removed after a week. <b>Pro</b> is <b>unlimited</b> and keeps your extensions installed. One-time <span data-gumroad-field="price">$19</span>, yours forever.</p>
+        <summary>What's the difference between Viaduct Free and Pro?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p>Viaduct Free gives you <b>2 conversions</b> that are removed after a week. <b>Pro</b> is <b>unlimited</b> and keeps your extensions installed. One-time <span data-gumroad-field="price">$19</span>, yours forever.</p>
       </details>
       <details>
-        <summary>Why isn't this on the Mac App Store?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <summary>Why isn't Viaduct on the Mac App Store?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <p>The build tools Viaduct drives aren't allowed inside the App Store sandbox, so it ships as a notarized direct download instead. Same Apple notarization, just outside the store.</p>
       </details>
     </div>

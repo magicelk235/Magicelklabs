@@ -289,7 +289,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .picks__list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .pick {
   display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 12px;
-  font: 500 14.5px/1.25 var(--sc-font-text); color: var(--ink); text-align: left; cursor: pointer;
+  font: 500 14.5px/1.25 var(--sc-font-text); color: var(--ink); text-align: left; text-decoration: none; cursor: pointer;
   background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; box-shadow: var(--lip);
   transition: border-color .2s, background-color .2s;
 }
@@ -410,6 +410,13 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .plan--pro h3, .plan--pro .price-num, .plan--pro b { color: #EEFBF8; }
 .plan--pro .p-row { color: #BFDBD5; border-top-color: rgba(255, 255, 255, .07); }
 
+/* The current version and the press mention, under the cards. */
+.release { margin-top: 28px; font-size: 14px; line-height: 1.6; color: var(--mute); }
+.release p { margin: 0; }
+.release p + p { margin-top: 12px; }
+.release a { padding-block: 6px; color: var(--body); font-weight: 500; text-underline-offset: 4px; text-decoration-thickness: 1px; text-decoration-color: rgba(45, 212, 191, .45); }
+@media (hover: hover) { .release a:hover { color: var(--ink); text-decoration-color: var(--teal); } }
+
 /* ------------------------------------------------------------------- faq -- */
 .section--faq { padding-bottom: 40px; }
 .faq__title { font-size: clamp(1.7rem, 4vw, 2.4rem); margin-bottom: 40px; }
@@ -473,6 +480,12 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .eng__cell { padding-right: 12px; }
   .eng__cell + .eng__cell { padding-left: 12px; }
   .foot { justify-content: center; text-align: center; }
+}
+
+/* Two samples across leave Tampermonkey and SponsorBlock wider than their
+   tiles on the narrowest phones, so the samples stack there. */
+@media (max-width: 370px) {
+  .picks__list { grid-template-columns: 1fr; }
 }
 
 /* ------------------------------------------------------- reduced motion --
