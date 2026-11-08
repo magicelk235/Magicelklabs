@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src https://buy.polar.sh https://polar.sh; upgrade-insecure-requests">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Terms of Service — Lector</title>
 <meta name="description" content="Lector terms of service. The rules for using the Lector app, including plans, license keys, acceptable use, and disclaimers.">
@@ -63,6 +63,7 @@ footer a{text-decoration:none}
 {"@context":"https://schema.org","@type":"WebPage","name":"Terms of Service — Lector","description":"Lector terms of service. The rules for using the Lector app, including plans, license keys, acceptable use, and disclaimers.","url":"https://magicelklabs.com/lector/terms.html","inLanguage":"en","dateModified":"2026-10-17","isPartOf":{"@type":"WebSite","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
 </script>
 <script defer src="/assets/analytics.js"></script>
+<script defer data-auto-init src="/assets/polar-checkout-0.6.0.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -71,12 +72,12 @@ footer a{text-decoration:none}
     <a class="back" href="./">← Lector</a>
     <nav class="actions" aria-label="Get Lector">
       <a class="btn-ghost" href="https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg">Download</a>
-      <a class="btn" href="https://magicelk235.gumroad.com/l/lector">Buy</a>
+      <a class="btn" href="./#pricing">Buy</a>
     </nav>
   </header>
 
   <h1>Terms of Service</h1>
-  <p class="updated">Last updated: October 17, 2026</p>
+  <p class="updated">Last updated: November 8, 2026</p>
 
   <p>
     These Terms of Service ("Terms") govern your use of Lector (the "App"), a
@@ -109,7 +110,7 @@ footer a{text-decoration:none}
   </ul>
   <p>
     A Text license can be upgraded to Translate for $6 with the
-    <a href="https://magicelk235.gumroad.com/l/lector-upgrade?wanted=true" rel="noopener">upgrade</a>.
+    <a href="https://buy.polar.sh/polar_cl_AI6jll9ffzZxapGmXkblVNZEQE0yecYUrLbcU2qceSe" rel="noopener" data-polar-checkout data-polar-checkout-theme="dark">upgrade</a>.
     A grab counts once text is found, and a translation counts when it starts.
     Looking up a word counts as neither.
     Counts start over on the first of each month. When you reach a limit, the
@@ -118,25 +119,28 @@ footer a{text-decoration:none}
   </p>
   <p>
     Text and Translate are sold through
-    <a href="https://magicelk235.gumroad.com/l/lector" rel="noopener">Gumroad</a>.
-    Gumroad is the merchant of record: it processes your payment, and its
-    <a href="https://gumroad.com/terms" rel="noopener">terms</a> and
-    <a href="https://gumroad.com/refunds" rel="noopener">refund policy</a>
+    <a href="https://polar.sh" rel="noopener">Polar</a>.
+    Polar is the merchant of record: it processes your payment, and its
+    <a href="https://polar.sh/legal/checkout-buyer-terms" rel="noopener">buyer terms</a>
     apply to your purchase. We do not see or store your payment details.
-    Refunds, where offered, are handled through Gumroad.
+    Refunds, where offered, are handled through Polar. Purchases made earlier
+    on Gumroad stay under Gumroad's
+    <a href="https://gumroad.com/terms" rel="noopener">terms</a> and
+    <a href="https://gumroad.com/refunds" rel="noopener">refund policy</a>.
   </p>
 
   <h2>4. License keys</h2>
   <p>
-    Your purchase comes with a license key. Paste it from your receipt into
-    Settings › License. For an upgrade, enter your Text key first, then the
-    upgrade key. Lector checks the key with Gumroad when you enter it and again
-    at each launch. A key Gumroad has confirmed keeps working for 30 days
-    without a connection. If Lector can't reach Gumroad for longer than that, it
-    removes the key, and you enter it again once you're back online.
+    Your purchase comes with a license key. Polar emails you a link to your
+    purchase, and the key is there. Paste it into Settings › License. For an
+    upgrade, enter your Text key first, then the upgrade key. Lector checks the
+    key with the store you bought it from when you enter it and again at each
+    launch. A confirmed key keeps working for 30 days without a connection. If
+    Lector can't reach the store for longer than that, it removes the key, and
+    you enter it again once you're back online.
   </p>
   <p>
-    A key for a purchase that was refunded, disputed or charged back stops
+    A key for a purchase that was refunded, disputed, charged back or revoked stops
     working. To move your license to another Mac, remove it in
     Settings › License and enter it on the other Mac.
   </p>
@@ -158,7 +162,7 @@ footer a{text-decoration:none}
   <p>
     The App relies on components and services it does not control, including
     Apple's Vision, Translation and Dictionary, Tesseract, Leptonica, ONNX Runtime, the
-    Opus-MT models downloaded from Hugging Face, Gumroad for license checks,
+    Opus-MT models downloaded from Hugging Face, Polar and Gumroad for license checks,
     and GitHub for updates. Their own licenses and terms apply to them, as set
     out on the <a href="./license.html">License page</a>. Lector is not
     affiliated with, endorsed by, or sponsored by Apple or any of these projects

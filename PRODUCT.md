@@ -30,11 +30,16 @@ they can't select or read (Lector).
   once, `?wanted=true`) and `spyglass-drive` ($4/month,
   `?monthly=true&wanted=true`). Like the other pages, the links carry no UTM
   tags of their own; `attribution.js` adds them for tagged visits.
-- Lector: free GitHub download; Buy Text and Buy Translate go straight to
-  checkout with the tier preselected (`?variant=Text|Translate&wanted=true`);
-  the plain Buy buttons open the product page so Gumroad shows its tier picker;
-  the Text to Translate upgrade is its own product (`lector-upgrade`).
-- Checkout is Gumroad's own page, full tab. Don't frame it (modal/iframe):
+- Lector: free GitHub download; Buy Text, Buy Translate and the $6 Text to
+  Translate upgrade each open their own Polar checkout link
+  (`buy.polar.sh/polar_cl_…`, one product each) as Polar's embedded checkout:
+  the links carry `data-polar-checkout` (dark theme) and the page loads the
+  pinned `/assets/polar-checkout-0.6.0.js`, so checkout opens in an overlay on
+  the page. Its CSP allows `frame-src https://buy.polar.sh https://polar.sh`,
+  and the host must stay under Polar's Settings › Embedding (magicelklabs.com
+  and localhost:4610 are listed). The plain Buy buttons scroll to the pricing
+  cards. Gumroad keys bought before the move still activate.
+- Gumroad checkout is Gumroad's own page, full tab. Don't frame it (modal/iframe):
   Gumroad rejects paid orders without its `_gumroad_guid` cookie, which Safari,
   iOS browsers, Brave and Chrome incognito block in a third-party frame.
 - Attribution: `/assets/attribution.js` (on every page, so a tag on the landing
@@ -43,10 +48,12 @@ they can't select or read (Lector).
   referrer) and adds it to every Gumroad link as `referrer=https://macapp.supply/`
   (what Gumroad's Referrers table shows) plus `utm_source`/`utm_medium`/
   `utm_campaign` (Gumroad's UTM links need all three; defaults `referral` /
-  `magicelklabs`).
+  `magicelklabs`). Polar checkout links get the same `utm_*` tags, which Polar
+  keeps in the order's metadata; with no tag, the referrer's host is the source.
 - Analytics: Umami Cloud via `/assets/analytics.js` (cookieless, no consent
   banner). Page views and sources come from Umami itself; the script adds
-  `Buy` (Gumroad `/l/` links) and `Download` (GitHub release links) events
+  `Buy` (Gumroad `/l/` links and Polar checkout links, named in its
+  `POLAR_CHECKOUTS` table) and `Download` (GitHub release links) events
   with a `product` property. The privacy pages disclose it under "This website".
 
 ## Constraints

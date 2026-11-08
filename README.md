@@ -58,7 +58,7 @@ That writes `samples.json` and one icon per extension. A new sample also needs i
 
 ## Analytics
 
-Visits are counted with [Umami Cloud](https://cloud.umami.is), which uses no cookies, so the site has no consent banner. Every page loads `/assets/analytics.js` in its `<head>`. That file holds the website ID, loads Umami's tracker, and sends a `Buy` event for clicks on `gumroad.com/l/…` links and a `Download` event for clicks on GitHub release links, each tagged with the product. A new page needs the same `<script defer src="/assets/analytics.js"></script>` tag, and if it has a Content-Security-Policy, `https://cloud.umami.is` in `script-src` and `https://gateway.umami.is` in `connect-src`. The extension guides get both from `viaduct/extensions/build.js`.
+Visits are counted with [Umami Cloud](https://cloud.umami.is), which uses no cookies, so the site has no consent banner. Every page loads `/assets/analytics.js` in its `<head>`. That file holds the website ID, loads Umami's tracker, and sends a `Buy` event for clicks on `gumroad.com/l/…` and `buy.polar.sh/…` links and a `Download` event for clicks on GitHub release links, each tagged with the product. A new Polar checkout link needs its product name in the file's `POLAR_CHECKOUTS` table. A new page needs the same `<script defer src="/assets/analytics.js"></script>` tag, and if it has a Content-Security-Policy, `https://cloud.umami.is` in `script-src` and `https://gateway.umami.is` in `connect-src`. The extension guides get both from `viaduct/extensions/build.js`.
 
 Only `magicelklabs.com` is counted, so local previews send nothing. To stop counting your own visits on the live site, run `localStorage.setItem("umami.disabled", 1)` in that browser's console.
 

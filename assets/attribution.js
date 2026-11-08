@@ -1,4 +1,4 @@
-/* Traffic-source attribution for Gumroad sales.
+/* Traffic-source attribution for Gumroad and Polar sales.
  *
  * Load near the end of <body> on every page a visitor can land on (after
  * footer.js, whose links it also tags):
@@ -16,6 +16,9 @@
  *   - utm_source/utm_medium/utm_campaign  Gumroad's UTM links only record a
  *     visit when all three are present, so medium and campaign default to
  *     "referral" and "magicelklabs" when the inbound link had only ?ref=.
+ * Every buy.polar.sh/<checkout link> carries the same utm_* tags, which Polar
+ * stores in the order's metadata. Polar has no referrer field, so a visit
+ * that only came from another site is tagged with that site's host.
  */
 (function () {
   var KEY = "mel-source";
@@ -53,14 +56,15 @@
       .replace(/[^a-z0-9.-]+/g, "-").replace(/^[-.]+|[-.]+$/g, "");
   }
 
-  function gumroadProduct(href) {
+  function storeLink(href) {
     var url;
     try { url = new URL(href); } catch (e) { return null; }
     var host = url.hostname;
     if (url.protocol !== "https:") return null;
+    if (host === "buy.polar.sh" && url.pathname.length > 1) return { url: url, store: "polar" };
     if (host !== "gumroad.com" && !/\.gumroad\.com$/.test(host)) return null;
     if (url.pathname.indexOf("/l/") !== 0) return null;
-    return url;
+    return { url: url, store: "gumroad" };
   }
 
   // A tag that names a site ("macapp.supply") becomes the referrer outright.
@@ -68,13 +72,16 @@
   // no real referrer, which would be the more precise source.
   var host = visit.source ? sourceHost(visit.source) : "";
   var referrer = host && (host.indexOf(".") !== -1 || !visit.referrer) ? "https://" + host + "/" : visit.referrer;
+  var source = visit.source || (visit.referrer ? sourceHost(visit.referrer) : "");
 
   document.querySelectorAll("a[href]").forEach(function (a) {
-    var url = gumroadProduct(a.href);
-    if (!url) return;
-    if (referrer) url.searchParams.set("referrer", referrer);
-    if (visit.source) {
-      url.searchParams.set("utm_source", visit.source);
+    var link = storeLink(a.href);
+    if (!link) return;
+    var url = link.url;
+    if (link.store === "gumroad" && referrer) url.searchParams.set("referrer", referrer);
+    var tag = link.store === "polar" ? source : visit.source;
+    if (tag) {
+      url.searchParams.set("utm_source", tag);
       url.searchParams.set("utm_medium", visit.utm_medium || "referral");
       url.searchParams.set("utm_campaign", visit.utm_campaign || "magicelklabs");
       if (visit.utm_term) url.searchParams.set("utm_term", visit.utm_term);

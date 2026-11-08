@@ -2,7 +2,7 @@
 <html lang="en" class="no-js">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src https://buy.polar.sh https://polar.sh">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lector: OCR and screen translator for your Mac</title>
 <meta name="description" content="Lector copies the text in any part of your screen, or paints a translation over it in place, all on your Mac. Press a shortcut and draw a box.">
@@ -49,17 +49,18 @@
   "releaseNotes": "https://github.com/magicelk235/Lector/releases/tag/v1.1.0",
   "publisher": { "@type": "Organization", "@id": "https://magicelklabs.com/#organization", "name": "Magicelk Labs", "url": "https://magicelklabs.com/" },
   "sameAs": [
-    "https://github.com/magicelk235/Lector",
-    "https://magicelk235.gumroad.com/l/lector"
+    "https://github.com/magicelk235/Lector"
   ],
   "offers": [
     { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD", "url": "https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg" },
-    { "@type": "Offer", "name": "Text", "price": "9", "priceCurrency": "USD", "url": "https://magicelk235.gumroad.com/l/lector?variant=Text&wanted=true" },
-    { "@type": "Offer", "name": "Translate", "price": "15", "priceCurrency": "USD", "url": "https://magicelk235.gumroad.com/l/lector?variant=Translate&wanted=true" }
+    { "@type": "Offer", "name": "Text", "price": "9", "priceCurrency": "USD", "url": "https://buy.polar.sh/polar_cl_tkgqF9gxvlZNU5Ge769WkrAE6Slzsr5e2PmnI4HV1NT" },
+    { "@type": "Offer", "name": "Translate", "price": "15", "priceCurrency": "USD", "url": "https://buy.polar.sh/polar_cl_DRiORzR9dAEomeWXX9oMsMB5YfOMM0lEn58xm0dzoKs" }
   ]
 }
 </script>
 <script defer src="/assets/analytics.js"></script>
+<!-- Opens the Polar checkout links marked data-polar-checkout in an overlay on this page. Without it they open Polar's own page. -->
+<script defer data-auto-init src="/assets/polar-checkout-0.6.0.js"></script>
 </head>
 <body>
 
@@ -98,7 +99,7 @@
     </div>
     <div class="nav-actions">
       <a href="https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg" class="btn-ghost btn-sm nav-download">Download</a>
-      <a href="https://magicelk235.gumroad.com/l/lector" class="btn-red btn-sm">Buy</a>
+      <a href="#pricing" class="btn-red btn-sm">Buy</a>
     </div>
   </nav>
 </header>
@@ -137,7 +138,7 @@
     <p class="hero__lede rise" style="--rise-delay: .45s">Lector is a menu-bar app that copies any text on your Mac's screen, or translates it in place.</p>
     <div class="hero__actions rise" style="--rise-delay: .55s">
       <a href="https://github.com/magicelk235/Lector/releases/latest/download/Lector.dmg" class="btn-ghost btn-lg">Download</a>
-      <a href="https://magicelk235.gumroad.com/l/lector" class="btn-red btn-lg">Buy</a>
+      <a href="#pricing" class="btn-red btn-lg">Buy</a>
     </div>
   </div>
 </section>
@@ -349,7 +350,7 @@
           <div class="p-row"><span><b>30</b> translations a month</span></div>
           <div class="p-row no"><span>No live translation</span></div>
         </div>
-        <a class="btn-ghost btn-block" href="https://magicelk235.gumroad.com/l/lector?variant=Text&wanted=true">Buy Text</a>
+        <a class="btn-ghost btn-block" href="https://buy.polar.sh/polar_cl_tkgqF9gxvlZNU5Ge769WkrAE6Slzsr5e2PmnI4HV1NT" data-polar-checkout data-polar-checkout-theme="dark">Buy Text</a>
       </div>
       <div class="plan price-lit">
         <h3>Translate</h3>
@@ -359,7 +360,7 @@
           <div class="p-row"><span><b>Unlimited</b> translations</span></div>
           <div class="p-row"><span><b>Live translation</b> with ⌘⇧9, in beta</span></div>
         </div>
-        <a class="btn-red btn-block" href="https://magicelk235.gumroad.com/l/lector?variant=Translate&wanted=true">Buy Translate</a>
+        <a class="btn-red btn-block" href="https://buy.polar.sh/polar_cl_DRiORzR9dAEomeWXX9oMsMB5YfOMM0lEn58xm0dzoKs" data-polar-checkout data-polar-checkout-theme="dark">Buy Translate</a>
       </div>
     </div>
     <p class="release" data-sc-in>Version 1.1.0 · <time datetime="2026-10-17">October 17, 2026</time><span class="release__sep"> · </span><a href="https://github.com/magicelk235/Lector/releases/tag/v1.1.0">Release notes</a></p>
@@ -388,7 +389,7 @@
       </div>
       <div class="row">
         <b>Three connections</b>
-        <p class="body">Language packs come from Hugging Face. A license key is checked with Gumroad when you enter it and at each launch, and keeps working for 30 days offline. If you allow it, Lector asks GitHub once a day whether there's an update.</p>
+        <p class="body">Language packs come from Hugging Face. A license key is checked with the store you bought it from when you enter it and at each launch, and keeps working for 30 days offline. If you allow it, Lector asks GitHub once a day whether there's an update.</p>
       </div>
     </div>
   </div>
@@ -417,11 +418,11 @@
       </details>
       <details>
         <summary>I have Text. Can I upgrade to Translate?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body">Yes. <a href="https://magicelk235.gumroad.com/l/lector-upgrade?wanted=true">The upgrade is $6</a>, and you keep your Text key.</p>
+        <p class="body">Yes. <a href="https://buy.polar.sh/polar_cl_AI6jll9ffzZxapGmXkblVNZEQE0yecYUrLbcU2qceSe" data-polar-checkout data-polar-checkout-theme="dark">The upgrade is $6</a>, and you keep your Text key.</p>
       </details>
       <details>
         <summary>How do I enter my license, or move it to another Mac?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p class="body">Paste the key from your Gumroad receipt into Lector's Settings › License. For an upgrade, enter the Text key first, then the upgrade key. To move a license, remove it there and enter it on the other Mac.</p>
+        <p class="body">Polar emails you a link to your purchase, and the key is there. Paste it into Lector's Settings › License. For an upgrade, enter the Text key first, then the upgrade key. Keys bought on Gumroad work too. To move a license, remove it there and enter it on the other Mac.</p>
       </details>
       <details>
         <summary>What doesn't it read well?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>

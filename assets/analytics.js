@@ -15,10 +15,12 @@
  * property counts against the plan's monthly event quota and Umami already
  * stores the page the click happened on:
  *   Buy       a click on a gumroad.com/l/<product> link ("Lector Translate"
- *             when the link preselects a ?variant=)
+ *             when the link preselects a ?variant=), or on a buy.polar.sh
+ *             checkout link, named from POLAR_CHECKOUTS below
  *   Download  a click on a github.com/<owner>/<repo>/releases/… link (named
  *             after the file, so .../download/Viaduct.dmg is "Viaduct")
- * Both are read from the link itself, so new buttons need no extra markup.
+ * Both are read from the link itself, so new buttons need no extra markup,
+ * apart from a new Polar checkout link, which needs a line in POLAR_CHECKOUTS.
  */
 (function () {
   var tracker = document.createElement("script");
@@ -26,6 +28,13 @@
   tracker.setAttribute("data-website-id", "e68f6430-d62b-4fdb-a63a-26d118ca8721");
   tracker.setAttribute("data-domains", "magicelklabs.com");
   document.head.appendChild(tracker);
+
+  // A Polar checkout link's path names no product, so each one is listed here.
+  var POLAR_CHECKOUTS = {
+    "polar_cl_tkgqF9gxvlZNU5Ge769WkrAE6Slzsr5e2PmnI4HV1NT": "Lector Text",
+    "polar_cl_DRiORzR9dAEomeWXX9oMsMB5YfOMM0lEn58xm0dzoKs": "Lector Translate",
+    "polar_cl_AI6jll9ffzZxapGmXkblVNZEQE0yecYUrLbcU2qceSe": "Lector Upgrade"
+  };
 
   // "lector-upgrade" -> "Lector Upgrade"
   function titleCase(slug) {
@@ -40,6 +49,9 @@
     if ((host === "gumroad.com" || /\.gumroad\.com$/.test(host)) && path[0] === "l" && path[1]) {
       var variant = url.searchParams.get("variant");
       return { name: "Buy", product: titleCase(path[1]) + (variant ? " " + variant : "") };
+    }
+    if (host === "buy.polar.sh" && path[0]) {
+      return { name: "Buy", product: POLAR_CHECKOUTS[path[0]] || "Polar " + path[0] };
     }
     if (host === "github.com" && path[2] === "releases") {
       var file = path[path.length - 1];
