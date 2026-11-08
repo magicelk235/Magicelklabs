@@ -386,12 +386,21 @@ a:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:8p
   // fullscreen triangle, one fragment program. Ivory rather than the stock
   // white, because the covers below own all the colour on this page. The loop
   // parks itself whenever the hero is off screen or the tab is in the
-  // background.
+  // background. Without a GPU the shader runs on the CPU and stalls the page,
+  // so a software renderer keeps the static hero. failIfMajorPerformanceCaveat
+  // turns most of them away, but headless Chrome, which Lighthouse runs in,
+  // still hands out SwiftShader, so the renderer's name is checked as well.
   (function () {
     var cv = document.getElementById('hero-threads');
     if (!cv || reduce) return;
-    var gl = cv.getContext('webgl', { alpha: true, antialias: true, premultipliedAlpha: false, powerPreference: 'low-power' });
+    var gl = cv.getContext('webgl', { alpha: true, antialias: true, premultipliedAlpha: false, powerPreference: 'low-power', failIfMajorPerformanceCaveat: true });
     if (!gl) return;
+    var renderer = gl.getParameter(gl.RENDERER);
+    if (renderer === 'WebKit WebGL') {
+      var info = gl.getExtension('WEBGL_debug_renderer_info');
+      if (info) renderer = gl.getParameter(info.UNMASKED_RENDERER_WEBGL);
+    }
+    if (/swiftshader|llvmpipe|softpipe|lavapipe|software|basic render/i.test(renderer)) return;
 
     var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
     var FRAG = [
@@ -488,6 +497,8 @@ a:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:8p
     var uTime = u('iTime'), uRes = u('iResolution');
     gl.uniform2f(u('uMouse'), 0.5, 0.5);
 
+    // The strands are one to three canvas pixels thick. Rendered any smaller
+    // and scaled up, they break into dashes, so the field stays at 1.5x.
     var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     function resize() {
       var w = Math.max(1, cv.clientWidth), h = Math.max(1, cv.clientHeight);

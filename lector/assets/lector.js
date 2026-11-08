@@ -108,12 +108,22 @@
      React Bits' LightRays on plain WebGL: one fullscreen triangle, one fragment
      program. Origin fixed to top centre, pointer influence removed (the hero is
      read past, not played with), opacity in CSS. The loop parks whenever the
-     hero is off screen or the tab is in the background. */
+     hero is off screen or the tab is in the background.
+     Without a GPU the shader runs on the CPU and stalls the page, so a
+     software renderer keeps the static hero. failIfMajorPerformanceCaveat
+     turns most of them away, but headless Chrome, which Lighthouse runs in,
+     still hands out SwiftShader, so the renderer's name is checked as well. */
   (function () {
     var cv = document.getElementById('hero-rays');
     if (!cv || reduce) return;
-    var gl = cv.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false, powerPreference: 'low-power' });
+    var gl = cv.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false, powerPreference: 'low-power', failIfMajorPerformanceCaveat: true });
     if (!gl) return;
+    var renderer = gl.getParameter(gl.RENDERER);
+    if (renderer === 'WebKit WebGL') {
+      var info = gl.getExtension('WEBGL_debug_renderer_info');
+      if (info) renderer = gl.getParameter(info.UNMASKED_RENDERER_WEBGL);
+    }
+    if (/swiftshader|llvmpipe|softpipe|lavapipe|software|basic render/i.test(renderer)) return;
 
     var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
     var FRAG = [

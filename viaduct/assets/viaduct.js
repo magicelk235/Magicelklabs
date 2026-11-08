@@ -303,12 +303,22 @@
      one fullscreen triangle, one fragment program. Origin is fixed to the
      top-right and opacity lives in CSS, so those three uniforms are gone. The
      loop parks itself whenever the hero is off screen; this page argues for
-     battery life, so it shouldn't spin the GPU while you read the pricing. */
+     battery life, so it shouldn't spin the GPU while you read the pricing.
+     Without a GPU the shader runs on the CPU and stalls the page, so a
+     software renderer keeps the static hero. failIfMajorPerformanceCaveat
+     turns most of them away, but headless Chrome, which Lighthouse runs in,
+     still hands out SwiftShader, so the renderer's name is checked as well. */
   (function () {
     var cv = document.getElementById('hero-rays');
     if (!cv || reduce) return;
-    var gl = cv.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false, powerPreference: 'low-power' });
+    var gl = cv.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false, powerPreference: 'low-power', failIfMajorPerformanceCaveat: true });
     if (!gl) return;
+    var renderer = gl.getParameter(gl.RENDERER);
+    if (renderer === 'WebKit WebGL') {
+      var info = gl.getExtension('WEBGL_debug_renderer_info');
+      if (info) renderer = gl.getParameter(info.UNMASKED_RENDERER_WEBGL);
+    }
+    if (/swiftshader|llvmpipe|softpipe|lavapipe|software|basic render/i.test(renderer)) return;
 
     var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
     var FRAG = [
@@ -379,8 +389,10 @@
     gl.uniform1f(u('iFalloff'), 1.2);
     var uTime = u('iTime'), uRes = u('iResolution');
 
-    // 1.5x is plenty for a soft gradient, and it costs half the fill of 2x.
-    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    // The rays are a soft gradient, so they render at 0.75 canvas pixels per
+    // CSS pixel and the browser scales them up: a quarter of the fill of 1.5x,
+    // with no visible difference on 2x and 3x screens.
+    var dpr = 0.75;
     function resize() {
       var w = Math.max(1, cv.clientWidth), h = Math.max(1, cv.clientHeight);
       cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
