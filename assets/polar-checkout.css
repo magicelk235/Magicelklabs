@@ -1,0 +1,18 @@
+/* Polar's embedded checkout (polar-checkout-0.6.0.js) opens a full-window
+ * iframe with color-scheme set to the checkout theme. Until Polar's page has
+ * painted, the frame holds a blank light document, and Safari draws a frame
+ * whose color scheme doesn't match its document as an opaque canvas: the
+ * whole window turns white for about a second. The script shows a spinner
+ * until the checkout reports it has loaded, so keep the frame hidden while
+ * the spinner is up and dim the page the way the frame's backdrop would. */
+body:has(.polar-loader-spinner) iframe[src^="https://buy.polar.sh/"] {
+  visibility: hidden;
+}
+
+body:has(.polar-loader-spinner)::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2147483646;
+}
