@@ -33,7 +33,9 @@
   var POLAR_CHECKOUTS = {
     "polar_cl_tkgqF9gxvlZNU5Ge769WkrAE6Slzsr5e2PmnI4HV1NT": "Lector Text",
     "polar_cl_DRiORzR9dAEomeWXX9oMsMB5YfOMM0lEn58xm0dzoKs": "Lector Translate",
-    "polar_cl_AI6jll9ffzZxapGmXkblVNZEQE0yecYUrLbcU2qceSe": "Lector Upgrade"
+    "polar_cl_AI6jll9ffzZxapGmXkblVNZEQE0yecYUrLbcU2qceSe": "Lector Upgrade",
+    "polar_cl_DfMvRZc8P5OMZIzuY8duXI1SfOvQdELriv42m0La9Dm": "Spyglass Pro",
+    "polar_cl_q0t2tPuZCbeIbnkku4ovVpGhCtZZuUeUsCMK52IcjnU": "Spyglass Drive"
   };
 
   // "lector-upgrade" -> "Lector Upgrade"
