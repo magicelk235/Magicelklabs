@@ -55,7 +55,7 @@
 :root{
   color-scheme:dark;
   --canvas:#0B0B0C; --surface:#131315;
-  --ink:#F5F5F4;    --body:#9A9A98;  --mute:#6C6C6A;
+  --ink:#F5F5F4;    --body:#9A9A98;  --mute:#7E7E7C;
   --hair:rgba(255,255,255,.08); --hair-soft:rgba(255,255,255,.05);
   --lip:inset 0 1px 0 rgba(255,255,255,.05);
   /* footer.js reads --accent for its link hover. */
@@ -118,6 +118,12 @@ html.glassy #nav.scrolled .nav-pill{background:rgba(19,19,21,.6)}
 .nav-links{display:flex;align-items:center;gap:24px;font-size:14px;font-weight:500}
 .nav-links a{color:var(--body);transition:color .2s}
 .nav-links a:hover{color:var(--ink)}
+/* The links are smaller than a fingertip; widen what catches the tap
+   without changing how they look. */
+@media(pointer:coarse){
+  .wordmark,.nav-links a{position:relative}
+  .wordmark::after,.nav-links a::after{content:"";position:absolute;inset:-11px -7px}
+}
 
 /* ── Hero ───────────────────────────────────────────────────── */
 .hero{position:relative;padding:180px 0 clamp(72px,10vh,110px);overflow:hidden}

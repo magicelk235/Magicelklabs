@@ -335,13 +335,15 @@ html.tall.pin .dv-steps li {
 /* ------------------------------------------------------------------- faq -- */
 .section--faq { padding-block: 80px; }
 .faq__title { font-size: clamp(1.7rem, 4vw, 2.4rem); padding-top: 40px; margin-bottom: 48px; border-top: 1px solid var(--hair); }
-.faq details { padding: 20px 0; }
+.faq details { padding: 0; }
 .faq details + details { border-top: 1px solid var(--hair); }
-.faq summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; list-style: none; cursor: pointer; font-weight: 600; font-size: 16px; color: var(--ink); }
+.faq summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; list-style: none; cursor: pointer; font-weight: 600; font-size: 16px; color: var(--ink); }
+.faq details[open] summary { padding-bottom: 0; }
 .faq summary::-webkit-details-marker { display: none; }
 .chev { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--mute); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s var(--ease); }
 .faq details[open] .chev { transform: rotate(180deg); }
 .faq details p { margin: 12px 0 0; font-size: 15px; line-height: 1.65; }
+.faq details p:last-child { margin-bottom: 20px; }
 
 /* ---------------------------------------------------------------- footer -- */
 .foot { border-top: 1px solid var(--hair); padding: 40px 24px 56px; font-size: 14px; color: var(--mute); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; max-width: 1080px; margin-inline: auto; }
