@@ -13,16 +13,27 @@ Individual apps keep their own casing: **Spyglass**, **Viaduct**, **Lector**.
 
 ## Typography
 
-- **Display (h1, h2, numerals, wordmarks):** Cabinet Grotesk (Fontshare CDN,
-  weights 500/700/800). Headings weight 800, `letter-spacing:-.02em` to
+- **Display (h1, h2, numerals, wordmarks):** Cabinet Grotesk, weights
+  500/700/800. Headings weight 800, `letter-spacing:-.02em` to
   `-.025em`. No italics anywhere (the family has none; synthesized italics are
   banned).
-- **Body / UI:** Inter on the root page, Viaduct, and the extensions pages;
-  system stack (SF Pro) on Spyglass. h3 and smaller stay in the body
-  family unless explicitly `font-display`.
+- **Body / UI:** Inter on the root page, About, Viaduct, and the extensions
+  pages; system stack (SF Pro) on Spyglass and Lector. h3 and smaller stay in
+  the body family unless explicitly `font-display`.
 - **Small caps / numerals / labels:** JetBrains Mono at 11–13px with
   `letter-spacing:.06em`–`.16em` for section labels, list numbers, and file
   extensions. Never for running text.
+- **Loading:** `/assets/fonts.css` self-hosts the fonts from `/assets/fonts/`:
+  Inter and JetBrains Mono as variable fonts (Latin subset) and Cabinet
+  Grotesk 500/700/800 (Fontshare's files), all `font-display: swap`. A page
+  links it as `/assets/fonts.css?v=N` ahead of its own CSS and preloads
+  `cabinet-grotesk-800.woff2`, the headline face. The root page, About,
+  Spyglass, Viaduct with its legal pages, and the extension hub and guides
+  do, and load nothing from Google Fonts or Fontshare; neither host is in
+  their CSP.
+  Lector keeps its own Cabinet Grotesk 700/800 in `lector/assets/fonts/`.
+  The variable fonts draw any weight a rule asks for, so set weights on
+  purpose: `code` on the Viaduct pages is JetBrains Mono 500.
 - Emphasis inside headings: color (brass or teal) + weight. Never a second
   family, never italic.
 
@@ -43,9 +54,12 @@ text (the accent itself is 4.4:1 on the canvas) and vellum `#F8EAD2` ink.
 The house page carries no accent at all, and that is the point. It is a shelf:
 every app already has cover art, the covers hold all the colour, and the room
 around them stays out of the way. Grey-black canvas `#0B0B0C`, surface
-`#131315`, ivory `#F5F5F4`, hairlines at 8% white, and nothing else. Links,
-buttons, and the mark are ivory. Adding an app adds a cover, so it adds
-colour without touching the theme.
+`#131315`, ivory `#F5F5F4`, body grey `#9A9A98`, muted grey `#7E7E7C`,
+hairlines at 8% white, and nothing else. Links, buttons, and the mark are
+ivory. Adding an app adds a cover, so it adds colour without touching the
+theme. Muted is the darkest grey text may use: `#7E7E7C` is 4.8:1 on the
+canvas and 4.6:1 under the About page's top tint, and anything darker fails
+WCAG AA at the 11–14px sizes it is set in (the labels, the footer links).
 
 **Committed color, not timid accents.** Viaduct's brand surfaces are drenched
 in deep teal (`linear-gradient(168deg,#0F4D48,#093732)`, the `--band-top` /
@@ -82,6 +96,15 @@ scheme is a bug.
   ivory at half opacity; Lector runs LightRays. None of them follows the
   cursor. The hero is something you read past, so the field drifts on its
   own clock and ignores the pointer.
+  A WebGL hero asks for its context with `failIfMajorPerformanceCaveat` and
+  also gives up when the renderer is a software rasterizer (SwiftShader,
+  llvmpipe), because headless Chrome, which Lighthouse runs in, still hands
+  out SwiftShader, and a shader on the CPU stalls the page. Without a GPU the
+  hero keeps its static look, as under reduced motion. Viaduct's SideRays,
+  the root page's Threads and Lector's LightRays all do this. The rays
+  render at 0.75 canvas pixels per CSS pixel because a soft gradient scales up
+  cleanly. The threads stay at up to 1.5x: their strands are one to three
+  canvas pixels thick and break into dashes at any lower resolution.
 - **Glass nav pill.** Every page's nav is the same floating pill with the
   GlassSurface displacement map (`#nav-glass`), Chromium-gated behind
   `html.glassy`, plain `backdrop-filter: blur()` everywhere else. The product
@@ -97,6 +120,11 @@ scheme is a bug.
   The nav pill ends with a small ghost Download and a small accent Buy or
   Get Pro (Download hides under 720px); the hero pairs the same two at large
   size.
+- **FAQ rows.** Spyglass, Lector, Viaduct and the extension guides end their
+  content on a FAQ of `<details>` rows split by hairlines, each with a chevron
+  that turns when it opens. The vertical padding sits on the `<summary>`, not
+  on the `<details>`, so a tap anywhere in the row opens it. With the padding
+  on `<details>`, only the 26px line of text took the tap.
 - **Film grain.** `body::after` at roughly 3% opacity over the whole page, so
   large near-black areas do not band.
 
@@ -196,7 +224,13 @@ and the pages drive their bespoke moves from that in CSS.
 Lector: clips scrubbed by the wheel, the pinned example drum, the keycap
 pause. Its hero lamp is React Bits' LightRays ported to plain WebGL, and its
 headline arrives in Japanese and scrambles into English letter by letter.
-Cabinet Grotesk is self-hosted there (`lector/assets/fonts/`).
+Cabinet Grotesk is self-hosted there (`lector/assets/fonts/`). The demo clip
+right under the hero would otherwise download alongside the page, so
+`lector.js` holds its sources in `data-src` and `data-src-mobile`, which the
+engine doesn't read, and hands them to the engine (as `data-sc-src` and
+`data-sc-src-mobile`) at the window `load` event or on the reader's first
+scroll, tap or key press. With Save-Data on, only the reader's first move
+starts it; under reduced motion it never loads.
 
 Viaduct follows one real extension, Dark Reader, through the page:
 
@@ -342,7 +376,7 @@ Re-refreshes on `load`. Only the load-time hero (`data-mm="lines"` and the
 other `data-mm-load` entrances) waits for the fonts (up to 900ms), because
 SplitText needs the final line breaks; scroll entrances such as the shelf
 start as soon as motion.js runs, so the first cover (the page's LCP image) isn't
-held back by the font CDN. The GSAP scripts and motion.js load with `defer`.
+held back by the fonts. The GSAP scripts and motion.js load with `defer`.
 Videos pause off-screen and gain controls (no autoplay/loop) under reduced
 motion. Hover stays 1–2px lifts; no other decorative loops beyond the ambient
 band light.

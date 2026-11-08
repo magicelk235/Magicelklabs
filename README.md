@@ -2,7 +2,7 @@
 
 The website for Magicelk Labs, a one-person studio building native Mac apps. It's live at [magicelklabs.com](https://magicelklabs.com).
 
-The site is static: hand-written HTML, no framework and no bundler. GitHub Pages serves it straight from `main`. The Spyglass page uses Tailwind, but it's compiled to a plain stylesheet ahead of time rather than loaded from the CDN, so no visitor waits on a script to build the CSS. The Viaduct and Lector pages use plain CSS on the scroll-craft engine (see DESIGN.md, Motion).
+The site is static: hand-written HTML, no framework and no bundler. GitHub Pages serves it straight from `main`. The Spyglass, Viaduct and Lector pages use plain CSS on the scroll-craft engine (see DESIGN.md, Motion).
 
 ## The apps
 
@@ -16,7 +16,7 @@ The site is static: hand-written HTML, no framework and no bundler. GitHub Pages
 - `spyglass/` holds the Spyglass product page and its legal pages (privacy, terms, license, security).
 - `viaduct/` holds the Viaduct product page, its legal pages, and `viaduct/extensions/`, a set of SEO guide pages with a hub index (one page per popular Chrome extension).
 - `lector/` holds the Lector product page and its legal pages.
-- `assets/` holds the shared scripts (`motion.js`, `footer.js`, `attribution.js`, which tags Gumroad buy links with where the visitor came from, and `analytics.js`, which loads Umami and counts Buy and Download clicks), the favicons, the web manifest, and `assets/tailwind/`, which holds the Tailwind configs the product stylesheets are built from.
+- `assets/` holds the shared scripts (`motion.js`, `footer.js`, `attribution.js`, which tags Gumroad buy links with where the visitor came from, and `analytics.js`, which loads Umami and counts Buy and Download clicks), the self-hosted webfonts (`fonts.css` and `fonts/`: Inter, JetBrains Mono and Cabinet Grotesk), the favicons and the web manifest.
 - `DESIGN.md` covers the brand and visual rules. Read it before editing any page.
 - `PRODUCT.md` explains what the site is for and how it converts.
 
