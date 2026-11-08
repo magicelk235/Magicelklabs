@@ -48,7 +48,9 @@ h1, h2 {
 h2 { font-size: clamp(1.9rem, 4.5vw, 3rem); }
 h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
 p { text-wrap: pretty; }
-code { font-family: var(--sc-font-mono); font-size: .86em; color: var(--ink); }
+/* Code is JetBrains Mono 500; without the weight it would take the
+   paragraph's lighter 400. */
+code { font-family: var(--sc-font-mono); font-size: .86em; font-weight: 500; color: var(--ink); }
 b { color: var(--ink); font-weight: 600; }
 .teal { color: var(--teal); }
 .sc-grain { opacity: .035; }

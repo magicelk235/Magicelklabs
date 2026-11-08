@@ -2,7 +2,7 @@
 <html lang="en" class="no-js">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Viaduct: run Chrome extensions in Safari on your Mac</title>
 <meta name="description" content="Viaduct converts any Chrome extension into a native Safari Web Extension. One click, and you never open a terminal.">
@@ -27,13 +27,11 @@
 <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png">
 <link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png">
 <link rel="manifest" href="/viaduct/assets/viaduct.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@700,800&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts.css?v=1">
 <!-- Bump ?v= when these files change; Pages lets browsers cache them for ten minutes. -->
 <link rel="stylesheet" href="./assets/scrollcraft.css?v=2">
-<link rel="stylesheet" href="./assets/viaduct.css?v=6">
+<link rel="stylesheet" href="./assets/viaduct.css?v=9">
 <link rel="stylesheet" href="./assets/nav.css?v=1">
 <script>document.documentElement.classList.remove('no-js');</script>
 <script type="application/ld+json">
