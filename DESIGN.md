@@ -527,6 +527,23 @@ $15 one-time (unlimited, plus live translation in beta). Upgrade $6. macOS 15+.
     rather than scrub them. `viaduct-install-m.mp4` stays the product page's.
   - The step times each recording is annotated with live in `VIDEOS` in
     build.js; a re-encode that shifts the footage has to re-read them.
+  - `viaduct/assets/install/<slug>{,-phone}.mp4` + `-poster.webp`: each
+    extension guide's own install, recorded in Safari by clicking Add to
+    Safari on the extension's store listing and letting Viaduct build it.
+    Captured with ScreenCaptureKit filtered to Safari's windows only (a
+    1280×720 pt window at 2x), so nothing else on screen can show. While a
+    window is captured macOS swaps its traffic lights for a capture badge, so
+    the encode pastes the lights back from a still of the same window, and
+    covers the store's signed-in avatar with the header colour
+    (`drawbox=x=2438:y=118:w=102:h=102:color=0x111111`). Desktop cut
+    1440×810, 20 fps, `-crf 27 -g 10`; phone cut `crop=1000:562:1440:240`
+    (the store button and the progress card) at 960×540, `-g 20`; posters
+    are each cut's first frame. Kit masters (1920×1080, `-crf 18`) are in the
+    media kit's `videos/extensions/`. `viaduct/extensions/recordings.json`
+    holds each cut's click and Installed-card times, which build.js reads; a
+    guide without an entry plays the Dark Reader install with a line saying
+    so. Claude in Chrome, MetaMask, Return YouTube Dislike and the three
+    off-store extensions have none yet.
   - `viaduct/assets/icons/<slug>.webp` (128×128, alpha): each extension's own
     icon, the largest one its Chrome Web Store package declares (from the
     project's GitHub repo for uBlock Origin, ClearURLs, xBrowserSync and

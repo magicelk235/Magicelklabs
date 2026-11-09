@@ -455,6 +455,20 @@ const VIDEOS = {
     label: 'Screen recording of Viaduct converting TWP - Translate Web Pages: it builds and signs the extension, then shows Installed in Safari.' },
 };
 
+// Each extension's own install, recorded by clicking Add to Safari on its store
+// listing (viaduct/assets/install/<slug>.mp4, -phone.mp4 and their posters;
+// DESIGN.md, Assets). recordings.json holds where the click and the Installed
+// card land in each cut. An extension without one plays the Dark Reader install.
+const RECORDINGS = JSON.parse(fs.readFileSync(path.join(__dirname, 'recordings.json'), 'utf8'));
+const ownRecording = (x) => {
+  const r = !x.offStore && RECORDINGS[x.slug];
+  // travel: these start on the store page and end on Remove from Safari, both
+  // still frames, so the clip can sit on them while the stage slides in and
+  // out, and every step's moment lands inside the pin.
+  return r && { file: `install/${x.slug}`, w: 1440, h: 810, phone: [960, 540], travel: true, at: { open: 0, click: r.click, on: r.on },
+    label: `Screen recording in Safari: Add to Safari is clicked on the ${x.name} listing in the Chrome Web Store, and Viaduct builds, signs and installs it.` };
+};
+
 // steps: [html, t] pairs. t is the second in the recording where that step
 // starts; a step the recording doesn't show (setup) has none.
 const stepsList = (steps) => `<ol class="steps">${steps.map(([html, t], i) => `
@@ -468,10 +482,11 @@ const stepsList = (steps) => `<ol class="steps">${steps.map(([html, t], i) => `
 // recording shows when it isn't the page's own extension. No dwell: a dwell
 // slows the clip while the stage is pinned, which is where every step's moment
 // has to land for the steps to track it and for a step's button to reach it.
+// `kind` is a VIDEOS key or a recording of the same shape.
 const demoAct = (heading, kind, steps, note) => {
   const v = typeof kind === 'string' ? VIDEOS[kind] : kind;
   return `
-<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4" data-phone-ar="${v.phone[0]} / ${v.phone[1]}" aria-labelledby="demo-h" style="--ar:${v.w} / ${v.h}">
+<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4"${v.travel ? ' data-sc-clip-map="travel"' : ''} data-phone-ar="${v.phone[0]} / ${v.phone[1]}" aria-labelledby="demo-h" style="--ar:${v.w} / ${v.h}">
   <div class="demo__stage" data-sc-stage>
     <h2 id="demo-h">${heading}</h2>
     ${stepsList(steps)}
@@ -680,7 +695,8 @@ function extensionPage(x) {
   // Viaduct; on it, the store's "Add to Safari" button does the work. The
   // times are where each step starts in the recording.
   const prompt = x.official?.prompt;
-  const rec = VIDEOS[x.offStore ? 'drop' : 'store'];
+  const own = ownRecording(x);
+  const rec = own || VIDEOS[x.offStore ? 'drop' : 'store'];
   const steps = x.offStore ? [
     setupStep('It walks you through installing Xcode (free) and signing in to it with any Apple ID.'),
     [`<strong>Download the .zip from <a href="${store}" rel="noopener">${esc(x.offStore.label)}</a>.</strong> It's no longer on the Chrome Web Store.`, null],
@@ -703,7 +719,7 @@ function extensionPage(x) {
     h1: esc(h1),
     lede,
   })}
-${demoAct('Install it', rec, steps, x.slug === 'dark-reader' ? ''
+${demoAct('Install it', rec, steps, own || x.slug === 'dark-reader' ? ''
     : x.offStore ? "Recorded with Dark Reader's .crx. A .zip goes the same way." : 'Recorded with Dark Reader. Every store install goes the same way.')}${x.fix || x.shot ? `
 ${ledger(`${esc(x.name)} in Safari`, `${x.fix ? `    <p>${esc(x.fix)}</p>` : ''}${x.shot ? `
     <figure class="frame"><img src="${x.shot.src}" width="${x.shot.width}" height="${x.shot.height}" alt="${esc(x.shot.alt)}" loading="lazy" decoding="async" /></figure>` : ''}`)}` : ''}

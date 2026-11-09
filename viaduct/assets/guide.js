@@ -77,11 +77,13 @@
   mark();
 
   // The engine's own clip mapping, run backwards: the clip spans the stage's
-  // whole on-screen life with the act's dwell curve applied, so find the
+  // whole on-screen life (or only its pinned stretch, with
+  // data-sc-clip-map="travel") with the act's dwell curve applied, so find the
   // dwell input that gives this fraction, then the scroll position for it.
   // Kept inside the pinned stretch so the whole window is on screen when it
   // lands.
   var L = parseFloat(demo.getAttribute('data-sc-dwell')) || 0;
+  var travel = demo.getAttribute('data-sc-clip-map') === 'travel';
   function dwell(x) { var c = x - 0.5; return (1 - L) * x + L * (4 * c * c * c + 0.5); }
   function scrollFor(t) {
     var f = Math.min(Math.max(t / (video.duration || 1), 0), 1);
@@ -91,8 +93,8 @@
     var top = demo.getBoundingClientRect().top + window.scrollY;
     var h = demo.offsetHeight;
     var maxY = document.documentElement.scrollHeight - vh;
-    var startY = top - Math.min(vh, top);
-    var endY = Math.min(top + h, maxY);
+    var startY = travel ? top : top - Math.min(vh, top);
+    var endY = travel ? top + h - vh : Math.min(top + h, maxY);
     var y = startY + lo * (endY - startY);
     return Math.min(Math.max(y, top), top + h - vh);
   }
