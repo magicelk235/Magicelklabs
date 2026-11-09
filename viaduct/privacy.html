@@ -6,13 +6,13 @@
   <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privacy Policy — Viaduct</title>
-  <meta name="description" content="Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions entirely on your Mac. It collects no personal data." />
+  <meta name="description" content="Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions and Firefox add-ons entirely on your Mac. It collects no personal data." />
   <link rel="canonical" href="https://magicelklabs.com/viaduct/privacy.html" />
   <link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png" />
   <link rel="manifest" href="/viaduct/assets/viaduct.webmanifest" />
   <meta name="theme-color" content="#070908" />
   <meta property="og:title" content="Privacy Policy — Viaduct" />
-  <meta property="og:description" content="Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions entirely on your Mac. It collects no personal data." />
+  <meta property="og:description" content="Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions and Firefox add-ons entirely on your Mac. It collects no personal data." />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://magicelklabs.com/viaduct/privacy.html" />
   <meta property="og:site_name" content="Magicelk Labs" />
@@ -23,7 +23,7 @@
   <meta property="og:image:alt" content="The Viaduct app window, with its drop area for a Chrome extension" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Privacy Policy — Viaduct" />
-  <meta name="twitter:description" content="Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions entirely on your Mac. It collects no personal data." />
+  <meta name="twitter:description" content="Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions and Firefox add-ons entirely on your Mac. It collects no personal data." />
   <meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
   <link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/assets/fonts.css?v=1" />
@@ -72,7 +72,7 @@
     pre { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); border-radius: 10px; padding: 20px; overflow-x: auto; font-size: 13px; line-height: 1.6; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--body); white-space: pre-wrap; }
   </style>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Viaduct","description":"Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions entirely on your Mac. It collects no personal data.","url":"https://magicelklabs.com/viaduct/privacy.html","inLanguage":"en","dateModified":"2026-10-20","isPartOf":{"@type":"WebSite","@id":"https://magicelklabs.com/#website","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","@id":"https://magicelklabs.com/#organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+  {"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy — Viaduct","description":"Viaduct privacy policy. Viaduct converts Chrome extensions to Safari extensions and Firefox add-ons entirely on your Mac. It collects no personal data.","url":"https://magicelklabs.com/viaduct/privacy.html","inLanguage":"en","dateModified":"2026-11-09","isPartOf":{"@type":"WebSite","@id":"https://magicelklabs.com/#website","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","@id":"https://magicelklabs.com/#organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
   </script>
 <script defer src="/assets/analytics.js"></script>
 </head>
@@ -91,19 +91,19 @@
     </div>
     <div class="nav-actions">
       <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
+      <a href="/viaduct/#pricing" class="btn-teal btn-sm">Buy</a>
     </div>
   </nav>
 </header>
   <main class="wrap">
 
     <h1>Privacy Policy</h1>
-    <p class="meta">Last updated: October 20, 2026</p>
+    <p class="meta">Last updated: November 9, 2026</p>
 
     <p>
       Viaduct is a native macOS app that converts Google Chrome extensions into
-      native Safari Web Extensions. This policy explains what it does, and does
-      not do, with your data.
+      native Safari Web Extensions and Firefox add-ons. This policy explains
+      what it does, and does not do, with your data.
     </p>
 
     <h2>The short version</h2>
@@ -111,8 +111,8 @@
       Viaduct collects no personal data. All conversion happens locally on your
       Mac. Nothing about the extensions you convert, and nothing about you, is
       sent to us. The two exceptions are a few anonymous usage counts that go
-      along with your purchase when you click "Buy a license" in the app, and a
-      problem report, if you choose to file one (see below).
+      along with your purchase when you click Buy in the app, and a problem
+      report, if you choose to file one (see below).
     </p>
 
     <h2>What runs on your Mac</h2>
@@ -131,13 +131,26 @@
       the extensions you have. Recent versions of macOS ask for your permission
       first, and none of it leaves your Mac.
     </p>
+    <p>
+      For Firefox, Viaduct installs the converted add-on in your Firefox
+      profile, which it can only read once you give it Full Disk Access.
+      Firefox only keeps add-ons that Mozilla has signed, so Viaduct adds a
+      login item, ViaductHelper, that loads your add-ons through Firefox's own
+      remote debugging on this Mac each time Firefox opens. One Firefox setting
+      stays changed while you have add-ons: Firefox won't ask before a debugger
+      connects. Removing your last add-on puts the settings back. The Add to
+      Firefox button talks to the app through the same helper, as a native
+      messaging host. None of this leaves your Mac.
+    </p>
 
     <h2>Data we collect</h2>
     <p>
       Viaduct has no analytics, no telemetry, no accounts, and no servers that
-      receive your data. When you click "Buy a license" inside the app, the
-      Gumroad checkout link it opens carries the values below to Gumroad. If you
-      complete the purchase, Gumroad passes them to us with the sale:
+      receive your data. When you click Buy inside the app, the Polar checkout
+      link it opens carries the values below in its <code>utm_source=app</code>,
+      <code>utm_medium</code>, <code>utm_content</code> and <code>utm_term</code>
+      tags. Polar keeps them with the order, so we see them if you complete the
+      purchase:
     </p>
     <ul>
       <li>how many free conversions you used;</li>
@@ -158,9 +171,10 @@
     <ul>
       <li>download its conversion engine from npm on first launch, and check npm for a newer version each time it starts;</li>
       <li>check for app updates once a day, after you allow it on first launch;</li>
-      <li>download an extension from the Chrome Web Store when you click "Add to Safari", or when an export from another Mac doesn't include its files;</li>
-      <li>check the store once a week for new versions of the extensions you installed from it, if you turn on weekly updates in Pro;</li>
-      <li>check your license key with Gumroad when you activate Pro and when Viaduct starts;</li>
+      <li>download an extension from the Chrome Web Store when you click "Add to Safari" or "Add to Firefox", or when an export from another Mac doesn't include its files;</li>
+      <li>check the store once a week for new versions of the extensions you installed from it, if you turn on weekly updates with a license;</li>
+      <li>send a license key to Polar with this Mac's computer name when you add it, so you can see and free your devices; check each key with Polar, using the key and its activation ID, each time Viaduct starts; and free the activation when you remove a key;</li>
+      <li>check a key bought on Gumroad with Gumroad when you add it and each time Viaduct starts;</li>
       <li>open a GitHub issue form in your browser when you click Report this issue, Report a Problem, or Report a Bug; and</li>
       <li>open external links (such as this page or the store) in your browser when you click them.</li>
     </ul>
@@ -169,23 +183,27 @@
       versions of Viaduct, macOS, Xcode and Safari, and, for a failed
       conversion, the error and the end of the log, which can include file
       paths on your Mac. Nothing is posted unless you submit it. Apart from that
-      form and the license key sent to Gumroad, these requests contain no
-      personal information about you.
+      form and the license keys and computer name sent to Polar or Gumroad,
+      these requests contain no personal information about you.
     </p>
 
     <h2>Payments</h2>
     <p>
-      Viaduct is free for your first two conversions. Pro is sold through
-      <a href="https://gumroad.com/l/viaduct" rel="noopener">Gumroad</a>, which
-      processes your purchase and payment details. We never see or store your
-      payment information. Gumroad's handling of your data is governed by
+      Viaduct is free for your first two conversions. Licenses are sold through
+      <a href="https://polar.sh" rel="noopener">Polar</a>, the merchant of
+      record, which processes your purchase and payment details. We never see
+      or store your payment information. Polar's handling of your data is
+      governed by
+      <a href="https://polar.sh/legal/privacy" rel="noopener">Polar's privacy policy</a>.
+      Viaduct Pro keys bought earlier on Gumroad fall under
       <a href="https://gumroad.com/privacy" rel="noopener">Gumroad's privacy policy</a>.
     </p>
 
     <h2>Third parties</h2>
     <p>
-      Aside from Gumroad for payment, and GitHub when you open a problem report,
-      Viaduct shares no data with third parties.
+      Aside from Polar for payment and licenses, Gumroad for older keys, and
+      GitHub when you open a problem report, Viaduct shares no data with third
+      parties.
     </p>
 
     <h2>This website</h2>
@@ -197,8 +215,8 @@
       Download button. Umami doesn't set cookies or store anything in your
       browser, and it doesn't keep your IP address. If you arrive from another
       site or a tagged link, the site keeps that source in your browser until
-      you close the tab and adds it to its Gumroad links, so Gumroad can show
-      where a sale came from. The Viaduct app itself sends none of this.
+      you close the tab and adds it to its checkout links, so the store can
+      show where a sale came from. The Viaduct app itself sends none of this.
     </p>
 
     <h2>Children</h2>

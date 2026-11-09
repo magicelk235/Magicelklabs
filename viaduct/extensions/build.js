@@ -507,7 +507,7 @@ const setupStep = (rest) => [`<strong><a href="/viaduct/">Get Viaduct</a> and ru
 
 // The price, said once, in the one place on each page a reader looks for it.
 const PRICE_FAQ = ['What does Viaduct cost?',
-  'Two conversions are free, and Viaduct removes them after 7 days. Pro is $19 once: it converts as many as you like and keeps them installed.'];
+  'The first 2 conversions are free, and Viaduct removes them after 7 days. A Safari license costs $19 once, converts as many as you like and keeps them installed.'];
 
 // These pages run no inline JavaScript: the scripts are the first-party
 // /assets/footer.js, /assets/attribution.js, /assets/analytics.js and
@@ -602,7 +602,7 @@ function chrome(inner, updated) {
     </div>
     <div class="nav-actions">
       <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
+      <a href="/viaduct/#pricing" class="btn-teal btn-sm">Buy</a>
     </div>
   </nav>
 </header>
@@ -736,7 +736,7 @@ ${faqRow([
       : 'The real one. Viaduct downloads the same package Chrome installs from the Web Store and adds fixes where Safari behaves differently.'],
     ['Will it update itself?', x.offStore
       ? "Not by itself. Viaduct's weekly update check only covers Chrome Web Store installs, so drop each new release on Viaduct yourself."
-      : "With Pro, yes. Turn on Update Chrome Web Store extensions weekly in Viaduct's settings, and it rebuilds the extension when the store has a new version."],
+      : "With a license, yes. Turn on Update Chrome Web Store extensions weekly in Viaduct's settings, and it rebuilds the extension when the store has a new version."],
     PRICE_FAQ,
   ])}
 ${moreLine([
@@ -798,7 +798,7 @@ const GUIDES = [
       ['What if I convert without an Apple ID in Xcode?',
         'Viaduct warns you first. If you convert anyway, the extension has no signature, and Safari turns it off every time it quits.'],
       ["Is this the 7 days Viaduct's free plan mentions?",
-        "No, that one is Viaduct's own: the free plan converts 2 extensions and removes them after 7 days, however they're signed. Pro is $19 once and keeps them."],
+        "No, that one is Viaduct's own: the free plan converts 2 extensions and removes them after 7 days, however they're signed. A Safari license is $19 once and keeps them."],
     ],
   },
   {
@@ -848,7 +848,7 @@ const GUIDES = [
       ['What about bookmarks, history and passwords?',
         'Safari imports those itself from File → Import From Browser → Google Chrome, as <a href="https://support.apple.com/guide/safari/import-bookmarks-and-passwords-ibrw1015/mac" rel="noopener">Apple describes</a>.'],
       ['Can I move them all on the free plan?',
-        'Two of them, kept for 7 days. Pro is $19 once and converts the rest, and the import list shows how many of your picks need it.'],
+        'Two of them, kept for 7 days. A Safari license is $19 once and converts the rest, and the import list shows how many of your picks need it.'],
       ['Moving to a new Mac too?',
         "In Viaduct, Settings → Extensions → Move to another Mac exports everything you've converted as one file. Import it on the new Mac and Viaduct converts them again there."],
     ],
@@ -875,7 +875,7 @@ const GUIDES = [
       ['Can Safari load it without converting?',
         'Only to test it: with its developer features on, Settings → Developer → Add Temporary Extension loads a folder or .zip, and Safari removes it after 24 hours or when you quit.'],
       ['Will it update itself?',
-        'No. A file has nothing to check for updates, so drop each new version on Viaduct. Extensions installed from the Chrome Web Store can update weekly with Pro.'],
+        'No. A file has nothing to check for updates, so drop each new version on Viaduct. Extensions installed from the Chrome Web Store can update weekly with a license.'],
       PRICE_FAQ,
     ],
   },

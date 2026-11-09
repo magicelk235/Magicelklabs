@@ -317,18 +317,38 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 
 /* -------------------------------------------------------------- pricing -- */
 .pricing__title { margin-bottom: 40px; }
+/* The free plan is one ruled line rather than a card: it asks for nothing,
+   so it doesn't compete with the licenses for the eye. */
+.free {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0 28px;
+  padding: 24px 0; margin-bottom: 28px;
+  border-block: 1px solid var(--hair);
+}
+.free h3 { font-size: 20px; font-weight: 700; }
+.free p { margin: 4px 0 0; font-size: 15.5px; line-height: 1.6; }
+.free .free__num { margin: 0; min-width: 2.4ch; font: 800 46px/1 var(--sc-font-display); letter-spacing: -.035em; color: var(--ink); }
 .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
-.plan { display: flex; flex-direction: column; padding: 30px; border-radius: 16px; background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); }
+.plans--3 { grid-template-columns: 1fr 1fr 1.18fr; gap: 16px; }
+.plan { display: flex; flex-direction: column; padding: 28px; border-radius: 16px; background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); }
 .plan h3 { font-size: 20px; font-weight: 700; }
-.price { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 24px; }
+.price { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 18px; }
 .price-num { font: 800 46px/1 var(--sc-font-display); letter-spacing: -.035em; color: var(--ink); }
 .price-note { font-size: 14px; color: #7FA39D; }
+.plan__what { flex: 1; margin: 0 0 26px; font-size: 15.5px; line-height: 1.55; }
 .plan__rows { list-style: none; margin: 0 0 28px; padding: 0; flex: 1; }
 .p-row { display: flex; gap: 11px; align-items: baseline; padding: 11px 0; border-top: 1px solid var(--hair-soft); font-size: 15px; line-height: 1.55; }
 .p-row:first-child { border-top: 0; }
 .p-row::before { content: "✓"; flex: none; font-size: 13px; color: var(--teal); }
-/* The paid tier: the one card lit from inside by the brand colour. Same box
-   as the free card; only the fill and the edge change. */
+/* What every license shares, said once: a ruled row under the cards, so
+   each card only says what differs. */
+.every {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 40px; align-items: baseline;
+  margin-top: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--hair);
+}
+.every ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 28px; }
+.every .p-row { border-top: 0; padding: 0; color: var(--ink); }
+/* Mixed, the license for both browsers: the one card lit from inside by the
+   brand colour. Same box as the other two; only the fill and the edge change. */
 .plan--pro {
   position: relative;
   background: linear-gradient(168deg, #0C302C 0%, #0A1E1C 58%, #08110F 100%);
@@ -340,7 +360,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 }
 .plan--pro > * { position: relative; }
 .plan--pro h3, .plan--pro .price-num, .plan--pro b { color: #EEFBF8; }
-.plan--pro .p-row { color: #BFDBD5; border-top-color: rgba(255, 255, 255, .07); }
+.plan--pro .p-row, .plan--pro .plan__what { color: #BFDBD5; border-top-color: rgba(255, 255, 255, .07); }
 
 /* The current version and the press mention, under the cards. */
 .release { margin-top: 28px; font-size: 14px; line-height: 1.6; color: var(--mute); }
@@ -377,6 +397,13 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   .install__copy h2 { font-size: clamp(1.6rem, 6vw, 2.2rem); margin-bottom: 14px; }
   .compat__sticky, .feat__sticky { position: static; }
 }
+/* The single-browser licenses side by side, with Mixed across the full width
+   under them, before the three cards get too narrow for their buttons. */
+@media (max-width: 860px) {
+  .plans--3 { grid-template-columns: 1fr 1fr; }
+  .plans--3 .plan--pro { grid-column: 1 / -1; }
+  .every { grid-template-columns: 1fr; gap: 12px; }
+}
 /* On a phone the store act uses a tighter crop of the same capture (the
    title block, which has no banner), with the nag card above it and the
    button below it in markup, so every part is still legible at phone width. */
@@ -400,7 +427,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   .install__caps p { font-size: 16px; max-width: none; }
   .fix { grid-template-columns: 1fr; padding: 22px 0; }
   .fix b { grid-row: auto; margin-bottom: 6px; }
-  .plans { grid-template-columns: 1fr; }
+  .plans, .plans--3 { grid-template-columns: 1fr; }
+  .free { grid-template-columns: auto minmax(0, 1fr); gap: 16px 20px; }
+  .free .btn-ghost { grid-column: 1 / -1; }
+  .every ul { flex-direction: column; gap: 10px; }
   .eng__cell { padding-right: 12px; }
   .eng__cell + .eng__cell { padding-left: 12px; }
   .foot { justify-content: center; text-align: center; }

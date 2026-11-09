@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Viaduct: run Chrome extensions in Safari on your Mac</title>
-<meta name="description" content="Viaduct converts any Chrome extension into a native Safari Web Extension. One click, and you never open a terminal.">
+<title>Viaduct: run Chrome extensions in Safari and Firefox on your Mac</title>
+<meta name="description" content="Viaduct converts any Chrome extension into a native Safari Web Extension, or a Firefox add-on that stays installed. One click, and you never open a terminal.">
 <link rel="canonical" href="https://magicelklabs.com/viaduct/">
-<meta property="og:title" content="Viaduct: run Chrome extensions in Safari">
-<meta property="og:description" content="Drop in a .zip, a .crx, or an unpacked folder. Viaduct converts, signs, and installs it into Safari for you.">
+<meta property="og:title" content="Viaduct: run Chrome extensions in Safari and Firefox">
+<meta property="og:description" content="Drop in a .zip, a .crx, or an unpacked folder. Viaduct converts, signs, and installs it into Safari or Firefox for you.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://magicelklabs.com/viaduct/">
 <meta property="og:site_name" content="Magicelk Labs">
@@ -19,8 +19,8 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The words Run any Chrome extension, now native in Safari, beside the Viaduct app window with its drop zone ready.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Viaduct: run Chrome extensions in Safari">
-<meta name="twitter:description" content="Drop in a .zip, a .crx, or an unpacked folder. Viaduct converts, signs, and installs it into Safari for you.">
+<meta name="twitter:title" content="Viaduct: run Chrome extensions in Safari and Firefox">
+<meta name="twitter:description" content="Drop in a .zip, a .crx, or an unpacked folder. Viaduct converts, signs, and installs it into Safari or Firefox for you.">
 <meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg">
 <meta name="theme-color" content="#070908">
 <meta name="color-scheme" content="dark">
@@ -31,7 +31,7 @@
 <link rel="stylesheet" href="/assets/fonts.css?v=1">
 <!-- Bump ?v= when these files change; Pages lets browsers cache them for ten minutes. -->
 <link rel="stylesheet" href="./assets/scrollcraft.css?v=2">
-<link rel="stylesheet" href="./assets/viaduct.css?v=10">
+<link rel="stylesheet" href="./assets/viaduct.css?v=11">
 <link rel="stylesheet" href="./assets/nav.css?v=1">
 <script>document.documentElement.classList.remove('no-js');</script>
 <script type="application/ld+json">
@@ -44,17 +44,19 @@
   "operatingSystem": "macOS 13.0 or later",
   "url": "https://magicelklabs.com/viaduct/",
   "downloadUrl": "https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg",
-  "description": "Viaduct converts any Chrome extension into a native Safari Web Extension. One click, and you never open a terminal.",
+  "description": "Viaduct converts any Chrome extension into a native Safari Web Extension, or a Firefox add-on that stays installed. One click, and you never open a terminal.",
   "softwareVersion": "1.4.0",
   "datePublished": "2026-06-25",
   "dateModified": "2026-10-17",
   "releaseNotes": "https://github.com/magicelk235/Viaduct-app/releases/tag/v1.4.0",
   "image": "https://magicelklabs.com/viaduct/assets/viaduct-og.jpg",
   "publisher": { "@type": "Organization", "@id": "https://magicelklabs.com/#organization", "name": "Magicelk Labs", "url": "https://magicelklabs.com/" },
-  "sameAs": ["https://github.com/magicelk235/viaduct-app", "https://magicelk235.gumroad.com/l/viaduct"],
+  "sameAs": ["https://github.com/magicelk235/viaduct-app"],
   "offers": [
     { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD", "url": "https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" },
-    { "@type": "Offer", "name": "Viaduct Pro", "price": "19", "priceCurrency": "USD", "url": "https://gumroad.com/l/viaduct" }
+    { "@type": "Offer", "name": "Viaduct Safari", "price": "19", "priceCurrency": "USD", "url": "https://buy.polar.sh/polar_cl_Ns3uKKSVeiB34PlvHjqM864ytr9YRigIvqc1j1Yy2cF" },
+    { "@type": "Offer", "name": "Viaduct Firefox", "price": "19", "priceCurrency": "USD", "url": "https://buy.polar.sh/polar_cl_kYYElpaU4pmRWDwI5KJAtcbd6epjDwG5HcHZE08b7gp" },
+    { "@type": "Offer", "name": "Viaduct Mixed", "price": "29", "priceCurrency": "USD", "url": "https://buy.polar.sh/polar_cl_DoWnpwb5gqYljHloz8IEjnuG6FA6ItQIgiEYf04EsGx" }
   ]
 }
 </script>
@@ -79,7 +81,7 @@
     </div>
     <div class="nav-actions">
       <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
+      <a href="#pricing" class="btn-teal btn-sm">Buy</a>
     </div>
   </nav>
 </header>
@@ -93,10 +95,10 @@
   <canvas class="rays" id="hero-rays" aria-hidden="true"></canvas>
   <div class="hero__inner">
     <h1 class="rise">Run Chrome extensions<br class="br-wide"> <span class="nowrap">in <span class="teal">Safari.</span></span></h1>
-    <p class="hero__lede rise" style="--rise-delay:.12s"><span data-gumroad-field="name">Viaduct</span> converts any Chrome extension into a native Safari Web Extension. You never have to open a terminal.</p>
+    <p class="hero__lede rise" style="--rise-delay:.12s">Viaduct converts any Chrome extension into a native Safari Web Extension, or a Firefox add-on that stays installed. You never have to open a terminal.</p>
     <div class="hero__actions rise" style="--rise-delay:.2s">
       <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-lg">Download</a>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-lg">Get Pro</a>
+      <a href="#pricing" class="btn-teal btn-lg">Buy</a>
     </div>
   </div>
 </section>
@@ -268,40 +270,47 @@
       <div class="feat" data-sc-in>
         <span class="feat__num">02</span>
         <div>
-          <h3>Keeps itself up to date</h3>
-          <p>Viaduct and its conversion engine update themselves, so new fixes arrive without you reinstalling anything.</p>
+          <h3>In Firefox too</h3>
+          <p>Pick Firefox above the drop zone and the extension becomes a Firefox add-on that stays installed when Firefox quits, with its settings. On the Chrome Web Store, Add to Firefox does the same from the listing.</p>
         </div>
       </div>
       <div class="feat" data-sc-in>
         <span class="feat__num">03</span>
         <div>
-          <h3>Auto-updating extensions</h3>
-          <p>Installed an extension from the Chrome Web Store? Turn on weekly updates in Pro, and when it ships a new version Viaduct rebuilds and reinstalls it for you.</p>
+          <h3>Keeps itself up to date</h3>
+          <p>Viaduct and its conversion engine update themselves, so new fixes arrive without you reinstalling anything.</p>
         </div>
       </div>
       <div class="feat" data-sc-in>
         <span class="feat__num">04</span>
+        <div>
+          <h3>Auto-updating extensions</h3>
+          <p>Installed an extension from the Chrome Web Store? Turn on weekly updates with a license, and when it ships a new version Viaduct rebuilds and reinstalls it for you.</p>
+        </div>
+      </div>
+      <div class="feat" data-sc-in>
+        <span class="feat__num">05</span>
         <div>
           <h3>MV2 &amp; MV3 aware</h3>
           <p>Converts Manifest V2 and V3 extensions. If one can't work in Safari, Viaduct tells you before it converts. If the maker ships an official Safari version, it points you there.</p>
         </div>
       </div>
       <div class="feat" data-sc-in>
-        <span class="feat__num">05</span>
+        <span class="feat__num">06</span>
         <div>
           <h3>Import from Chrome</h3>
           <p>Viaduct lists the extensions already installed in Chrome, Brave, Edge, Arc, Vivaldi, Opera or Chromium. Pick the ones you want and it converts them in one batch, saved settings included.</p>
         </div>
       </div>
       <div class="feat" data-sc-in>
-        <span class="feat__num">06</span>
+        <span class="feat__num">07</span>
         <div>
           <h3>Works with Shortcuts</h3>
           <p>Shortcuts gets two actions: Convert Chrome Extension and List Converted Extensions.</p>
         </div>
       </div>
       <div class="feat" data-sc-in>
-        <span class="feat__num">07</span>
+        <span class="feat__num">08</span>
         <div>
           <h3>Moves to a new Mac</h3>
           <p>Export your converted extensions from Settings, import the file on the new Mac, and Viaduct converts them again there.</p>
@@ -311,32 +320,48 @@
   </div>
 </section>
 
-<!-- PRICING -->
+<!-- PRICING: the free plan first, as one ruled line, then the licenses. A
+     license makes one browser unlimited; Mixed covers both and carries the
+     lit panel. What every license shares is said once, in the ledger row
+     under the cards, so the cards only say what differs. -->
 <section id="get" class="section" aria-labelledby="pricing-h">
   <div id="pricing" class="wrap wrap--4">
-    <h2 id="pricing-h" class="pricing__title" data-sc-in>Start free. Go Pro when it sticks.</h2>
-    <div class="plans" data-sc-in data-sc-stagger="80">
-      <div class="plan">
+    <h2 id="pricing-h" class="pricing__title" data-sc-in>Start free. Pay once for your browser.</h2>
+    <div class="free" data-sc-in>
+      <p class="free__num price-num">$0</p>
+      <div>
         <h3>Free</h3>
-        <p class="price"><span class="price-num">$0</span></p>
-        <ul class="plan__rows">
-          <li class="p-row"><span>Convert up to <b>2 extensions</b></span></li>
-          <li class="p-row">“Add to Safari” Web Store button</li>
-          <li class="p-row">Extensions kept for 7 days</li>
-        </ul>
-        <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-block">Download</a>
+        <p>Convert <b>2 extensions</b> in Safari or Firefox. Viaduct removes them after 7 days.</p>
+      </div>
+      <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-lg">Download</a>
+    </div>
+    <div class="plans plans--3" data-sc-in data-sc-stagger="80">
+      <div class="plan">
+        <h3>Safari</h3>
+        <p class="price"><span class="price-num">$19</span><span class="price-note">one time</span></p>
+        <p class="plan__what"><b>Unlimited</b> in Safari</p>
+        <a href="https://buy.polar.sh/polar_cl_Ns3uKKSVeiB34PlvHjqM864ytr9YRigIvqc1j1Yy2cF" data-product="Viaduct Safari" class="btn-teal btn-block">Buy for Safari</a>
+      </div>
+      <div class="plan">
+        <h3>Firefox</h3>
+        <p class="price"><span class="price-num">$19</span><span class="price-note">one time</span></p>
+        <p class="plan__what"><b>Unlimited</b> in Firefox</p>
+        <a href="https://buy.polar.sh/polar_cl_kYYElpaU4pmRWDwI5KJAtcbd6epjDwG5HcHZE08b7gp" data-product="Viaduct Firefox" class="btn-teal btn-block">Buy for Firefox</a>
       </div>
       <div class="plan plan--pro">
-        <h3><span data-gumroad-field="name">Viaduct</span> Pro</h3>
-        <p class="price"><span class="price-num"><span data-gumroad-field="price">$19</span></span><span class="price-note">one time</span></p>
-        <ul class="plan__rows">
-          <li class="p-row"><span><b>Unlimited</b> conversions</span></li>
-          <li class="p-row">“Add to Safari” Web Store button</li>
-          <li class="p-row">Extensions kept forever</li>
-          <li class="p-row">Weekly Web Store updates</li>
-        </ul>
-        <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-block">Get Viaduct Pro</a>
+        <h3>Mixed</h3>
+        <p class="price"><span class="price-num">$29</span><span class="price-note">one time</span></p>
+        <p class="plan__what"><b>Unlimited</b> in Safari and Firefox</p>
+        <a href="https://buy.polar.sh/polar_cl_DoWnpwb5gqYljHloz8IEjnuG6FA6ItQIgiEYf04EsGx" data-product="Viaduct Mixed" class="btn-teal btn-block">Buy for both</a>
       </div>
+    </div>
+    <div class="every" data-sc-in>
+      <h3>Every license</h3>
+      <ul>
+        <li class="p-row">Extensions stay installed</li>
+        <li class="p-row">Weekly Web Store updates</li>
+        <li class="p-row">Works on 3 Macs</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -347,24 +372,32 @@
     <h2 id="faq-h" class="faq__title" data-sc-in>Questions</h2>
     <div class="faq" data-sc-in>
       <details>
-        <summary>Will my Chrome extension actually work in Safari?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p>Most do. Before converting, Viaduct checks the extension and tells you if it can't work in Safari, for example when a file it needs is missing. Features built on Chrome-only APIs, like some OAuth sign-in flows, still won't work after conversion. If the maker ships an official Safari version, Viaduct points you to it.</p>
+        <summary>Will my Chrome extension actually work?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p>Most do. Before converting, Viaduct checks the extension for the browser you picked and tells you if it can't work there, for example when a file it needs is missing. Features built on Chrome-only APIs, like some OAuth sign-in flows, still won't work after conversion. If the maker ships an official Safari version, Viaduct points you to it.</p>
       </details>
       <details>
         <summary>What do I need to run Viaduct?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p>Viaduct needs a Mac on macOS 13 or later, and Xcode, which is free from Apple. Apple requires Xcode to sign extensions. Viaduct's setup walks you through signing in to it once with your Apple ID (a free one works), so Safari keeps your extensions on after it quits. After that, Viaduct drives Xcode for you. Free and Pro need the same.</p>
+        <p>A Mac on macOS 13 or later. For Safari you also need Xcode, which is free from Apple, because Apple requires it to sign extensions. Viaduct's setup walks you through signing in to it once with your Apple ID (a free one works), so Safari keeps your extensions on after it quits. For Firefox you need Firefox, and Viaduct asks once for Full Disk Access so it can read your Firefox profile. Xcode only matters for Safari.</p>
       </details>
       <details>
         <summary>Do I need to know how to code to use Viaduct?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p>No. Drop an extension in and get it in Safari. Viaduct does the building and the signing.</p>
+        <p>No. Drop an extension in and get it in Safari or Firefox. Viaduct does the building and the signing.</p>
       </details>
       <details>
         <summary>Does Viaduct run on an Intel Mac?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <p>Yes. Viaduct is a universal app, so the same download runs natively on Intel and Apple Silicon. There's one build, not two, and Rosetta never comes into it.</p>
       </details>
       <details>
-        <summary>What's the difference between Viaduct Free and Pro?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p>Viaduct Free gives you <b>2 conversions</b> that are removed after a week. <b>Pro</b> is <b>unlimited</b> and keeps your extensions installed. One-time <span data-gumroad-field="price">$19</span>, yours forever.</p>
+        <summary>Which license do I need?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p>The one for the browser you use. A <b>Safari</b> or <b>Firefox</b> license makes that browser unlimited, and <b>Mixed</b> covers both for less than buying the two.</p>
+      </details>
+      <details>
+        <summary>I bought Viaduct Pro. What do I have now?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p>Mixed. Your key keeps working, and Safari and Firefox are both unlimited.</p>
+      </details>
+      <details>
+        <summary>How does Viaduct keep add-ons in Firefox?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <p>Firefox only keeps add-ons that Mozilla has signed. So each time Firefox opens, Viaduct briefly turns on Firefox's remote debugging, loads your add-ons, and turns it off again. That leaves one Firefox setting changed while you have add-ons: Firefox won't ask before a debugger connects. Viaduct tells you before your first one, and removing your last add-on puts the setting back.</p>
       </details>
       <details>
         <summary>Why isn't Viaduct on the Mac App Store?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
@@ -377,7 +410,7 @@
 </main>
 
 <div id="site-footer"></div>
-<script src="/assets/footer.js" data-product="Viaduct" data-more="1" data-links-only="1" data-links="How it works|/viaduct/#how, Features|/viaduct/#features, Extensions|/viaduct/extensions/, Get it|https://gumroad.com/l/viaduct, Privacy|/viaduct/privacy.html, Terms|/viaduct/terms.html, Security|/viaduct/security.html, License|/viaduct/license.html"></script>
+<script src="/assets/footer.js" data-product="Viaduct" data-more="1" data-links-only="1" data-links="How it works|/viaduct/#how, Features|/viaduct/#features, Extensions|/viaduct/extensions/, Get it|/viaduct/#pricing, Privacy|/viaduct/privacy.html, Terms|/viaduct/terms.html, Security|/viaduct/security.html, License|/viaduct/license.html"></script>
 <noscript>
   <footer class="foot">
     <p><a href="/">Magicelk Labs</a> · Viaduct · © 2026</p>
@@ -385,7 +418,7 @@
       <a href="/viaduct/#how">How it works</a>
       <a href="/viaduct/#features">Features</a>
       <a href="/viaduct/extensions/">Extensions</a>
-      <a href="https://gumroad.com/l/viaduct">Get it</a>
+      <a href="/viaduct/#pricing">Get it</a>
       <a href="/viaduct/privacy.html">Privacy</a>
       <a href="/viaduct/terms.html">Terms</a>
       <a href="/viaduct/security.html">Security</a>

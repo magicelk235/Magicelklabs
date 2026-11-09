@@ -8,7 +8,7 @@ zero build step except `viaduct/extensions/build.js`.
 
 ## Register
 
-Brand / marketing. Design IS the product here: the site must sell $9–$19
+Brand / marketing. Design IS the product here: the site must sell $9–$29
 one-time utilities, plus Spyglass's optional Spyglass Drive subscription, to
 design-conscious Mac users. Pages: studio landing (`/`),
 three product pages (`/spyglass/`, `/viaduct/`, `/lector/`), 29 SEO extension guides
@@ -23,8 +23,12 @@ they can't select or read (Lector).
 
 ## Conversion paths
 
-- Viaduct: Gumroad buy buttons (`data-gumroad-action="buy"`, product `uadrjp`).
-  Landing is also embedded in Gumroad's iframe; do not break the postMessage wiring.
+- Viaduct: free GitHub download, and three Polar checkout links, one product
+  each, that open Polar's own checkout page (no embed): Safari ($19), Firefox ($19)
+  and Mixed ($29, both browsers). Each carries `data-product="Viaduct Safari"`
+  (or `Viaduct Firefox`, `Viaduct Mixed`), which `analytics.js` reports as the
+  Buy event's product. Nav, hero and footer Buy links go to `/viaduct/#pricing`.
+  Viaduct Pro keys bought on Gumroad still activate and count as Mixed.
 - Spyglass: free GitHub download (every format free for 7 days); Get Pro
   ($12 once) and Get Drive ($4/month, 7-day trial) each open their own Polar
   checkout link as Polar's embedded checkout, set up the same way as Lector's
@@ -51,14 +55,15 @@ they can't select or read (Lector).
   keeps in the order's metadata; with no tag, the referrer's host is the source.
 - Analytics: Umami Cloud via `/assets/analytics.js` (cookieless, no consent
   banner). Page views and sources come from Umami itself; the script adds
-  `Buy` (Gumroad `/l/` links and Polar checkout links, named in its
-  `POLAR_CHECKOUTS` table) and `Download` (GitHub release links) events
+  `Buy` (Gumroad `/l/` links and Polar checkout links, named by the link's
+  `data-product` or else its `POLAR_CHECKOUTS` table) and `Download` (GitHub release links) events
   with a `product` property. The privacy pages disclose it under "This website".
 
 ## Constraints
 
 - Static, no framework, no bundler. Tailwind CDN already on product pages.
 - Keep URL slugs, anchor IDs (`#how`, `#features`, `#pricing`, `#faq`, `#get`),
-  and Gumroad attributes stable.
+  and checkout attributes (`data-gumroad-*`, `data-polar-checkout`,
+  `data-product`) stable.
 - Design system lives in DESIGN.md (editorial studio: Newsreader display serif,
   brass/teal accents, hairline rules, no glass/glow decoration).

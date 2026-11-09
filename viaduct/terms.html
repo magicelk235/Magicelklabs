@@ -72,7 +72,7 @@
     pre { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); border-radius: 10px; padding: 20px; overflow-x: auto; font-size: 13px; line-height: 1.6; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--body); white-space: pre-wrap; }
   </style>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebPage","name":"Terms of Service — Viaduct","description":"Viaduct terms of service. The rules for using the Viaduct app, including license, purchases, and disclaimers.","url":"https://magicelklabs.com/viaduct/terms.html","inLanguage":"en","dateModified":"2026-10-17","isPartOf":{"@type":"WebSite","@id":"https://magicelklabs.com/#website","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","@id":"https://magicelklabs.com/#organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+  {"@context":"https://schema.org","@type":"WebPage","name":"Terms of Service — Viaduct","description":"Viaduct terms of service. The rules for using the Viaduct app, including license, purchases, and disclaimers.","url":"https://magicelklabs.com/viaduct/terms.html","inLanguage":"en","dateModified":"2026-11-09","isPartOf":{"@type":"WebSite","@id":"https://magicelklabs.com/#website","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","@id":"https://magicelklabs.com/#organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
   </script>
 <script defer src="/assets/analytics.js"></script>
 </head>
@@ -91,19 +91,19 @@
     </div>
     <div class="nav-actions">
       <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
+      <a href="/viaduct/#pricing" class="btn-teal btn-sm">Buy</a>
     </div>
   </nav>
 </header>
   <main class="wrap">
 
     <h1>Terms of Service</h1>
-    <p class="meta">Last updated: October 17, 2026</p>
+    <p class="meta">Last updated: November 9, 2026</p>
 
     <p>
       These Terms of Service ("Terms") govern your use of Viaduct (the "App"), a
       native macOS application that converts Google Chrome extensions into Safari
-      Web Extensions, published by Magicelk Labs ("we", "us"). By downloading,
+      Web Extensions and Firefox add-ons, published by Magicelk Labs ("we", "us"). By downloading,
       installing, or using the App, you agree to these Terms. If you do not
       agree, do not use the App.
     </p>
@@ -112,8 +112,8 @@
     <p>
       Viaduct's source code and CLI engine are source-available under the
       <a href="/viaduct/license.html">PolyForm Shield License 1.0.0</a>, which governs your rights
-      to the code. These Terms govern your use of the distributed App and the
-      paid "Pro" features. Subject to these Terms, we grant you a personal,
+      to the code. These Terms govern your use of the distributed App and its
+      paid licenses. Subject to these Terms, we grant you a personal,
       non-exclusive, non-transferable right to use the App.
     </p>
 
@@ -130,7 +130,7 @@
       <li>use the App to convert, distribute, or install extensions you do not have the right to use;</li>
       <li>use the App to build or distribute malware, or to violate the rights of any third party;</li>
       <li>circumvent, disable, or tamper with any licensing, signing, or update mechanism in the App; or</li>
-      <li>use the App in any way that breaks the law or the terms of the platforms it interacts with (Apple, Google, or the extension's own author).</li>
+      <li>use the App in any way that breaks the law or the terms of the platforms it interacts with (Apple, Google, Mozilla, or the extension's own author).</li>
     </ul>
     <p>
       You are responsible for the extensions you convert and for complying with
@@ -140,25 +140,31 @@
 
     <h2>4. Purchases and payments</h2>
     <p>
-      Viaduct is free for your first two conversions. On the free plan, Viaduct
-      removes converted extensions 7 days after converting them. "Pro" unlocks
-      unlimited use, keeps your extensions installed, and adds other features. It is sold through
-      <a href="https://gumroad.com/l/viaduct" rel="noopener">Gumroad</a>. Gumroad
-      is the merchant of record: it processes your payment and its
-      <a href="https://gumroad.com/terms" rel="noopener">terms</a> and
-      <a href="https://gumroad.com/refunds" rel="noopener">refund policy</a>
+      Viaduct is free for your first two conversions, in Safari or Firefox. On
+      the free plan, Viaduct removes converted extensions 7 days after
+      converting them. Three one-time licenses unlock unlimited use and keep
+      your extensions installed: Safari covers Safari, Firefox covers Firefox,
+      and Mixed covers both. A Viaduct Pro key bought on Gumroad counts as
+      Mixed. Licenses are sold through
+      <a href="https://polar.sh" rel="noopener">Polar</a>. Polar is the
+      merchant of record: it processes your payment, and its
+      <a href="https://polar.sh/legal/terms" rel="noopener">terms and refund policy</a>
       apply to your purchase. We do not see or store your payment details.
-      Refunds, where offered, are handled through Gumroad.
+      Refunds, where offered, are handled through Polar, or through Gumroad
+      for a Pro key bought there.
     </p>
 
     <h2>5. Third-party tools and services</h2>
     <p>
       The App relies on tools it does not control, including Apple's Xcode and
-      developer toolchain, a bundled Node.js runtime, the
+      developer toolchain, Mozilla Firefox, a bundled Node.js runtime, the
       <a href="https://www.npmjs.com/package/@magicelk235/viaduct" rel="noopener">@magicelk235/viaduct</a>
-      CLI package, and the Chrome Web Store. Your use of those tools is subject
-      to their own terms. Viaduct is not affiliated with, endorsed by, or
-      sponsored by Apple or Google.
+      CLI package and its engines
+      <a href="https://www.npmjs.com/package/@magicelk235/aqueduct" rel="noopener">@magicelk235/aqueduct</a>
+      and <a href="https://www.npmjs.com/package/@magicelk235/lavaduct" rel="noopener">@magicelk235/lavaduct</a>,
+      and the Chrome Web Store. Your use of those tools is subject to their own
+      terms. Viaduct is not affiliated with, endorsed by, or sponsored by
+      Apple, Google, or Mozilla.
     </p>
 
     <h2>6. Disclaimer of warranty</h2>
@@ -167,8 +173,8 @@
       kind, express or implied, including merchantability, fitness for a
       particular purpose, and non-infringement. We do not warrant that the App
       will be error-free, that conversions will succeed for every extension, or
-      that a converted extension will keep working as Apple, Google, or the
-      extension's author change their platforms.
+      that a converted extension will keep working as Apple, Google, Mozilla,
+      or the extension's author change their platforms.
     </p>
 
     <h2>7. Limitation of liability</h2>

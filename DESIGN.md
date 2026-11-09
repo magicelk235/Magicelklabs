@@ -64,7 +64,7 @@ WCAG AA at the 11–14px sizes it is set in (the labels, the footer links).
 **Committed color, not timid accents.** Viaduct's brand surfaces are drenched
 in deep teal (`linear-gradient(168deg,#0F4D48,#093732)`, the `--band-top` /
 `--band-bot` pair in `viaduct/assets/viaduct.css`). It floods the store act
-the moment the install button flips, and carries the Pro pricing panel. The
+the moment the install button flips, and carries the Mixed pricing panel. The
 rest of the page stays on the green-black canvas, so the flood is the one
 colour event on the page. On-band text: near-white ink
 `#F2FBF9`, body `#C6E3DE`, dim `#93C2BB`, bright accent `#6EE0D1`; on-band
@@ -117,9 +117,10 @@ scheme is a bug.
   `.btn-ghost` (lit pane) for Download and the page's accent (`.btn-teal`,
   `.btn-red`, `.btn-brass`) for buying, in three sizes (`.btn-sm` 13.5px in
   the nav, `.btn-lg` 15px in the hero, `.btn-block` full width in pricing).
-  The nav pill ends with a small ghost Download and a small accent Buy or
-  Get Pro (Download hides under 720px); the hero pairs the same two at large
-  size.
+  The nav pill ends with a small ghost Download and a small accent Buy
+  (Download hides under 720px); the hero pairs the same two at large size.
+  On Viaduct both Buy links go to `/viaduct/#pricing`, where each license card
+  has its own checkout button.
 - **FAQ rows.** Spyglass, Lector, Viaduct and the extension guides end their
   content on a FAQ of `<details>` rows split by hairlines, each with a chevron
   that turns when it opens. The vertical padding sits on the `<summary>`, not
@@ -253,7 +254,7 @@ starts it; under reduced motion it never loads.
 Viaduct follows one real extension, Dark Reader, through the page:
 
 - **Hero:** a centred headline under SideRays (React Bits, plain WebGL, in
-  `viaduct.js`), Download and Get Pro. No product imagery; a layered
+  `viaduct.js`), Download and Buy. No product imagery; a layered
   two-screenshot hero was tried and rejected.
 - **The store act (`#how`, pinned, the page's peak):** the real Dark Reader
   listing, captured from headless Chrome, which gets the same "Switch to
@@ -411,11 +412,12 @@ adds rendered Google Drive previews and thumbnails. The Drive
 info card is free for everyone, and 1.0 buyers get Spyglass Drive for life.
 macOS 14+.
 
-**Viaduct** — Run Chrome extensions in Safari, natively. Drop in a `.zip`,
+**Viaduct** — Run Chrome extensions in Safari or Firefox. Drop in a `.zip`,
 `.crx`, or unpacked folder; Viaduct converts, signs, and installs it into
-Safari. Runs in Safari's own engine (keeps battery life). Free for 2
-conversions, which Viaduct removes after 7 days; then $19 one-time (unlimited,
-keeps extensions installed, opt-in weekly Web Store updates). macOS 13+.
+Safari, or installs it in Firefox as an add-on that stays installed. Free for 2
+conversions, which Viaduct removes after 7 days; then one-time licenses:
+Safari $19, Firefox $19, Mixed $29 for both (unlimited, keeps extensions
+installed, opt-in weekly Web Store updates). macOS 13+.
 
 **Lector** — Copy or translate any text on your Mac's screen. ⌘⇧2 copies the
 text under a crosshair; ⌘⇧1 paints the translation over the original, in

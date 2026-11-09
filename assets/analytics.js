@@ -16,11 +16,13 @@
  * stores the page the click happened on:
  *   Buy       a click on a gumroad.com/l/<product> link ("Lector Translate"
  *             when the link preselects a ?variant=), or on a buy.polar.sh
- *             checkout link, named from POLAR_CHECKOUTS below
+ *             checkout link, named by its data-product attribute
+ *             (data-product="Viaduct Mixed") or else from POLAR_CHECKOUTS
  *   Download  a click on a github.com/<owner>/<repo>/releases/… link (named
  *             after the file, so .../download/Viaduct.dmg is "Viaduct")
  * Both are read from the link itself, so new buttons need no extra markup,
- * apart from a new Polar checkout link, which needs a line in POLAR_CHECKOUTS.
+ * apart from a new Polar checkout link, which needs a data-product attribute
+ * or a line in POLAR_CHECKOUTS.
  */
 (function () {
   var tracker = document.createElement("script");
@@ -29,7 +31,8 @@
   tracker.setAttribute("data-domains", "magicelklabs.com");
   document.head.appendChild(tracker);
 
-  // A Polar checkout link's path names no product, so each one is listed here.
+  // A Polar checkout link's path names no product, so a link without a
+  // data-product attribute is named from this table.
   var POLAR_CHECKOUTS = {
     "polar_cl_tkgqF9gxvlZNU5Ge769WkrAE6Slzsr5e2PmnI4HV1NT": "Lector Text",
     "polar_cl_DRiORzR9dAEomeWXX9oMsMB5YfOMM0lEn58xm0dzoKs": "Lector Translate",
@@ -53,7 +56,7 @@
       return { name: "Buy", product: titleCase(path[1]) + (variant ? " " + variant : "") };
     }
     if (host === "buy.polar.sh" && path[0]) {
-      return { name: "Buy", product: POLAR_CHECKOUTS[path[0]] || "Polar " + path[0] };
+      return { name: "Buy", product: a.getAttribute("data-product") || POLAR_CHECKOUTS[path[0]] || "Polar " + path[0] };
     }
     if (host === "github.com" && path[2] === "releases") {
       var file = path[path.length - 1];
