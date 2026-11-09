@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Move your Chrome extensions to Safari · Viaduct</title>
+<link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
+<link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png" />
+<link rel="manifest" href="/viaduct/assets/viaduct.webmanifest" />
+<meta name="theme-color" content="#070908" />
+<meta name="description" content="Switching from Chrome or Brave? Viaduct lists the extensions in every profile, converts the ones you pick for Safari and brings their settings along." />
+<link rel="canonical" href="https://magicelklabs.com/viaduct/guides/move-chrome-extensions-to-safari/" />
+<meta property="og:site_name" content="Magicelk Labs" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:title" content="Move your Chrome extensions to Safari · Viaduct" />
+<meta property="og:description" content="Switching from Chrome or Brave? Viaduct lists the extensions in every profile, converts the ones you pick for Safari and brings their settings along." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://magicelklabs.com/viaduct/guides/move-chrome-extensions-to-safari/" />
+<meta property="og:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="The Viaduct app window on macOS, which converts Chrome extensions for Safari. Guide: Move your Chrome extensions to Safari" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Move your Chrome extensions to Safari · Viaduct" />
+<meta name="twitter:description" content="Switching from Chrome or Brave? Viaduct lists the extensions in every profile, converts the ones you pick for Safari and brings their settings along." />
+<meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
+<link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="/assets/fonts.css?v=1" />
+<link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
+<link rel="stylesheet" href="/viaduct/assets/scrollcraft.css?v=2" />
+<style>
+/* The pages only ship dark. The canvas is a near-black with a trace of green in
+   it, so the teal accent sits on it like something lit, not a sticker on grey. */
+:root {
+  color-scheme:dark;
+  --canvas:#070908; --surface:#0E1211; --elevated:#151A19; --card:#1B211F;
+  --ink:#ECF2F0; --body:#A3B0AD; --mute:#85938F;
+  --teal:#2DD4BF; --teal-press:#5FE3D2; --on-teal:#04211D;
+  --hair:rgba(255,255,255,.075); --hair-soft:rgba(255,255,255,.045);
+  --lip:inset 0 1px 0 rgba(255,255,255,.055);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+* { box-sizing:border-box; }
+html { scroll-padding-top:86px; }
+body {
+  margin:0; background:var(--canvas); color:var(--body);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',system-ui,sans-serif;
+  font-size:16.5px; line-height:1.65; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden;
+}
+::selection { background:var(--teal); color:var(--on-teal); }
+/* Film grain over the whole page. Keeps the near-black from banding and takes
+   the plastic off the flat fills. */
+body::after {
+  content:""; position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+h1,h2,h3 { color:var(--ink); margin:0; font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; letter-spacing:-.025em; line-height:1.08; text-wrap:balance; }
+p { margin:0 0 16px; text-wrap:pretty; }
+a { color:var(--teal); text-decoration:none; }
+a:hover { text-decoration:underline; text-underline-offset:3px; }
+strong { color:var(--ink); font-weight:600; }
+code { font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace; color:var(--ink); font-size:.86em; padding:1px 5px; border-radius:5px; background:var(--elevated); }
+.wrap { max-width:1152px; margin:0 auto; padding:0 24px; }
+.btn-teal, .btn-ghost {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-size:15px; padding:11px 22px; text-decoration:none; border-radius:999px;
+}
+.btn-sm { font-size:13.5px; padding:7px 14px; }
+.btn-teal:hover, .btn-ghost:hover { text-decoration:none; }
+.btn-teal { background:var(--teal); color:var(--on-teal); font-weight:600; box-shadow:inset 0 1px 0 rgba(255,255,255,.3); transition:transform .22s var(--ease), background .2s; }
+.btn-teal:hover { background:var(--teal-press); transform:translateY(-1px); }
+.btn-ghost { background:rgba(255,255,255,.05); color:var(--ink); border:1px solid rgba(255,255,255,.12); box-shadow:var(--lip); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); transition:transform .22s var(--ease), border-color .2s, background .2s; }
+.btn-ghost:hover { background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.2); transform:translateY(-1px); }
+
+/* Page head: crumb, the extension's own icon when there is one, a big
+   headline and one paragraph. */
+.top { padding:148px 0 72px; }
+.crumb { font-size:13.5px; color:var(--mute); margin:0 0 40px; }
+.crumb a { color:var(--mute); }
+.crumb a:hover { color:var(--ink); }
+.top h1 { font-size:clamp(2.5rem,5.4vw,4.25rem); line-height:1.02; max-width:17ch; margin-bottom:24px; }
+.lede { font-size:clamp(1.08rem,1.9vw,1.25rem); line-height:1.6; max-width:40rem; margin:0; }
+
+/* The ledger: each section is a row, its heading held in the left column while
+   the body scrolls past on the right. */
+.row { display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:24px clamp(40px,5vw,72px); padding:64px 0; border-top:1px solid var(--hair); }
+.row > h2 { position:sticky; top:112px; align-self:start; font-size:clamp(1.55rem,2.5vw,2rem); max-width:13ch; }
+.row__body { min-width:0; }
+.row__body > :last-child { margin-bottom:0; }
+.row__body p { max-width:62ch; }
+
+/* Steps: bare numerals in the accent, hairlines between. In the
+   demonstration the numbers of the steps the recording shows are buttons. */
+.steps { list-style:none; padding:0; margin:0; }
+.steps li { display:grid; grid-template-columns:44px minmax(0,1fr); gap:0 16px; padding:18px 0; border-top:1px solid var(--hair); }
+.steps li:last-child { border-bottom:1px solid var(--hair); }
+.steps p { margin:0; padding-top:6px; }
+.step__n { display:block; width:44px; height:44px; margin:0; padding:0; border:0; background:none; text-align:left; font:800 32px/44px 'Cabinet Grotesk',Inter,sans-serif; color:var(--teal); }
+button.step__n { cursor:pointer; border-radius:8px; }
+button.step__n:hover { color:var(--teal-press); }
+button.step__n:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
+
+/* The demonstration: the steps on the lead side, the recording framed on the
+   trail side, capped by the stage height so the whole window stays on screen
+   while the act holds. While it tracks, the step the footage is on is lit
+   and the rest fall back to the muted ink. */
+.demo { --ar:16 / 9; border-top:1px solid var(--hair); }
+.demo__stage {
+  display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); grid-template-rows:1fr auto auto 1fr;
+  grid-template-areas:". f" "h f" "s f" ". f"; gap:0 clamp(32px,4vw,64px); align-items:center;
+  max-width:1152px; margin:0 auto; padding:96px 24px 40px;
+}
+.demo__stage > h2 { grid-area:h; font-size:clamp(1.55rem,2.5vw,2rem); margin-bottom:20px; }
+.demo__stage > .steps { grid-area:s; align-self:start; }
+.demo__frame { grid-area:f; justify-self:end; margin:0; width:min(100%, (100svh - 230px) * (var(--ar)) + 14px); }
+.demo__slot { position:relative; aspect-ratio:var(--ar); border-radius:11px; overflow:hidden; background:var(--elevated); }
+.demo__slot > img, .demo__slot > video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.demo--plain .demo__slot > img { display:none; }
+.demo__frame figcaption { padding:10px 6px 4px; font-size:13.5px; color:var(--mute); }
+.demo--plain .demo__stage { padding-top:64px; padding-bottom:64px; }
+.demo.is-tracking .steps li { color:var(--mute); transition:color .3s var(--ease); }
+.demo.is-tracking .steps li strong { color:var(--mute); transition:color .3s var(--ease); }
+.demo.is-tracking .steps li .step__n { color:var(--mute); transition:color .3s var(--ease); }
+.demo.is-tracking .steps li.is-on, .demo.is-tracking .steps li.is-on strong { color:var(--ink); }
+.demo.is-tracking .steps li.is-on .step__n { color:var(--teal); }
+
+/* Screenshots sit in the product page's frame: a lipped surface, 6px of it
+   showing round the image. */
+.frame { margin:24px 0 0; padding:6px; background:var(--surface); border:1px solid var(--hair); border-radius:16px; box-shadow:var(--lip), 0 24px 60px -30px rgba(0,0,0,.7); }
+.frame img { display:block; width:100%; height:auto; border-radius:11px; }
+
+/* Other guides, as one line. */
+.more { border-top:1px solid var(--hair); padding:32px 0; margin:0; color:var(--mute); }
+.more a { color:var(--ink); }
+.more a:hover { color:var(--teal); text-decoration:none; }
+
+/* The padding sits on the summary, so the whole row takes the tap. */
+details { border-bottom:1px solid var(--hair); }
+details:first-child { border-top:1px solid var(--hair); }
+details summary { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 0; cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
+details summary::-webkit-details-marker { display:none; }
+details p { margin:0 0 18px; max-width:62ch; }
+.chev { width:20px; height:20px; flex:none; fill:none; stroke:var(--mute); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s var(--ease); }
+details[open] .chev { transform:rotate(180deg); }
+
+/* Other guides, by name only. */
+.names { list-style:none; margin:0; padding:0; columns:2 220px; column-gap:32px; }
+.names li { break-inside:avoid; }
+.names a { display:block; padding:8px 0; color:var(--ink); }
+.names a:hover { color:var(--teal); text-decoration:none; }
+
+.meta { border-top:1px solid var(--hair); padding:32px 0 0; margin-top:8px; font-size:13px; line-height:1.6; color:var(--mute); }
+.meta p { max-width:70ch; margin:0 0 8px; }
+footer { border-top:1px solid var(--hair); margin-top:72px; padding:32px 0 48px; font-size:13px; color:var(--mute); }
+
+/* Read aloud, not shown. */
+.sr { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+/* Side-by-side tables (the general guide's three ways, the developer guide's
+   comparison): phones drop the header row and label each cell instead. */
+.ways { width:100%; border-collapse:collapse; table-layout:fixed; font-size:15px; line-height:1.55; }
+.ways th, .ways td { text-align:left; vertical-align:baseline; padding:16px 16px 16px 0; border-top:1px solid var(--hair); }
+.ways th:last-child, .ways td:last-child { padding-right:0; }
+.ways thead th { border-top:0; padding-top:0; font-size:13.5px; font-weight:400; color:var(--mute); }
+.ways tbody th { font-weight:600; color:var(--ink); }
+.ways tbody tr:last-child > * { border-bottom:1px solid var(--hair); }
+.ways td::before { content:attr(data-label); display:none; }
+
+/* The hub's tables: extension, its official Safari version, its limits. */
+.compat { width:100%; border-collapse:collapse; table-layout:fixed; font-size:15px; line-height:1.5; }
+.compat .c-ext { width:36%; }
+.compat .c-off { width:30%; }
+.compat thead th { padding:0; border:0; }
+.compat tbody th, .compat td { text-align:left; font-weight:400; vertical-align:middle; padding:14px 16px 14px 0; border-top:1px solid var(--hair); }
+.compat td:last-child { padding-right:0; }
+.compat .ext { display:flex; align-items:center; gap:14px; color:var(--ink); }
+.compat .ext img, .compat .ph { width:32px; height:32px; flex:none; }
+.compat .ext b { font-weight:600; transition:color .2s; }
+.compat .ext:hover { text-decoration:none; }
+.compat .ext:hover b { color:var(--teal); }
+.compat .no { color:var(--mute); }
+
+pre { margin:20px 0; padding:16px 18px; background:var(--surface); border:1px solid var(--hair); border-radius:12px; box-shadow:var(--lip); white-space:pre-wrap; overflow-x:auto; }
+pre code { padding:0; background:none; font-size:13.5px; color:var(--teal); }
+/* Broken after one of its hyphens, the tool's name reads as two words. */
+pre .nw { white-space:nowrap; }
+
+a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--teal); outline-offset:3px; border-radius:6px; }
+
+@media (max-width:860px) {
+  .top { padding:124px 0 48px; }
+  .crumb { margin-bottom:28px; }
+  .row { grid-template-columns:1fr; padding:48px 0; }
+  .row > h2 { position:static; max-width:none; }
+}
+@media (max-width:640px) {
+  .demo__stage { grid-template-columns:1fr; grid-template-rows:none; grid-template-areas:"h" "f" "s"; padding-left:0; padding-right:0; }
+  .demo__frame { justify-self:stretch; width:auto; margin-bottom:24px; }
+  .ways thead { display:none; }
+  .ways, .ways tbody, .ways tr, .ways tbody th, .ways td { display:block; width:auto; }
+  .ways tbody tr { padding:16px 0; border-top:1px solid var(--hair); }
+  .ways tbody tr:last-child { border-bottom:1px solid var(--hair); }
+  .ways tbody th, .ways td, .ways tbody tr:last-child > * { padding:0; border:0; }
+  .ways td { margin-top:10px; }
+  .ways td::before { display:block; font-size:13.5px; color:var(--mute); }
+  .compat thead { display:none; }
+  .compat, .compat tbody, .compat tr, .compat tbody th, .compat td { display:block; width:auto; }
+  .compat tbody tr { padding:16px 0; border-top:1px solid var(--hair); }
+  .compat tbody th, .compat td { padding:0; border:0; }
+  .compat td { margin:6px 0 0 46px; }
+}
+/* One-line links in tables and lists; widen what catches a tap. */
+@media (pointer:coarse) {
+  .compat td a, .names a { position:relative; }
+  .compat td a::after { content:""; position:absolute; inset:-13px -6px; }
+  .names a { padding:11px 0; }
+}
+@media (prefers-reduced-motion: reduce) { .btn-teal, .btn-ghost, .chev, .compat .ext b { transition:none; } }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "Move your Chrome extensions to Safari",
+      "description": "Switching from Chrome or Brave? Viaduct lists the extensions in every profile, converts the ones you pick for Safari and brings their settings along.",
+      "url": "https://magicelklabs.com/viaduct/guides/move-chrome-extensions-to-safari/",
+      "inLanguage": "en-US",
+      "image": "https://magicelklabs.com/viaduct/assets/viaduct-og.jpg",
+      "dateModified": "2026-11-09",
+      "author": {
+        "@type": "Organization",
+        "@id": "https://magicelklabs.com/#organization",
+        "name": "Magicelk Labs",
+        "url": "https://magicelklabs.com/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "@id": "https://magicelklabs.com/#organization",
+        "name": "Magicelk Labs",
+        "url": "https://magicelklabs.com/"
+      },
+      "about": {
+        "@type": "SoftwareApplication",
+        "name": "Safari",
+        "applicationCategory": "BrowserApplication",
+        "operatingSystem": "macOS"
+      },
+      "mentions": {
+        "@type": "SoftwareApplication",
+        "@id": "https://magicelklabs.com/viaduct/#app",
+        "name": "Viaduct",
+        "url": "https://magicelklabs.com/viaduct/"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Viaduct",
+          "item": "https://magicelklabs.com/viaduct/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Move from Chrome"
+        }
+      ]
+    }
+  ]
+}
+</script>
+<script defer src="/assets/analytics.js"></script>
+</head>
+<body>
+<header id="nav" class="nav">
+  <nav class="nav-pill" aria-label="Primary">
+    <a href="/viaduct/" class="brand" aria-label="Viaduct home">
+      <img src="/viaduct/assets/viaduct-appicon.png" width="21" height="21" alt="">
+      <span>Viaduct</span>
+    </a>
+    <div class="nav-links">
+      <a href="/viaduct/#how">How it works</a>
+      <a href="/viaduct/#features">Features</a>
+      <a href="/viaduct/#pricing">Pricing</a>
+      <a href="/viaduct/#faq">FAQ</a>
+    </div>
+    <div class="nav-actions">
+      <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
+      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
+    </div>
+  </nav>
+</header>
+<main class="wrap">
+
+<div class="top">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="/viaduct/">Viaduct</a> / Move from Chrome</nav>
+  <h1>Move your Chrome extensions to Safari</h1>
+  <p class="lede">Viaduct reads the extensions you already have in Chrome and other Chromium browsers, converts the ones you pick and brings their settings along.</p>
+</div>
+
+<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4" data-phone-ar="686 / 720" aria-labelledby="demo-h" style="--ar:1388 / 1016">
+  <div class="demo__stage" data-sc-stage>
+    <h2 id="demo-h">Move them over</h2>
+    <ol class="steps">
+      <li><span class="step__n" aria-hidden="true">1</span><p><strong><a href="/viaduct/">Get Viaduct</a> and run its setup.</strong> When it asks to read your browsers, click Allow Access.</p></li>
+      <li><span class="step__n" aria-hidden="true">2</span><p><strong>Choose File → Import from Chrome.</strong> It lists the extensions in Chrome, Brave, Edge, Arc, Vivaldi and Opera, profile by profile.</p></li>
+      <li data-t="0"><button type="button" class="step__n" aria-label="Show step 3 in the recording">3</button><p><strong>Tick the ones you want and click Convert.</strong> Their saved settings come along.</p></li>
+      <li data-t="9"><button type="button" class="step__n" aria-label="Show step 4 in the recording">4</button><p><strong>Switch them on.</strong> When the batch finishes, click Open Safari Settings.</p></li>
+    </ol>
+    <figure class="frame demo__frame"><div class="demo__slot">
+      <img class="sc-stage__poster" src="/viaduct/assets/viaduct-batch-poster.webp" width="1388" height="1016" alt="" />
+      <video data-sc-scrub data-sc-src="/viaduct/assets/viaduct-batch.mp4" data-sc-src-mobile="/viaduct/assets/viaduct-batch-phone.mp4" data-phone-poster="/viaduct/assets/viaduct-batch-phone-poster.webp" width="1388" height="1016" muted playsinline aria-label="Screen recording of Viaduct converting TWP - Translate Web Pages: it builds and signs the extension, then shows Installed in Safari."></video>
+    </div><figcaption>Recorded converting TWP. Import from Chrome converts each of yours the same way.</figcaption></figure>
+  </div>
+</section>
+
+<section class="row" aria-labelledby="what-stays-behind-h">
+  <h2 id="what-stays-behind-h">What stays behind</h2>
+  <div class="row__body">
+
+    <p>Themes and Chrome apps aren't listed. An extension with an official Safari version starts unticked, with a link to that version. Some rely on Chrome features Safari doesn't have, like <a href="/viaduct/extensions/xbrowsersync/">xBrowserSync</a>, which can't reach Safari's bookmarks. <a href="/viaduct/extensions/">The extension list</a> shows the known limits.</p>
+  </div>
+</section>
+
+<section class="row" aria-labelledby="questions-h">
+  <h2 id="questions-h">Questions</h2>
+  <div class="row__body">
+    <details><summary>What about bookmarks, history and passwords?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>Safari imports those itself from File → Import From Browser → Google Chrome, as <a href="https://support.apple.com/guide/safari/import-bookmarks-and-passwords-ibrw1015/mac" rel="noopener">Apple describes</a>.</p></details>
+    <details><summary>Can I move them all on the free plan?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>Two of them, kept for 7 days. Pro is $19 once and converts the rest, and the import list shows how many of your picks need it.</p></details>
+    <details><summary>Moving to a new Mac too?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>In Viaduct, Settings → Extensions → Move to another Mac exports everything you've converted as one file. Import it on the new Mac and Viaduct converts them again there.</p></details>
+  </div>
+</section>
+
+<nav class="more" aria-label="More guides">More guides: <a href="/viaduct/guides/install-crx-file-mac/">Install a .crx file</a>, <a href="/viaduct/guides/safari-web-extension-converter-alternative/">Apple's converter, compared</a>, <a href="/viaduct/guides/arc-to-safari/">Arc to Safari</a>, <a href="/viaduct/extensions/chrome-extensions-in-safari/">Chrome extensions in Safari</a> and <a href="/viaduct/extensions/">guides for each extension</a>.</nav>
+<div class="meta">
+  <p>Updated <time datetime="2026-11-09">November 9, 2026</time></p>
+  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple or Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
+</div>
+</main>
+<div id="site-footer"></div>
+<script src="/assets/footer.js" data-product="Viaduct" data-links-only="1" data-links="Viaduct|/viaduct/, All extensions|/viaduct/extensions/, How it works|/viaduct/#how, Privacy|/viaduct/privacy.html, Terms|/viaduct/terms.html"></script>
+<noscript>
+  <footer style="border-top:1px solid var(--hair);padding:40px 0 56px;font-size:14px;color:var(--mute)">
+    <div style="max-width:1080px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px">
+      <span style="font-family:'Cabinet Grotesk','Inter',sans-serif;font-size:16px;color:var(--ink)"><a href="/" style="color:inherit;text-decoration:none">Magicelk Labs</a> · Viaduct <span style="color:var(--mute);font-family:Inter,sans-serif;font-size:13px">· © 2026</span></span>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <a href="/viaduct/" style="color:var(--mute);font-weight:500;text-decoration:none">Viaduct</a>
+        <a href="/viaduct/extensions/" style="color:var(--mute);font-weight:500;text-decoration:none">All extensions</a>
+        <a href="/viaduct/#how" style="color:var(--mute);font-weight:500;text-decoration:none">How it works</a>
+        <a href="/viaduct/privacy.html" style="color:var(--mute);font-weight:500;text-decoration:none">Privacy</a>
+        <a href="/viaduct/terms.html" style="color:var(--mute);font-weight:500;text-decoration:none">Terms</a>
+      </div>
+    </div>
+  </footer>
+</noscript>
+<script src="/viaduct/assets/nav.js?v=1"></script>
+<script src="/assets/attribution.js"></script>
+<script src="/viaduct/assets/scrollcraft.js?v=2"></script>
+<script src="/viaduct/assets/guide.js?v=1"></script>
+</body>
+</html>

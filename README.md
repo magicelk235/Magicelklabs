@@ -14,7 +14,7 @@ The site is static: hand-written HTML, no framework and no bundler. GitHub Pages
 
 - `index.html` is the studio landing page.
 - `spyglass/` holds the Spyglass product page and its legal pages (privacy, terms, license, security).
-- `viaduct/` holds the Viaduct product page, its legal pages, and `viaduct/extensions/`, a set of SEO guide pages with a hub index (one page per popular Chrome extension).
+- `viaduct/` holds the Viaduct product page, its legal pages, `viaduct/extensions/`, a set of SEO guide pages with a hub index (one page per popular Chrome extension), and `viaduct/guides/`, the topic guides (the 7-day limit, .crx files, moving from Chrome or Arc and so on).
 - `lector/` holds the Lector product page and its legal pages.
 - `assets/` holds the shared scripts (`motion.js`, `footer.js`, `attribution.js`, which tags Gumroad buy links with where the visitor came from, and `analytics.js`, which loads Umami and counts Buy and Download clicks), the self-hosted webfonts (`fonts.css` and `fonts/`: Inter, JetBrains Mono and Cabinet Grotesk), the favicons and the web manifest.
 - `DESIGN.md` covers the brand and visual rules. Read it before editing any page.
@@ -34,16 +34,16 @@ Then open http://localhost:8000.
 
 Two things in the repo are generated, and each gets committed alongside the change that caused it.
 
-### Extension guides and the sitemap
+### Extension guides, topic guides and the sitemap
 
-The guides under `viaduct/extensions/` come from a template. To change them, edit the `EXTENSIONS` list or the template in `viaduct/extensions/build.js`, then regenerate:
+The guides under `viaduct/extensions/` and `viaduct/guides/` come from templates. To change them, edit the `EXTENSIONS` or `GUIDES` list or the templates in `viaduct/extensions/build.js`, then regenerate:
 
 ```
 cd viaduct/extensions
 node build.js
 ```
 
-That writes a `<slug>/index.html` for each extension, the hub `index.html`, and `sitemap.xml` for the whole site. The sitemap is generated, so don't edit it by hand: each `lastmod` comes from the last commit that touched the page, which means regenerating the files doesn't tell crawlers the content changed.
+That writes a `<slug>/index.html` for each extension, the general guide, the hub `index.html`, `viaduct/guides/<slug>/index.html` for each topic guide, and `sitemap.xml` for the whole site. The sitemap is generated, so don't edit it by hand: each `lastmod` comes from the last commit that touched the page, which means regenerating the files doesn't tell crawlers the content changed.
 
 ### Viaduct sample extensions
 

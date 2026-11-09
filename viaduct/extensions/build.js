@@ -1,8 +1,11 @@
 #!/usr/bin/env node
-// Generates the /viaduct/extensions/ SEO pages: one page per popular Chrome
-// extension with no (or partial) Safari presence, plus the hub index.
-// Edit EXTENSIONS or the template below, then re-run:  node build.js
-// Output: ./<slug>/index.html for each extension + ./index.html (hub).
+// Generates the Viaduct SEO pages: one page per popular Chrome extension with
+// no (or partial) Safari presence, the general guide to Chrome extensions in
+// Safari, the hub index, and the topic guides under /viaduct/guides/.
+// Edit EXTENSIONS, GUIDES or the templates below, then re-run:  node build.js
+// Output: ./<slug>/index.html for each extension, ./<GENERAL.slug>/index.html
+// (the general guide), ./index.html (hub), ../guides/<slug>/index.html for each
+// topic guide, and the site's sitemap.xml.
 
 'use strict';
 const fs = require('fs');
@@ -10,24 +13,54 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 
 const SITE = 'https://magicelklabs.com';
+const ROOT = path.join(__dirname, '..', '..');
 const STORE = (id) => `https://chromewebstore.google.com/detail/${id}`;
 
-// official = an official Safari version exists; the page must say so and link it.
+// Every per-extension fact has to be checkable against the extension's store
+// listing or release page, Viaduct's own source (../viaduct-app) or its media
+// kit's FACT-SHEET.md, never the CLI repo. Leave a field out rather than guess.
+//
+// desc     = what it is, a noun phrase that reads after "<name>, ".
+// category = the hub section it's listed under; related guides prefer it.
+// official = the developer's own Safari option: label and url for the link. The
+//            label's "(…)" part says where it comes from; the hub's table
+//            leaves it out. paid: it costs money and the Chrome version is
+//            free. port: an official Safari port of the same extension. note:
+//            what to say about choosing it. prompt: Viaduct's list of official
+//            versions (SafariAlternatives.swift in viaduct-app) has this Chrome
+//            id, so a store install first asks whether you'd rather get that.
 // offStore = gone from the Chrome Web Store; the steps link the developer's own
-// package instead of the store listing.
-// limit = what the extension can't do once it runs in Safari; shown before the steps.
+//            package instead of the store listing.
+// limit    = what the extension can't do once it runs in Safari: [why, what
+//            happens instead]. The second half is the page's lede and goes in
+//            the hub's table; without a limit the table says "no known limits".
+// h1       = the honest headline when the extension's main job fails in Safari;
+//            the title and the JSON-LD headline follow it.
+// faq      = a question about this extension, from the media kit.
+// fix      = a Safari breakage Viaduct patches in this extension (media kit).
+// shot     = a screenshot of it running in Safari, encoded from the media kit.
+//            Either one gets the page a row of its own.
+// summary  = the meta description, where the composed one would leave out the
+//            fact that matters.
+// The page's icon is viaduct/assets/icons/<slug>.webp (128px, from the
+// extension's own package) when that file exists.
 const EXTENSIONS = [
   { slug: 'claude-in-chrome', name: 'Claude in Chrome', id: 'fcoeoabgfenejglbffodgkkbkcdhcgfn',
-    desc: 'Anthropic’s AI assistant that works right in your browser', category: 'AI assistants' },
+    desc: "Anthropic's AI assistant that works right in your browser", category: 'AI assistants',
+    faq: { q: 'Does sign-in work?',
+      a: 'Yes. So do the agent working in its own tab group and the Cowork connection from the Claude desktop app.' },
+    summary: 'Claude in Chrome has no official Safari version. Converted by Viaduct, its sign-in, agent tab group and Cowork connection all work in Safari.' },
   { slug: 'ublock-origin', name: 'uBlock Origin', id: 'cjpalhdlnbpafiamejdnhcphjbkeiagm',
     desc: 'the wide-spectrum content blocker', category: 'Privacy & ad blocking',
     official: { label: 'uBlock Origin Lite (Mac App Store)', url: 'https://apps.apple.com/us/app/ublock-origin-lite/id6745342698',
-      note: 'uBlock Origin’s developer makes uBlock Origin Lite for Safari, free on the Mac App Store, and it blocks requests for real. The full uBlock Origin blocks requests in a way Safari doesn’t allow, so converted it can hide ads on a page but can’t stop them loading.' },
-    offStore: { label: 'uBlock Origin releases on GitHub', url: 'https://github.com/gorhill/uBlock/releases' } },
+      note: "Made by uBlock Origin's developer, free, and it blocks requests for real." },
+    offStore: { label: 'uBlock Origin releases on GitHub', url: 'https://github.com/gorhill/uBlock/releases' },
+    limit: ["uBlock Origin blocks requests in a way Safari doesn't allow.",
+      "Converted by Viaduct, it can hide ads on a page but can't stop them loading."],
+    summary: "uBlock Origin Lite is its official Safari version. Converted by Viaduct, the full uBlock Origin can hide ads on a page but can't stop them loading." },
   { slug: 'tampermonkey', name: 'Tampermonkey', id: 'dhdgffkkebhmkfjojejmpbldmpobfkfo',
     desc: 'the most popular userscript manager', category: 'Userscripts',
-    official: { label: 'Tampermonkey (Mac App Store)', url: 'https://apps.apple.com/us/app/tampermonkey/id6738342400',
-      note: 'Tampermonkey ships an official paid Safari version. If you just want Tampermonkey, buy it; it supports the developer. Viaduct is for running the free Chrome build, or for extensions with no Safari port at all.' } },
+    official: { label: 'Tampermonkey (Mac App Store)', url: 'https://apps.apple.com/us/app/tampermonkey/id6738342400', paid: true, prompt: true } },
   { slug: 'violentmonkey', name: 'Violentmonkey', id: 'jinjaccalgkegednnccohejagnlnfdag',
     desc: 'the open-source userscript manager', category: 'Userscripts' },
   { slug: 'metamask', name: 'MetaMask', id: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
@@ -36,18 +69,22 @@ const EXTENSIONS = [
     desc: 'the extension that restores dislike counts on YouTube', category: 'YouTube' },
   { slug: 'sponsorblock', name: 'SponsorBlock', id: 'mnjggcdmjocbbbhaepdhchncahnbgone',
     desc: 'the extension that auto-skips sponsor segments in YouTube videos', category: 'YouTube',
-    official: { label: 'SponsorBlock for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/sponsorblock-for-safari/id1573461917',
-      note: 'SponsorBlock ships an official paid Safari version. If you just want SponsorBlock, buy it; it supports the developer. Viaduct is for running the free Chrome build, or for extensions with no Safari port at all.' } },
+    official: { label: 'SponsorBlock for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/sponsorblock-for-safari/id1573461917', paid: true, prompt: true } },
   { slug: 'stylus', name: 'Stylus', id: 'clngdbkpkpeebahjckkjfobafhncgmne',
     desc: 'custom CSS themes for any website', category: 'Customization' },
   { slug: 'dark-reader', name: 'Dark Reader', id: 'eimadpbcbfnmbkopoojfekhnkhdbieeh',
     desc: 'dark mode for every website', category: 'Customization',
-    official: { label: 'Dark Reader for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/dark-reader-for-safari/id1438243180',
-      note: 'Dark Reader ships an official paid Safari version. If you just want Dark Reader, buy it; it supports the developer. Viaduct is for running the free Chrome build, or for the day you want an extension that has no Safari port at all.' } },
+    official: { label: 'Dark Reader for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/dark-reader-for-safari/id1438243180', paid: true, prompt: true },
+    fix: "Safari reports an extension's ID differently from Chrome, so Dark Reader's popup buttons go dead: their messages never reach the background. Viaduct rewrites the ID, and the popup works.",
+    shot: { src: '/viaduct/assets/viaduct-dark-reader-safari.webp', width: 1400, height: 1071,
+      alt: "Dark Reader's popup open from Safari's toolbar, over its own page on the Chrome Web Store" },
+    summary: 'Dark Reader has a paid official Safari version. Viaduct runs the free Chrome one instead and fixes the popup buttons Safari breaks.' },
   { slug: 'clearurls', name: 'ClearURLs', id: 'lckanjgmijmafbedllaakclkaicjfmnk',
     desc: 'the extension that strips tracking parameters from links', category: 'Privacy & ad blocking',
     offStore: { label: 'ClearURLs releases on GitHub', url: 'https://github.com/ClearURLs/Addon/releases' },
-    limit: 'ClearURLs cleans most links by rewriting requests as they leave the browser, and Safari doesn’t let extensions do that. Converted, it installs and opens, but most links go through uncleaned.' },
+    limit: ["ClearURLs cleans most links by rewriting requests as they leave the browser, and Safari doesn't let extensions do that.",
+      'Converted by Viaduct, it installs and opens, but most links go through uncleaned.'],
+    h1: 'ClearURLs in Safari: it opens, but most links stay uncleaned' },
   { slug: 'decentraleyes', name: 'Decentraleyes', id: 'ldpochfccmkkmhdbclfhpagapcfdljkj',
     desc: 'local CDN emulation that blocks tracking requests', category: 'Privacy & ad blocking' },
   { slug: 'i-still-dont-care-about-cookies', name: "I still don't care about cookies", id: 'edibdbjcniadpccecjdfdjjppcpchdlm',
@@ -60,120 +97,406 @@ const EXTENSIONS = [
     desc: 'the power-user toolkit for Reddit', category: 'Social' },
   { slug: 'refined-github', name: 'Refined GitHub', id: 'hlepfoohegkhhmjieoechaddaejaokhf',
     desc: 'dozens of quality-of-life improvements for GitHub', category: 'Developer tools',
-    official: { label: 'Refined GitHub (Mac App Store)', url: 'https://apps.apple.com/us/app/refined-github/id1519867270',
-      note: 'Refined GitHub has an official Safari port on the Mac App Store. If that works for you, use it. Viaduct is for running the Chrome build directly, or for extensions with no port at all.' } },
+    official: { label: 'Refined GitHub (Mac App Store)', url: 'https://apps.apple.com/us/app/refined-github/id1519867270', port: true } },
   { slug: 'zotero-connector', name: 'Zotero Connector', id: 'ekhagklcjbdpajgpjgmbionohlpdbjgc',
-    desc: 'save references into Zotero from your browser', category: 'Research',
-    official: { label: 'Zotero desktop app (bundles a Safari extension)', url: 'https://www.zotero.org/download/',
-      note: 'Zotero bundles a Safari connector with its desktop app. If you run Zotero anyway, enable that first. Viaduct is for running the standalone Chrome connector, or any extension with no Safari option.' } },
+    desc: 'the extension that saves references into Zotero from your browser', category: 'Research',
+    official: { label: 'Zotero desktop app (zotero.org)', url: 'https://www.zotero.org/download/', prompt: true,
+      note: 'It comes with a Safari connector. If you run Zotero anyway, switch that on first.' } },
   { slug: 'ublacklist', name: 'uBlacklist', id: 'pncfbmialoiaghdehhbnbhkkgmjanfhe',
     desc: 'the extension that removes chosen sites from Google results', category: 'Search',
-    official: { label: 'uBlacklist for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/ublacklist-for-safari/id1547912640',
-      note: 'uBlacklist has an official Safari port on the Mac App Store. If that covers you, use it. Viaduct is for running the Chrome build directly, or for extensions with no port at all.' } },
+    official: { label: 'uBlacklist for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/ublacklist-for-safari/id1547912640', port: true } },
   { slug: 'web-archives', name: 'Web Archives', id: 'hkligngkgcpcolhcnkgccglchdafcnao',
     desc: 'one-click lookup of archived page versions (Wayback Machine and more)', category: 'Research',
-    official: { label: 'Web Archives for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/web-archives-for-safari/id1603181853',
-      note: 'Web Archives ships an official paid Safari version. If you just want Web Archives, buy it; it supports the developer. Viaduct is for running the free Chrome build, or for extensions with no Safari port at all.' } },
+    official: { label: 'Web Archives for Safari (Mac App Store)', url: 'https://apps.apple.com/us/app/web-archives-for-safari/id1603181853', paid: true } },
   { slug: 'user-agent-switcher', name: 'User-Agent Switcher and Manager', id: 'bhchdcejhohfmigjafbampogmaanbfkg',
-    desc: 'spoof or rotate your browser’s user agent', category: 'Developer tools' },
+    desc: "the extension that spoofs or rotates your browser's user agent", category: 'Developer tools' },
   { slug: 'xbrowsersync', name: 'xBrowserSync', id: 'lcbjdhceifofjlpecfpeimnnphbcjgnc',
     desc: 'encrypted bookmark sync across browsers', category: 'Sync',
     offStore: { label: 'xBrowserSync releases on GitHub', url: 'https://github.com/xbrowsersync/app/releases' },
-    limit: 'xBrowserSync syncs through the browser’s bookmarks API, which Safari doesn’t give extensions. Converted, it installs and opens, but it can’t read or change your Safari bookmarks.' },
+    limit: ["xBrowserSync syncs through the browser's bookmarks API, which Safari doesn't give extensions.",
+      "Converted by Viaduct, it installs and opens, but it can't read or change your Safari bookmarks."],
+    h1: "xBrowserSync in Safari: it opens, but can't sync bookmarks" },
+  { slug: 'vimium', name: 'Vimium', id: 'dbepggeogbaibhgnhhndojpepiihcmeb',
+    desc: 'Vim-style keyboard shortcuts for browsing', category: 'Productivity',
+    limit: ["Safari doesn't let extensions read your history or bookmarks.",
+      "Converted by Viaduct, it can't search your Safari history or bookmarks from the Vomnibar."] },
+  { slug: 'enhancer-for-youtube', name: 'Enhancer for YouTube', id: 'ponfpcnoihfmfllpaingbgckeeldkhle',
+    desc: 'the extension that adds player controls, shortcuts and themes to YouTube', category: 'YouTube' },
+  { slug: 'onetab', name: 'OneTab', id: 'chphlpgkkbolifaimnlloiipkdnihall',
+    desc: 'the extension that turns your open tabs into a list', category: 'Productivity',
+    official: { label: 'OneTab (Mac App Store)', url: 'https://apps.apple.com/us/app/onetab/id1540160809', port: true, prompt: true } },
+  { slug: 'react-developer-tools', name: 'React Developer Tools', id: 'fmkadmapgofadopljbjfkapdkoienihi',
+    desc: "the React team's inspector for components and renders", category: 'Developer tools',
+    official: { label: 'React Developer Tools standalone app (npm)', url: 'https://github.com/facebook/react/tree/main/packages/react-devtools',
+      note: "The React team's own way to debug React in Safari: run npx react-devtools and add its script tag to your page." },
+    limit: ["React Developer Tools listens for an Elements panel event that Safari's Web Inspector doesn't have.",
+      'Converted by Viaduct, it installs, but its Components and Profiler tabs are unlikely to load.'] },
+  { slug: 'vue-devtools', name: 'Vue.js devtools', id: 'nhdogjmejiglipccpnnnanhbledajbpd',
+    desc: "Vue's own inspector for components and state", category: 'Developer tools',
+    official: { label: 'Vue DevTools Vite plugin (npm)', url: 'https://devtools.vuejs.org/guide/vite-plugin',
+      note: "Vue's own option that needs no browser extension: the devtools open inside your app's page." },
+    faq: { q: 'Does it work with Vue 2?',
+      a: "This version supports Vue 3 only. Vue's docs point Vue 2 projects to the older v6 extension." } },
+  { slug: 'redux-devtools', name: 'Redux DevTools', id: 'lmhkpmbekcpmknklioeibfkpmmfibljd',
+    desc: 'the debugger for Redux state changes', category: 'Developer tools',
+    official: { label: 'Redux DevTools remote (npm)', url: 'https://github.com/reduxjs/redux-devtools/tree/main/packages/redux-devtools-remote',
+      note: "Redux's own option for other browsers: your app sends its state to the Redux DevTools monitor." } },
+  { slug: 'colorzilla', name: 'ColorZilla', id: 'bhlhnicpbhignbdhedgjhgdocnmhomnp',
+    desc: 'the eyedropper and color picker for web pages', category: 'Developer tools' },
+  { slug: 'google-translate', name: 'Google Translate', id: 'aapbdbdomjkkjkaonfhkkikfgjllcleb',
+    desc: "Google's extension for translating the text you select", category: 'Language',
+    faq: { q: "Doesn't Safari translate already?",
+      a: "It does, with Apple's own translation, from the Translate button in the address bar. The extension gives you Google's translation of the text you select instead." } },
 ];
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+// desc as a list entry: "the extension that restores dislike counts" reads as
+// "Restores dislike counts" beside the name.
+const blurb = (x) => cap(x.desc.replace(/^the extension that /, '').replace(/^the /, ''));
+const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const longDate = (iso) => new Date(`${iso}T12:00:00Z`)
+  .toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 
-// Shared page chrome. Tokens are lifted from ../index.html (the Theme.swift palette).
+// lastmod comes from the last commit that touched the page, not from mtime, so
+// regenerating these files doesn't tell crawlers the content changed. The
+// guides print the same date as "Updated" and as their JSON-LD dateModified, so
+// after committing a guide, run this again and commit what it rewrites.
+function lastmod(url) {
+  let rel = url.slice(`${SITE}/`.length);
+  if (rel === '' || rel.endsWith('/')) rel += 'index.html';
+  const date = execFileSync('git', ['log', '-1', '--format=%cs', '--', rel], {
+    cwd: ROOT,
+    encoding: 'utf8',
+  }).trim();
+  // Uncommitted page: fall back to today rather than emitting an empty element.
+  return date || new Date().toISOString().slice(0, 10);
+}
+
+// Categories in the order their first extension appears in EXTENSIONS.
+function categories() {
+  const groups = new Map();
+  for (const x of EXTENSIONS) groups.set(x.category, [...(groups.get(x.category) || []), x]);
+  return [...groups];
+}
+
+// Three other guides: up to two from x's category, then the next guides after x
+// in EXTENSIONS, wrapping round. The cap of two leaves every list a slot for the
+// guide after it, so no guide goes without a link from another.
+function related(x) {
+  const i = EXTENSIONS.indexOf(x);
+  const after = [...EXTENSIONS.slice(i + 1), ...EXTENSIONS.slice(0, i)];
+  const same = after.filter((y) => y.category === x.category).slice(0, 2);
+  return [...same, ...after.filter((y) => !same.includes(y))].slice(0, 3);
+}
+
+const icon = (slug) => fs.existsSync(path.join(ROOT, 'viaduct', 'assets', 'icons', `${slug}.webp`))
+  ? `/viaduct/assets/icons/${slug}.webp` : null;
+
+// One extension in the hub's table, with its own icon. Each cell says what it
+// holds, so a row still reads right once it stacks on a phone. The limit is the
+// guide's own sentence without its "Converted by Viaduct" opening.
+const compatRow = (x) => {
+  const src = icon(x.slug);
+  const official = x.official
+    ? `<td><a href="${x.official.url}" rel="noopener">${esc(x.official.label.replace(/\s*\([^)]*\)$/, ''))}</a>${x.official.paid ? ', paid' : ''}</td>`
+    : '<td class="no">No Safari version</td>';
+  const limit = x.limit
+    ? `<td>${esc(cap(x.limit[1].replace(/^Converted by Viaduct, it /, '')))}</td>`
+    : '<td class="no">No known limits</td>';
+  return `<tr><th scope="row"><a class="ext" href="/viaduct/extensions/${x.slug}/">${src ? `<img src="${src}" width="32" height="32" alt="" loading="lazy" decoding="async" />` : '<span class="ph"></span>'}<b>${esc(x.name)}</b></a></th>${official}${limit}</tr>`;
+};
+
+// "a, b and c"
+const andList = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
+
+// Shared page chrome, built on the product page's own system (viaduct.css):
+// the same 1152px column, the 4/8 ledger its Compatibility and Features
+// sections use, the framed screenshots and the bare teal step numerals. Tokens
+// are lifted from ../index.html (the Theme.swift palette).
 const CSS = `
 /* The pages only ship dark. The canvas is a near-black with a trace of green in
    it, so the teal accent sits on it like something lit, not a sticker on grey. */
 :root {
   color-scheme:dark;
   --canvas:#070908; --surface:#0E1211; --elevated:#151A19; --card:#1B211F;
-  --ink:#ECF2F0; --body:#A3B0AD; --mute:#85938F; --ash:#4E5B58; --stone:#333D3B;
+  --ink:#ECF2F0; --body:#A3B0AD; --mute:#85938F;
   --teal:#2DD4BF; --teal-press:#5FE3D2; --on-teal:#04211D;
-  --ok:#30D158; --bad:#FF7A7F;
-  --hair:rgba(255,255,255,.075); --hair-soft:rgba(255,255,255,.045); --hair-strong:rgba(255,255,255,.14);
-  --glow:rgba(45,212,191,.09); --brass:var(--teal);
+  --hair:rgba(255,255,255,.075); --hair-soft:rgba(255,255,255,.045);
   --lip:inset 0 1px 0 rgba(255,255,255,.055);
+  --ease:cubic-bezier(.16,1,.3,1);
 }
 * { box-sizing:border-box; }
+html { scroll-padding-top:86px; }
 body {
   margin:0; background:var(--canvas); color:var(--body);
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',system-ui,sans-serif;
-  line-height:1.6; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden;
+  font-size:16.5px; line-height:1.65; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden;
 }
 ::selection { background:var(--teal); color:var(--on-teal); }
-/* Film grain over the whole page. Keeps the near-black from banding on the big
-   gradients and takes the plastic off the flat fills. */
+/* Film grain over the whole page. Keeps the near-black from banding and takes
+   the plastic off the flat fills. */
 body::after {
   content:""; position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.035;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-h1,h2,h3 { color:var(--ink); letter-spacing:-.02em; line-height:1.15; }
-h1,h2 { font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; letter-spacing:-.025em; }
+h1,h2,h3 { color:var(--ink); margin:0; font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; letter-spacing:-.025em; line-height:1.08; text-wrap:balance; }
+p { margin:0 0 16px; text-wrap:pretty; }
 a { color:var(--teal); text-decoration:none; }
-a:hover { text-decoration:underline; }
-code { font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular','SF Mono',Menlo,monospace; color:var(--teal); font-size:.92em; }
-.wrap { max-width:760px; margin:0 auto; padding:0 24px; }
-main.wrap { padding-top:110px; padding-bottom:24px; }
+a:hover { text-decoration:underline; text-underline-offset:3px; }
+strong { color:var(--ink); font-weight:600; }
+code { font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace; color:var(--ink); font-size:.86em; padding:1px 5px; border-radius:5px; background:var(--elevated); }
+.wrap { max-width:1152px; margin:0 auto; padding:0 24px; }
 .btn-teal, .btn-ghost {
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  font-size:15px; padding:11px 22px; text-decoration:none;
+  font-size:15px; padding:11px 22px; text-decoration:none; border-radius:999px;
 }
 .btn-sm { font-size:13.5px; padding:7px 14px; }
 .btn-teal:hover, .btn-ghost:hover { text-decoration:none; }
-.btn-teal { background:var(--teal); color:var(--on-teal); font-weight:600; border-radius:999px; box-shadow:inset 0 1px 0 rgba(255,255,255,.3); transition:transform .22s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .25s; }
-.btn-teal:hover { background:var(--teal-press); transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 6px 28px -6px rgba(45,212,191,.55); }
-.btn-teal:active { transform:translateY(0) scale(.99); }
-.btn-ghost { background:rgba(255,255,255,.05); color:var(--ink); border:1px solid rgba(255,255,255,.12); border-radius:999px; box-shadow:var(--lip); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); transition:transform .22s cubic-bezier(.2,.8,.2,1), border-color .2s, background .2s; }
+.btn-teal { background:var(--teal); color:var(--on-teal); font-weight:600; box-shadow:inset 0 1px 0 rgba(255,255,255,.3); transition:transform .22s var(--ease), background .2s; }
+.btn-teal:hover { background:var(--teal-press); transform:translateY(-1px); }
+.btn-ghost { background:rgba(255,255,255,.05); color:var(--ink); border:1px solid rgba(255,255,255,.12); box-shadow:var(--lip); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); transition:transform .22s var(--ease), border-color .2s, background .2s; }
 .btn-ghost:hover { background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.2); transform:translateY(-1px); }
-.btn-ghost:active { transform:translateY(0) scale(.99); }
-.crumb { font-size:13px; color:var(--mute); margin:0 0 14px; }
+
+/* Page head: crumb, the extension's own icon when there is one, a big
+   headline and one paragraph. */
+.top { padding:148px 0 72px; }
+.crumb { font-size:13.5px; color:var(--mute); margin:0 0 40px; }
 .crumb a { color:var(--mute); }
-.hero h1 { font-size:clamp(2.2rem,5.5vw,3.4rem); margin:0 0 16px; text-wrap:balance; }
-.hero p.lede { font-size:18px; max-width:56ch; }
-.card { background:var(--surface); border:1px solid var(--hair); border-radius:14px; padding:24px; box-shadow:var(--lip); }
-.callout { border:1px solid color-mix(in srgb, var(--teal) 45%, transparent); background:color-mix(in srgb, var(--teal) 8%, var(--surface)); }
-.steps { counter-reset:step; list-style:none; padding:0; margin:0; border-bottom:1px solid var(--hair); }
-.steps li { counter-increment:step; border-top:1px solid var(--hair); padding:22px 0 22px 58px; position:relative; }
-.steps li::before {
-  content:counter(step); position:absolute; left:2px; top:16px;
-  font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; font-size:30px; color:var(--teal);
+.crumb a:hover { color:var(--ink); }
+.top h1 { font-size:clamp(2.5rem,5.4vw,4.25rem); line-height:1.02; max-width:17ch; margin-bottom:24px; }
+.lede { font-size:clamp(1.08rem,1.9vw,1.25rem); line-height:1.6; max-width:40rem; margin:0; }
+
+/* The ledger: each section is a row, its heading held in the left column while
+   the body scrolls past on the right. */
+.row { display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:24px clamp(40px,5vw,72px); padding:64px 0; border-top:1px solid var(--hair); }
+.row > h2 { position:sticky; top:112px; align-self:start; font-size:clamp(1.55rem,2.5vw,2rem); max-width:13ch; }
+.row__body { min-width:0; }
+.row__body > :last-child { margin-bottom:0; }
+.row__body p { max-width:62ch; }
+
+/* Steps: bare numerals in the accent, hairlines between. In the
+   demonstration the numbers of the steps the recording shows are buttons. */
+.steps { list-style:none; padding:0; margin:0; }
+.steps li { display:grid; grid-template-columns:44px minmax(0,1fr); gap:0 16px; padding:18px 0; border-top:1px solid var(--hair); }
+.steps li:last-child { border-bottom:1px solid var(--hair); }
+.steps p { margin:0; padding-top:6px; }
+.step__n { display:block; width:44px; height:44px; margin:0; padding:0; border:0; background:none; text-align:left; font:800 32px/44px 'Cabinet Grotesk',Inter,sans-serif; color:var(--teal); }
+button.step__n { cursor:pointer; border-radius:8px; }
+button.step__n:hover { color:var(--teal-press); }
+button.step__n:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
+
+/* The demonstration: the steps on the lead side, the recording framed on the
+   trail side, capped by the stage height so the whole window stays on screen
+   while the act holds. While it tracks, the step the footage is on is lit
+   and the rest fall back to the muted ink. */
+.demo { --ar:16 / 9; border-top:1px solid var(--hair); }
+.demo__stage {
+  display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); grid-template-rows:1fr auto auto 1fr;
+  grid-template-areas:". f" "h f" "s f" ". f"; gap:0 clamp(32px,4vw,64px); align-items:center;
+  max-width:1152px; margin:0 auto; padding:96px 24px 40px;
 }
-.steps li strong { color:var(--ink); }
-section { margin:56px 0; }
-h2 { font-size:clamp(1.5rem,3.4vw,2rem); margin:0 0 16px; }
-main > section > h2 { border-top:1px solid var(--hair); padding-top:28px; }
-details { border-bottom:1px solid var(--hair); padding:14px 0; }
-details summary { cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
+.demo__stage > h2 { grid-area:h; font-size:clamp(1.55rem,2.5vw,2rem); margin-bottom:20px; }
+.demo__stage > .steps { grid-area:s; align-self:start; }
+.demo__frame { grid-area:f; justify-self:end; margin:0; width:min(100%, (100svh - 230px) * (var(--ar)) + 14px); }
+.demo__slot { position:relative; aspect-ratio:var(--ar); border-radius:11px; overflow:hidden; background:var(--elevated); }
+.demo__slot > img, .demo__slot > video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.demo--plain .demo__slot > img { display:none; }
+.demo__frame figcaption { padding:10px 6px 4px; font-size:13.5px; color:var(--mute); }
+.demo--plain .demo__stage { padding-top:64px; padding-bottom:64px; }
+.demo.is-tracking .steps li { color:var(--mute); transition:color .3s var(--ease); }
+.demo.is-tracking .steps li strong { color:var(--mute); transition:color .3s var(--ease); }
+.demo.is-tracking .steps li .step__n { color:var(--mute); transition:color .3s var(--ease); }
+.demo.is-tracking .steps li.is-on, .demo.is-tracking .steps li.is-on strong { color:var(--ink); }
+.demo.is-tracking .steps li.is-on .step__n { color:var(--teal); }
+
+/* Screenshots sit in the product page's frame: a lipped surface, 6px of it
+   showing round the image. */
+.frame { margin:24px 0 0; padding:6px; background:var(--surface); border:1px solid var(--hair); border-radius:16px; box-shadow:var(--lip), 0 24px 60px -30px rgba(0,0,0,.7); }
+.frame img { display:block; width:100%; height:auto; border-radius:11px; }
+
+/* Other guides, as one line. */
+.more { border-top:1px solid var(--hair); padding:32px 0; margin:0; color:var(--mute); }
+.more a { color:var(--ink); }
+.more a:hover { color:var(--teal); text-decoration:none; }
+
+/* The padding sits on the summary, so the whole row takes the tap. */
+details { border-bottom:1px solid var(--hair); }
+details:first-child { border-top:1px solid var(--hair); }
+details summary { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 0; cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
 details summary::-webkit-details-marker { display:none; }
-details p { margin:10px 0 0; font-size:15px; }
+details p { margin:0 0 18px; max-width:62ch; }
+.chev { width:20px; height:20px; flex:none; fill:none; stroke:var(--mute); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s var(--ease); }
+details[open] .chev { transform:rotate(180deg); }
+
+/* Other guides, by name only. */
+.names { list-style:none; margin:0; padding:0; columns:2 220px; column-gap:32px; }
+.names li { break-inside:avoid; }
+.names a { display:block; padding:8px 0; color:var(--ink); }
+.names a:hover { color:var(--teal); text-decoration:none; }
+
+.meta { border-top:1px solid var(--hair); padding:32px 0 0; margin-top:8px; font-size:13px; line-height:1.6; color:var(--mute); }
+.meta p { max-width:70ch; margin:0 0 8px; }
 footer { border-top:1px solid var(--hair); margin-top:72px; padding:32px 0 48px; font-size:13px; color:var(--mute); }
-footer .links { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:16px; }
-footer .links a { color:var(--mute); }
-footer .links a:hover { color:var(--teal); }
-.legal { max-width:760px; margin:64px auto 0; padding:0 24px; font-size:12.5px; line-height:1.6; color:var(--mute); }
-.legal a { color:var(--mute); }
-.index { margin:0; padding:0; list-style:none; }
-.index a.row { display:grid; grid-template-columns:240px 1fr auto; gap:20px; align-items:baseline; padding:16px 12px; margin:0 -12px; border-top:1px solid var(--hair); color:inherit; transition:background .2s; }
-.index a.row:last-child { border-bottom:1px solid var(--hair); }
-.index a.row:hover { background:var(--glow); text-decoration:none; }
-.index .row b { font-family:'Cabinet Grotesk',Inter,sans-serif; font-size:16px; font-weight:700; color:var(--ink); }
-.index .row .d { font-size:14px; color:var(--mute); }
-.index .row .c { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--teal); white-space:nowrap; }
-@media (max-width:640px) { .index a.row { grid-template-columns:1fr; gap:4px; } .index .row .c { order:-1; } }
-.tag { display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--teal); margin-bottom:8px; }
+
+/* Read aloud, not shown. */
+.sr { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+/* Side-by-side tables (the general guide's three ways, the developer guide's
+   comparison): phones drop the header row and label each cell instead. */
+.ways { width:100%; border-collapse:collapse; table-layout:fixed; font-size:15px; line-height:1.55; }
+.ways th, .ways td { text-align:left; vertical-align:baseline; padding:16px 16px 16px 0; border-top:1px solid var(--hair); }
+.ways th:last-child, .ways td:last-child { padding-right:0; }
+.ways thead th { border-top:0; padding-top:0; font-size:13.5px; font-weight:400; color:var(--mute); }
+.ways tbody th { font-weight:600; color:var(--ink); }
+.ways tbody tr:last-child > * { border-bottom:1px solid var(--hair); }
+.ways td::before { content:attr(data-label); display:none; }
+
+/* The hub's tables: extension, its official Safari version, its limits. */
+.compat { width:100%; border-collapse:collapse; table-layout:fixed; font-size:15px; line-height:1.5; }
+.compat .c-ext { width:36%; }
+.compat .c-off { width:30%; }
+.compat thead th { padding:0; border:0; }
+.compat tbody th, .compat td { text-align:left; font-weight:400; vertical-align:middle; padding:14px 16px 14px 0; border-top:1px solid var(--hair); }
+.compat td:last-child { padding-right:0; }
+.compat .ext { display:flex; align-items:center; gap:14px; color:var(--ink); }
+.compat .ext img, .compat .ph { width:32px; height:32px; flex:none; }
+.compat .ext b { font-weight:600; transition:color .2s; }
+.compat .ext:hover { text-decoration:none; }
+.compat .ext:hover b { color:var(--teal); }
+.compat .no { color:var(--mute); }
+
+pre { margin:20px 0; padding:16px 18px; background:var(--surface); border:1px solid var(--hair); border-radius:12px; box-shadow:var(--lip); white-space:pre-wrap; overflow-x:auto; }
+pre code { padding:0; background:none; font-size:13.5px; color:var(--teal); }
+/* Broken after one of its hyphens, the tool's name reads as two words. */
+pre .nw { white-space:nowrap; }
+
 a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--teal); outline-offset:3px; border-radius:6px; }
+
+@media (max-width:860px) {
+  .top { padding:124px 0 48px; }
+  .crumb { margin-bottom:28px; }
+  .row { grid-template-columns:1fr; padding:48px 0; }
+  .row > h2 { position:static; max-width:none; }
+}
+@media (max-width:640px) {
+  .demo__stage { grid-template-columns:1fr; grid-template-rows:none; grid-template-areas:"h" "f" "s"; padding-left:0; padding-right:0; }
+  .demo__frame { justify-self:stretch; width:auto; margin-bottom:24px; }
+  .ways thead { display:none; }
+  .ways, .ways tbody, .ways tr, .ways tbody th, .ways td { display:block; width:auto; }
+  .ways tbody tr { padding:16px 0; border-top:1px solid var(--hair); }
+  .ways tbody tr:last-child { border-bottom:1px solid var(--hair); }
+  .ways tbody th, .ways td, .ways tbody tr:last-child > * { padding:0; border:0; }
+  .ways td { margin-top:10px; }
+  .ways td::before { display:block; font-size:13.5px; color:var(--mute); }
+  .compat thead { display:none; }
+  .compat, .compat tbody, .compat tr, .compat tbody th, .compat td { display:block; width:auto; }
+  .compat tbody tr { padding:16px 0; border-top:1px solid var(--hair); }
+  .compat tbody th, .compat td { padding:0; border:0; }
+  .compat td { margin:6px 0 0 46px; }
+}
+/* One-line links in tables and lists; widen what catches a tap. */
+@media (pointer:coarse) {
+  .compat td a, .names a { position:relative; }
+  .compat td a::after { content:""; position:absolute; inset:-13px -6px; }
+  .names a { padding:11px 0; }
+}
+@media (prefers-reduced-motion: reduce) { .btn-teal, .btn-ghost, .chev, .compat .ext b { transition:none; } }
 `;
+
+// A ledger row: the heading on the left, everything else on the right.
+const ledger = (h2, body, id) => {
+  const hid = `${id || slugify(h2.replace(/<[^>]+>/g, ''))}-h`;
+  return `
+<section class="row"${id ? ` id="${id}"` : ''} aria-labelledby="${hid}">
+  <h2 id="${hid}">${h2}</h2>
+  <div class="row__body">
+${body}
+  </div>
+</section>`;
+};
+
+// The head every page opens with, and all it holds: crumb, headline, one
+// sentence. The demonstration comes straight after it.
+const pageTop = ({ crumbs, h1, lede }) => `
+<div class="top">
+  <nav class="crumb" aria-label="Breadcrumb">${crumbs}</nav>
+  <h1>${h1}</h1>
+  <p class="lede">${lede}</p>
+</div>`;
+
+const frame = (src, width, height, alt, lazy = true) =>
+  `<figure class="frame"><img src="/viaduct/assets/${src}" width="${width}" height="${height}" alt="${alt}"${lazy ? ' loading="lazy"' : ''} decoding="async" /></figure>`;
+
+const faqRow = (faqs) => ledger('Questions', faqs.map(([q, a]) => `    <details><summary>${esc(q)}${CHEV}</summary>
+      <p>${a}</p></details>`).join('\n'));
+
+const namesRow = (h2, links) => ledger(h2, `    <ul class="names">
+      ${links.map(([name, href]) => `<li><a href="${href}">${esc(name)}</a></li>`).join('\n      ')}
+    </ul>`);
+
+// Other guides, as one line rather than a section of their own.
+const moreLine = (links) => `
+<nav class="more" aria-label="More guides">More guides: ${andList(links.map(([name, href]) => `<a href="${href}">${esc(name)}</a>`))}.</nav>`;
+
+// The real recordings a demonstration can play, all from the media kit: the
+// Dark Reader install from the Chrome Web Store, the drop-and-convert of its
+// .crx, and TWP converting (its long build compressed). Each has a scrub
+// master, a -phone cut, and -poster first frames (DESIGN.md, Assets).
+// `at`: the second in each recording where a step begins, read off its frames.
+// `phone`: the size of the -phone cut, cropped in on the action so it reads at
+// phone width; phones play it rather than scrub it.
+const VIDEOS = {
+  store: { file: 'viaduct-install', w: 1440, h: 810, phone: [960, 720], at: { open: 0, click: 6.2, on: 14 },
+    label: "Screen recording in Safari: Add to Safari is clicked on the Dark Reader listing in the Chrome Web Store, Viaduct builds and signs it, the button becomes Remove from Safari, and Dark Reader's popup opens from the toolbar." },
+  drop: { file: 'viaduct-drop', w: 1260, h: 940, phone: [640, 720], at: { drop: 2.5, convert: 5.2, on: 12 },
+    label: "Screen recording of Viaduct: Dark Reader's .crx is dropped on the window, Convert & Install is clicked, and Viaduct builds, signs and installs it." },
+  batch: { file: 'viaduct-batch', w: 1388, h: 1016, phone: [686, 720], at: { convert: 0, on: 9 },
+    label: 'Screen recording of Viaduct converting TWP - Translate Web Pages: it builds and signs the extension, then shows Installed in Safari.' },
+};
+
+// steps: [html, t] pairs. t is the second in the recording where that step
+// starts; a step the recording doesn't show (setup) has none.
+const stepsList = (steps) => `<ol class="steps">${steps.map(([html, t], i) => `
+      <li${t == null ? '' : ` data-t="${t}"`}>${t == null
+    ? `<span class="step__n" aria-hidden="true">${i + 1}</span>`
+    : `<button type="button" class="step__n" aria-label="Show step ${i + 1} in the recording">${i + 1}</button>`}<p>${html}</p></li>`).join('')}
+    </ol>`;
+
+// The page's peak: the steps beside the recording, scrubbed by the wheel on
+// desktop (viaduct/assets/guide.js plays it on phones). `note` says what the
+// recording shows when it isn't the page's own extension. No dwell: a dwell
+// slows the clip while the stage is pinned, which is where every step's moment
+// has to land for the steps to track it and for a step's button to reach it.
+const demoAct = (heading, kind, steps, note) => {
+  const v = typeof kind === 'string' ? VIDEOS[kind] : kind;
+  return `
+<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4" data-phone-ar="${v.phone[0]} / ${v.phone[1]}" aria-labelledby="demo-h" style="--ar:${v.w} / ${v.h}">
+  <div class="demo__stage" data-sc-stage>
+    <h2 id="demo-h">${heading}</h2>
+    ${stepsList(steps)}
+    <figure class="frame demo__frame"><div class="demo__slot">
+      <img class="sc-stage__poster" src="/viaduct/assets/${v.file}-poster.webp" width="${v.w}" height="${v.h}" alt="" />
+      <video data-sc-scrub data-sc-src="/viaduct/assets/${v.file}.mp4" data-sc-src-mobile="/viaduct/assets/${v.file}-phone.mp4" data-phone-poster="/viaduct/assets/${v.file}-phone-poster.webp" width="${v.w}" height="${v.h}" muted playsinline aria-label="${esc(v.label)}"></video>
+    </div>${note ? `<figcaption>${note}</figcaption>` : ''}</figure>
+  </div>
+</section>`;
+};
+
+// The first step of every demonstration, which the recordings don't show.
+const setupStep = (rest) => [`<strong><a href="/viaduct/">Get Viaduct</a> and run its setup.</strong> ${rest}`, null];
+
+// The price, said once, in the one place on each page a reader looks for it.
+const PRICE_FAQ = ['What does Viaduct cost?',
+  'Two conversions are free, and Viaduct removes them after 7 days. Pro is $19 once: it converts as many as you like and keeps them installed.'];
 
 // These pages run no inline JavaScript: the scripts are the first-party
 // /assets/footer.js, /assets/attribution.js, /assets/analytics.js and
 // /viaduct/assets/nav.js, plus the Umami tracker analytics.js loads from
-// cloud.umami.is, which reports to gateway.umami.is. frame-ancestors is ignored
-// when a policy arrives via <meta>, so framing is not covered here.
-const CSP = "default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests";
+// cloud.umami.is, which reports to gateway.umami.is. The fonts are the site's
+// own (/assets/fonts.css). frame-ancestors is ignored when a policy arrives via
+// <meta>, so framing is not covered here.
+const CSP = "default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests";
 
 // Social card: one image for the whole section, cropped to the 1.91:1 the
 // scrapers want. JPEG rather than the .webp hero because several scrapers still
@@ -182,11 +505,25 @@ const OG_IMAGE = `${SITE}/viaduct/assets/viaduct-og.jpg`;
 const OG_IMAGE_W = 1200;
 const OG_IMAGE_H = 630;
 
+// The homepage defines this node; the pages here point at it by @id and keep the
+// name and url so each block still stands on its own.
+const ORG = { '@type': 'Organization', '@id': `${SITE}/#organization`, name: 'Magicelk Labs', url: `${SITE}/` };
+
+// [name, url] pairs, root first. The last crumb is the page itself and has no url.
+const breadcrumbs = (trail) => ({
+  '@type': 'BreadcrumbList',
+  itemListElement: trail.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, ...(item && { item }) })),
+});
+
 // Escaping "<" keeps a stray "</script>" inside any interpolated string from
 // closing the block early.
 const ldjson = (obj) => JSON.stringify(obj, null, 2).replace(/</g, '\\u003c');
 
-function head({ title, description, canonical, imageAlt, jsonld }) {
+const CHEV = '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+
+// `demo`: the page has a demonstration, so it loads the scroll-craft engine's
+// stylesheet here and the engine with guide.js at the end of the body.
+function head({ title, description, canonical, imageAlt, jsonld, css = '', demo = false }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -214,12 +551,11 @@ function head({ title, description, canonical, imageAlt, jsonld }) {
 <meta name="twitter:title" content="${esc(title)}" />
 <meta name="twitter:description" content="${esc(description)}" />
 <meta name="twitter:image" content="${OG_IMAGE}" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
-<style>${CSS}</style>
+<link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="/assets/fonts.css?v=1" />
+<link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />${demo ? `
+<link rel="stylesheet" href="/viaduct/assets/scrollcraft.css?v=2" />` : ''}
+<style>${CSS}${css}</style>
 <script type="application/ld+json">
 ${ldjson(jsonld)}
 </script>
@@ -227,7 +563,10 @@ ${ldjson(jsonld)}
 </head>`;
 }
 
-function chrome(inner) {
+// `updated` is the ISO date the page prints at its foot, beside the trademark
+// note; the hub, which has no date, passes none.
+function chrome(inner, updated) {
+  const demo = inner.includes('data-demo');
   return `
 <body>
 <header id="nav" class="nav">
@@ -250,10 +589,11 @@ function chrome(inner) {
 </header>
 <main class="wrap">
 ${inner}
+<div class="meta">${updated ? `
+  <p>Updated <time datetime="${updated}">${longDate(updated)}</time></p>` : ''}
+  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple or Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
+</div>
 </main>
-<p class="legal">All extension names are trademarks of their respective owners. Viaduct is not
-affiliated with or endorsed by the developers of the extensions listed here, nor by Apple or
-Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
 <div id="site-footer"></div>
 <script src="/assets/footer.js" data-product="Viaduct" data-links-only="1" data-links="Viaduct|/viaduct/, All extensions|/viaduct/extensions/, How it works|/viaduct/#how, Privacy|/viaduct/privacy.html, Terms|/viaduct/terms.html"></script>
 <noscript>
@@ -271,7 +611,9 @@ Google. Viaduct converts extensions locally on your Mac; nothing is redistribute
   </footer>
 </noscript>
 <script src="/viaduct/assets/nav.js?v=1"></script>
-<script src="/assets/attribution.js"></script>
+<script src="/assets/attribution.js"></script>${demo ? `
+<script src="/viaduct/assets/scrollcraft.js?v=2"></script>
+<script src="/viaduct/assets/guide.js?v=1"></script>` : ''}
 </body>
 </html>`;
 }
@@ -279,195 +621,500 @@ Google. Viaduct converts extensions locally on your Mac; nothing is redistribute
 function extensionPage(x) {
   const store = x.offStore ? x.offStore.url : STORE(x.id);
   const canonical = `${SITE}/viaduct/extensions/${x.slug}/`;
-  const title = `Run ${x.name} in Safari · Viaduct`;
-  const description = x.official
-    ? `${x.name} on Safari: what the official option covers, and how to run the Chrome version natively in Safari with Viaduct.`
-    : `${x.name} has no Safari version. Viaduct converts the real Chrome extension into a native Safari extension. ${x.offStore ? 'You never open a terminal.' : 'One click, no terminal.'}`;
+  const updated = lastmod(canonical);
+  const h1 = x.h1 || `Run ${x.name} in Safari`;
+  const title = `${h1} · Viaduct`;
+  const status = !x.official ? 'has no official Safari version'
+    : x.official.paid ? 'has a paid official Safari version'
+    : x.official.port ? 'has an official Safari port'
+    : 'has an official Safari option';
+  // Built from the extension's own fields. Past 160 characters the desc goes,
+  // so the part that says what happens in Safari survives the snippet.
+  const tail = x.limit ? x.limit[1]
+    : x.official ? `Or run the ${x.official.paid ? 'free ' : ''}Chrome version with Viaduct.`
+    : 'Viaduct converts the Chrome version for Safari.';
+  const full = `${x.name}, ${x.desc}, ${status}. ${tail}`;
+  const description = x.summary || (full.length <= 160 ? full : `${x.name} ${status}. ${tail}`);
 
   // The card image is Viaduct's own window, so the alt describes that, but names
   // the extension this page is about so no two pages ship the same string.
   const imageAlt = `The Viaduct app window on macOS, its drop target ready to convert the ${x.name} Chrome extension into a native Safari extension`;
 
-  // TechArticle: this page is a how-to for one extension. No dates, no author
-  // names, and no ratings, because nothing on the page sources them.
+  // TechArticle: this page is a how-to for one extension. dateModified is the
+  // date the page prints as "Updated"; no author names and no ratings, because
+  // nothing on the page sources them.
   const jsonld = {
     '@context': 'https://schema.org',
-    '@type': 'TechArticle',
-    headline: title,
-    description,
-    url: canonical,
-    inLanguage: 'en-US',
-    image: OG_IMAGE,
-    author: { '@type': 'Organization', name: 'Magicelk Labs', url: SITE },
-    publisher: { '@type': 'Organization', name: 'Magicelk Labs', url: SITE },
-    about: {
-      '@type': 'SoftwareApplication',
-      name: x.name,
-      description: x.desc.charAt(0).toUpperCase() + x.desc.slice(1),
-      applicationCategory: 'BrowserApplication',
-      url: store,
-    },
+    '@graph': [
+      {
+        '@type': 'TechArticle',
+        headline: h1,
+        description,
+        url: canonical,
+        inLanguage: 'en-US',
+        image: OG_IMAGE,
+        dateModified: updated,
+        author: ORG,
+        publisher: ORG,
+        about: {
+          '@type': 'SoftwareApplication',
+          name: x.name,
+          description: blurb(x),
+          applicationCategory: 'BrowserApplication',
+          url: store,
+        },
+      },
+      breadcrumbs([['Viaduct', `${SITE}/viaduct/`], ['Extensions', `${SITE}/viaduct/extensions/`], [x.name]]),
+    ],
   };
 
-  const officialBlock = x.official ? `
-<section>
-  <div class="card callout">
-    <strong style="color:var(--ink)">Good news first: an official option exists.</strong>
-    <p style="margin:8px 0 0">${esc(x.official.note)}<br />
-    → <a href="${x.official.url}" rel="noopener">${esc(x.official.label)}</a></p>
-  </div>
-</section>` : '';
-
-  const limitBlock = x.limit ? `
-<section>
-  <div class="card callout">
-    <strong style="color:var(--ink)">What won't work in Safari</strong>
-    <p style="margin:8px 0 0">${esc(x.limit)}</p>
-  </div>
-</section>` : '';
-
-  const noPortLede = x.official
-    ? `There's an official Safari option for ${x.name} (linked below). There's also
-       Viaduct, which runs the actual Chrome build in Safari, the same way it runs the
-       thousands of extensions that never got a port.`
-    : `${x.name}, ${x.desc}, has no official Safari version. Safari can't load Chrome
-       extensions: it uses its own native <code>.appex</code> format that must be built,
-       code-signed, and registered with macOS. Viaduct does all of that for you.`;
+  // One sentence under the headline: the limit when there is one, otherwise
+  // where it stands against its developer's own Safari version.
+  const lede = x.limit ? esc(x.limit[1])
+    : x.official?.paid ? `${esc(x.name)} has a paid Safari version. Viaduct runs the free Chrome one instead.`
+    : x.official?.port ? 'Its developer makes a Safari version too. Viaduct runs the Chrome one you already know.'
+    : x.official ? 'Viaduct converts the Chrome version into a Safari extension on your Mac.'
+    : 'It has no Safari version. Viaduct converts the Chrome one into a Safari extension on your Mac.';
 
   // Off the store, the package comes from the developer and gets dropped on
-  // Viaduct; on it, the store's "Add to Safari" button does the work.
-  const steps = x.offStore ? `
-    <li><strong><a href="/viaduct/">Get Viaduct</a></strong>. Free for your first 2 conversions.</li>
-    <li><strong>Download ${esc(x.name)}'s Chromium package from its developer.</strong> It's no longer on the Chrome Web Store.<br />
-        <a href="${store}" rel="noopener">${esc(x.offStore.label)} →</a></li>
-    <li><strong>Drop it on Viaduct.</strong> Viaduct converts ${esc(x.name)} to a native Safari extension, signs it, and installs it. Switch it on once in Safari's settings and it appears in the toolbar, like any other extension.</li>` : `
-    <li><strong><a href="/viaduct/">Get Viaduct</a></strong>. Free for your first 2 conversions. Turn on its small Safari extension once, and it upgrades the Chrome Web Store.</li>
-    <li><strong>Open ${esc(x.name)}'s Chrome Web Store page in Safari.</strong><br />
-        <a href="${store}" rel="noopener">${esc(x.name)} on the Chrome Web Store →</a></li>
-    <li><strong>Click "Add to Safari."</strong> The store's "Add to Chrome" button becomes "Add to Safari." ${x.official
-      ? 'If Viaduct points you to the official version first, choose Convert Anyway. It then fetches'
-      : 'One click: Viaduct fetches'} ${esc(x.name)}, converts it to a native Safari extension, signs it, and installs it. Switch it on once in Safari's settings and it appears in the toolbar, like any other extension.</li>`;
-  const source = x.offStore
-    ? `takes the exact ${esc(x.name)} package its developers publish`
-    : `downloads the exact ${esc(x.name)} package published on the Chrome Web Store`;
+  // Viaduct; on it, the store's "Add to Safari" button does the work. The
+  // times are where each step starts in the recording.
+  const prompt = x.official?.prompt;
+  const rec = VIDEOS[x.offStore ? 'drop' : 'store'];
+  const steps = x.offStore ? [
+    setupStep('It walks you through installing Xcode (free) and signing in to it with any Apple ID.'),
+    [`<strong>Download the .zip from <a href="${store}" rel="noopener">${esc(x.offStore.label)}</a>.</strong> It's no longer on the Chrome Web Store.`, null],
+    ['<strong>Drop the .zip on Viaduct and click Convert &amp; Install.</strong> Building and signing takes a minute or two.', rec.at.drop],
+    ['<strong>Switch it on</strong> in Safari → Settings → Extensions.', rec.at.on],
+  ] : [
+    setupStep('It walks you through installing Xcode (free), signing in to it with any Apple ID and turning on the Add to Safari button.'),
+    [`<strong>Open <a href="${store}" rel="noopener">${esc(x.name)} on the Chrome Web Store</a> in Safari.</strong>`, rec.at.open],
+    [`<strong>Click Add to Safari${prompt ? ', then Convert Anyway' : ''}.</strong> ${prompt ? 'Viaduct first offers the official Safari version, then ' : 'Viaduct '}downloads, converts and signs it.`, rec.at.click],
+    ["<strong>Switch it on</strong> in Safari → Settings → Extensions, and it's in your toolbar.", rec.at.on],
+  ];
 
-  return head({ title, description, canonical, imageAlt, jsonld }) + chrome(`
-<div class="crumb"><a href="/viaduct/extensions/">Extensions</a> / ${esc(x.name)}</div>
-<div class="hero">
-  <span class="tag">${esc(x.category)}</span>
-  <h1>Run ${esc(x.name)} in Safari</h1>
-  <p class="lede">${noPortLede}</p>
-</div>
-${officialBlock}${limitBlock}
-<section>
-  <h2>The whole process, three steps</h2>
-  <ol class="steps">${steps}
-  </ol>
-</section>
+  const off = x.official && x.official.label.match(/^(.*?)\s*\(([^)]*)\)$/);
+  const officialAnswer = x.official && `Yes: <a href="${x.official.url}" rel="noopener">${esc(off ? off[1] : x.official.label)}</a>${off ? ` (${esc(off[2])}${x.official.paid ? ', paid' : ''})` : ''}. ${x.official.paid
+    ? 'The Chrome version is free; buying the Safari one supports its developer.'
+    : esc(x.official.note || (prompt ? 'Viaduct offers it before converting the Chrome one.' : ''))}`.trim();
 
-<!-- MEDIA-SLOT: ${x.slug}. Uncomment and fill after testing this extension.
-<section>
-  <h2>${esc(x.name)} running in Safari</h2>
-  <figure class="card" style="padding:12px">
-    <img src="media/${x.slug}-safari.png" alt="${esc(x.name)} running natively in Safari" style="width:100%;border-radius:8px;display:block" />
-    <figcaption style="font-size:13px;color:var(--mute);margin-top:8px">${esc(x.name)}, converted by Viaduct, running in Safari's own engine.</figcaption>
-  </figure>
-</section>
--->
+  return head({ title, description, canonical, imageAlt, jsonld, demo: true }) + chrome(`${pageTop({
+    crumbs: `<a href="/viaduct/">Viaduct</a> / <a href="/viaduct/extensions/">Extensions</a> / ${esc(x.name)}`,
+    h1: esc(h1),
+    lede,
+  })}
+${demoAct('Install it', rec, steps, x.slug === 'dark-reader' ? ''
+    : x.offStore ? "Recorded with Dark Reader's .crx. A .zip goes the same way." : 'Recorded with Dark Reader. Every store install goes the same way.')}${x.fix || x.shot ? `
+${ledger(`${esc(x.name)} in Safari`, `${x.fix ? `    <p>${esc(x.fix)}</p>` : ''}${x.shot ? `
+    <figure class="frame"><img src="${x.shot.src}" width="${x.shot.width}" height="${x.shot.height}" alt="${esc(x.shot.alt)}" loading="lazy" decoding="async" /></figure>` : ''}`)}` : ''}
+${faqRow([
+    ...(x.official ? [['Does its developer make one for Safari?', officialAnswer]] : []),
+    ...(x.limit ? [["Why doesn't all of it work?", esc(x.limit[0])]] : []),
+    ...(x.faq ? [[x.faq.q, esc(x.faq.a)]] : []),
+    ['Is it the real extension, or a clone?', x.offStore
+      ? 'The real one. Viaduct converts the package its developers publish and adds fixes where Safari behaves differently.'
+      : 'The real one. Viaduct downloads the same package Chrome installs from the Web Store and adds fixes where Safari behaves differently.'],
+    ['Will it update itself?', x.offStore
+      ? "Not by itself. Viaduct's weekly update check only covers Chrome Web Store installs, so drop each new release on Viaduct yourself."
+      : "With Pro, yes. Turn on Update Chrome Web Store extensions weekly in Viaduct's settings, and it rebuilds the extension when the store has a new version."],
+    PRICE_FAQ,
+  ])}
+${moreLine([
+    ...related(x).map((y) => [y.name, `/viaduct/extensions/${y.slug}/`]),
+    [GENERAL.crumb, `/viaduct/extensions/${GENERAL.slug}/`],
+    ['every extension', '/viaduct/extensions/'],
+  ])}`, updated);
+}
 
-<section>
-  <h2>What's actually happening</h2>
-  <p>Viaduct ${source} (same code, same version) and rebuilds it as a native Safari Web Extension
-  (<code>.appex</code>). It handles the conversion, the code-signing, and the macOS
-  registration that normally require Xcode wrangling and a terminal. Because the result
-  runs inside Safari's own engine, you keep Safari's battery life. No second Chromium
-  process runs in the background.</p>
-  <p>Safari supports the same WebExtension API family that Chrome extensions are built
-  on, and Viaduct patches the places where Safari behaves differently, so most extensions
-  work. Some Chrome-only APIs have no Safari equivalent, and
-  the features built on them won't work. If an extension can't work in Safari at all,
-  Viaduct tells you before you convert.</p>
-</section>
-<section>
-  <h2>Questions</h2>
-  <details><summary>Is this the real ${esc(x.name)}, or a clone?</summary>
-    <p>The real one. Viaduct converts the exact package its developers published${x.offStore ? '' : ' on the Chrome Web Store'}
-    and adds the fixes Safari needs to run it. Nothing is hosted or redistributed; the
-    conversion happens locally on your Mac.</p></details>
-  <details><summary>Will it stop working after a week?</summary>
-    <p>On the free plan, yes: Viaduct removes converted extensions after 7 days.
-    Viaduct Pro keeps them installed for good.</p></details>
-  <details><summary>I already use ${esc(x.name)} in Chrome. Do my settings come with it?</summary>
-    <p>Usually, if it's installed in Chrome, Brave, Edge, Arc, Vivaldi, Opera or Chromium on
-    the same Mac. Viaduct reads its saved settings from the browser and brings them into
-    the Safari version. Import from Chrome in Viaduct lists everything you have installed
-    there and converts the ones you pick in one batch.</p></details>
-  <details><summary>What do I need?</summary>
-    <p>macOS 13+, on Apple Silicon or Intel. Viaduct is a universal app, so one download
-    runs natively on either chip. Node is bundled inside Viaduct, so there's nothing
-    to install. Xcode is required (free, from the App Store), with an Apple ID signed in
-    (a free one works), because Apple offers no other way to code-sign a Safari extension
-    on a free account. Viaduct's first-launch setup walks you through both.</p></details>
-  <details><summary>What does Viaduct cost?</summary>
-    <p>Free for your first 2 conversions, which Viaduct removes after 7 days. Pro is $19
-    one-time: unlimited conversions, and your extensions stay installed. The conversion
-    engine is source-available (PolyForm Shield).</p></details>
-</section>`);
+// The general guide: what Safari will load, and the three ways to get a Chrome
+// extension into it. Apple's packager is described only as Apple's own page
+// (APPLE_PACKAGER) documents it; the Viaduct facts come from the same sources
+// as the extension guides.
+const GENERAL = {
+  slug: 'chrome-extensions-in-safari',
+  h1: 'How to use Chrome extensions in Safari',
+  crumb: 'Chrome extensions in Safari',
+};
+const APPLE_PACKAGER = 'https://developer.apple.com/documentation/safariservices/packaging-a-web-extension-for-safari';
+const APPLE_COMPAT = 'https://developer.apple.com/documentation/safariservices/assessing-your-safari-web-extension-s-browser-compatibility';
+const APPLE_RUNNING = 'https://developer.apple.com/documentation/safariservices/running-your-safari-web-extension';
+const APPLE_ACCOUNT = 'https://developer.apple.com/help/account/basics/about-your-developer-account';
+
+// Topic guides under /viaduct/guides/<slug>/: questions people search for that
+// aren't about one extension. Same sourcing rule as EXTENSIONS: Viaduct facts
+// from the app as it ships (../viaduct-app) and its media kit, never the CLI;
+// Safari and Apple facts from Apple's documentation, linked where they're used.
+//
+// crumb    = the short name in the breadcrumb and in guide lists.
+// title    = the <title> when it should differ from h1 (the search phrase).
+// demo     = [heading, recording (a VIDEOS key), steps, note]: the page's peak.
+// sections = [heading, HTML body] pairs after it, one ledger row each.
+// faqs     = [question, HTML answer] pairs.
+const { store: ST, drop: DR, batch: BA } = Object.fromEntries(Object.entries(VIDEOS).map(([k, v]) => [k, v.at]));
+const BATCH_NOTE = 'Recorded converting TWP. Import from Chrome converts each of yours the same way.';
+
+const GUIDES = [
+  {
+    slug: 'safari-extension-7-day-limit',
+    h1: 'Why your Safari extension stops working after 7 days',
+    crumb: 'The 7-day limit',
+    description: 'Safari forgets Allow unsigned extensions every time it quits, and a free Apple ID signs in 7-day periods. What each limit does, and how Viaduct signs.',
+    lede: "Two different limits turn off an extension that didn't come from the App Store. One resets every time Safari quits. The other runs on a 7-day clock.",
+    demo: ['Keep it switched on', 'store', [
+      setupStep('It walks you through installing Xcode, which is free.'),
+      ['<strong>Add your Apple ID in Xcode → Settings → Accounts.</strong> A free one works. Signing in under System Settings is a different thing.', null],
+      ["<strong>Click Add to Safari</strong> on the extension's store page. Viaduct signs it with that Apple ID.", ST.click],
+      ['<strong>Switch it on.</strong> Signed, it stays on after Safari quits.', ST.on],
+    ]],
+    sections: [
+      ['Safari forgets the setting', `
+    <p>Without an Apple signature, an extension only loads while Allow unsigned extensions is on in Safari → Settings → Developer, and <a href="${APPLE_RUNNING}" rel="noopener">Apple's documentation</a> says that setting "resets when you quit Safari". Add Temporary Extension lasts even less: 24 hours, or until you quit.</p>`],
+      ['A free Apple ID signs for 7 days', `
+    <p><a href="${APPLE_ACCOUNT}" rel="noopener">Apple's account help</a> gives a free Apple ID's personal team 10 app IDs and provisioning profiles that "expire 7 days from issuance". Apple writes that about installing apps on a device and doesn't say how it applies to Safari extensions on a Mac. If a converted extension ever stops loading, convert it again from Recently converted in Viaduct's window.</p>`],
+    ],
+    faqs: [
+      ['Xcode says I have no signing certificate',
+        'Xcode makes one only when you ask. In Xcode → Settings → Accounts, select your Apple ID, click Manage Certificates, click + and choose Apple Development. Then convert again.'],
+      ['What if I convert without an Apple ID in Xcode?',
+        'Viaduct warns you first. If you convert anyway, the extension has no signature, and Safari turns it off every time it quits.'],
+      ["Is this the 7 days Viaduct's free plan mentions?",
+        "No, that one is Viaduct's own: the free plan converts 2 extensions and removes them after 7 days, however they're signed. Pro is $19 once and keeps them."],
+    ],
+  },
+  {
+    slug: 'chrome-extension-to-safari-converter',
+    h1: 'Convert any Chrome extension to Safari',
+    title: 'Chrome extension to Safari converter for Mac',
+    crumb: 'Chrome to Safari converter',
+    description: 'Viaduct turns a Chrome extension from the Web Store, a file or your Chrome profile into a signed Safari extension and installs it. The steps, recorded.',
+    lede: 'Viaduct is a Mac app that converts a Chrome extension, builds and signs it with Xcode, and installs it in Safari.',
+    demo: ['Convert one', 'drop', [
+      setupStep('It walks you through installing Xcode (free) and signing in to it with any Apple ID.'),
+      ['<strong>Drop the extension on Viaduct.</strong> A .zip, a .crx or an unpacked folder. Viaduct checks it before converting.', DR.drop],
+      ['<strong>Click Convert &amp; Install.</strong> Building and signing takes a minute or two.', DR.convert],
+      ['<strong>Switch it on</strong> in Safari → Settings → Extensions.', DR.on],
+    ]],
+    sections: [
+      ['Other ways in', `
+    <p>From the Chrome Web Store it's one click: once Viaduct is set up, Add to Safari sits where Add to Chrome was. For the extensions you already use, <a href="/viaduct/guides/move-chrome-extensions-to-safari/">Import from Chrome</a> converts them in one batch.</p>`],
+      ['What it fixes', `
+    <p>Safari runs most of Chrome's extension APIs, but some behave differently. Viaduct patches the differences it knows about, which is why <a href="/viaduct/extensions/dark-reader/">Dark Reader's</a> popup buttons work after conversion. Features built on something Safari doesn't have still won't work: converted <a href="/viaduct/extensions/ublock-origin/">uBlock Origin</a> hides ads but can't stop them loading.</p>`],
+    ],
+    faqs: [
+      ['Do I need Xcode?',
+        'Yes. Safari only runs extensions that Xcode has built and signed. Xcode is free, and Viaduct drives it for you, so you never build anything in it yourself.'],
+      ['Does Viaduct upload my extension anywhere?',
+        'No. It downloads from the Chrome Web Store when you install from there, and converts on your Mac.'],
+      PRICE_FAQ,
+    ],
+  },
+  {
+    slug: 'move-chrome-extensions-to-safari',
+    h1: 'Move your Chrome extensions to Safari',
+    crumb: 'Move from Chrome',
+    description: 'Switching from Chrome or Brave? Viaduct lists the extensions in every profile, converts the ones you pick for Safari and brings their settings along.',
+    lede: 'Viaduct reads the extensions you already have in Chrome and other Chromium browsers, converts the ones you pick and brings their settings along.',
+    demo: ['Move them over', 'batch', [
+      setupStep('When it asks to read your browsers, click Allow Access.'),
+      ['<strong>Choose File → Import from Chrome.</strong> It lists the extensions in Chrome, Brave, Edge, Arc, Vivaldi and Opera, profile by profile.', null],
+      ['<strong>Tick the ones you want and click Convert.</strong> Their saved settings come along.', BA.convert],
+      ['<strong>Switch them on.</strong> When the batch finishes, click Open Safari Settings.', BA.on],
+    ], BATCH_NOTE],
+    sections: [
+      ['What stays behind', `
+    <p>Themes and Chrome apps aren't listed. An extension with an official Safari version starts unticked, with a link to that version. Some rely on Chrome features Safari doesn't have, like <a href="/viaduct/extensions/xbrowsersync/">xBrowserSync</a>, which can't reach Safari's bookmarks. <a href="/viaduct/extensions/">The extension list</a> shows the known limits.</p>`],
+    ],
+    faqs: [
+      ['What about bookmarks, history and passwords?',
+        'Safari imports those itself from File → Import From Browser → Google Chrome, as <a href="https://support.apple.com/guide/safari/import-bookmarks-and-passwords-ibrw1015/mac" rel="noopener">Apple describes</a>.'],
+      ['Can I move them all on the free plan?',
+        'Two of them, kept for 7 days. Pro is $19 once and converts the rest, and the import list shows how many of your picks need it.'],
+      ['Moving to a new Mac too?',
+        "In Viaduct, Settings → Extensions → Move to another Mac exports everything you've converted as one file. Import it on the new Mac and Viaduct converts them again there."],
+    ],
+  },
+  {
+    slug: 'install-crx-file-mac',
+    h1: 'Install a .crx file or unpacked extension in Safari on Mac',
+    crumb: 'Install a .crx file',
+    description: "Safari can't open a .crx file. Viaduct converts a .crx, a .zip or an unpacked extension folder into a Safari extension on your Mac and installs it.",
+    lede: "Safari can't open a .crx. Viaduct converts it into a Safari extension and installs it, and does the same for a .zip or an unpacked folder.",
+    demo: ['Install it', 'drop', [
+      setupStep('It walks you through installing Xcode (free) and signing in to it with any Apple ID.'),
+      ['<strong>Drop the .crx, .zip or folder on Viaduct.</strong> Any folder with a <code>manifest.json</code> in it works.', DR.drop],
+      ['<strong>Click Convert &amp; Install.</strong> Building and signing takes a minute or two.', DR.convert],
+      ['<strong>Switch it on</strong> in Safari → Settings → Extensions.', DR.on],
+    ]],
+    sections: [
+      ['What a .crx is', `
+    <p>It's how the Chrome Web Store ships an extension: a zip of its files with a signature header on the front. Safari only runs extensions packaged inside a Mac app that Xcode has built and signed, so a <code>.crx</code> has to be converted first.</p>`],
+      ['From GitHub', `
+    <p>Download the project's release <code>.zip</code>, or the repository from Code → Download ZIP, and drop that on Viaduct; it finds the <code>manifest.json</code> inside. If the repository only gets one once it's built, run its build steps first and drop the folder they produce.</p>`],
+    ],
+    faqs: [
+      ['Can Safari load it without converting?',
+        'Only to test it: with its developer features on, Settings → Developer → Add Temporary Extension loads a folder or .zip, and Safari removes it after 24 hours or when you quit.'],
+      ['Will it update itself?',
+        'No. A file has nothing to check for updates, so drop each new version on Viaduct. Extensions installed from the Chrome Web Store can update weekly with Pro.'],
+      PRICE_FAQ,
+    ],
+  },
+  {
+    slug: 'safari-web-extension-converter-alternative',
+    h1: "An alternative to Apple's Safari extension converter",
+    title: "An alternative to Apple's safari-web-extension-converter",
+    crumb: "Apple's converter, compared",
+    description: "Apple's safari-web-extension-converter gives you an Xcode project to build, sign and fix. Viaduct converts, signs and installs a Chrome extension in one go.",
+    lede: "Apple's tool, now called safari-web-extension-packager, wraps an extension in an Xcode project. Building it, signing it and fixing what Safari runs differently is left to you.",
+    css: '.ways.vs thead th { width:37%; } .ways.vs thead th:first-child { width:26%; }',
+    demo: ['Viaduct does all of it', 'drop', [
+      setupStep('It walks you through installing Xcode (free) and signing in to it with any Apple ID.'),
+      ["<strong>Drop the extension's folder on Viaduct.</strong> Or its .zip or .crx.", DR.drop],
+      ["<strong>Click Convert &amp; Install.</strong> Viaduct runs Apple's packager, patches what Safari handles differently, then builds and signs the app.", DR.convert],
+      ["<strong>Switch it on.</strong> It's installed in Safari, with no Xcode project to keep.", DR.on],
+    ]],
+    sections: [
+      ["What Apple's tool does", `
+    <p>It comes with Xcode. Run it in Terminal on the extension's folder:</p>
+    <pre><code>xcrun <span class="nw">safari-web-extension-packager</span> /path/to/extension</code></pre>
+    <p>It used to be called <code>safari-web-extension-converter</code>. It creates an Xcode project with a Mac or iOS app that installs the extension, and warns about manifest keys Safari doesn't support, as <a href="${APPLE_PACKAGER}" rel="noopener">Apple's guide</a> explains.</p>`],
+      ['Side by side', `
+    <table class="ways vs">
+      <thead><tr><th scope="col"><span class="sr">Step</span></th><th scope="col">Apple's packager</th><th scope="col">Viaduct</th></tr></thead>
+      <tbody>${[
+        ['Building', 'You open the project and build it in Xcode', 'Builds it with Xcode in the background'],
+        ['Signing', 'You choose a team in Xcode', 'Signs with the Apple ID you added to Xcode'],
+        ['APIs Safari handles differently', 'Warns about manifest keys and leaves the code as it is', 'Patches them while the extension runs'],
+        ['Platforms', 'Mac and iOS', 'Mac only'],
+        ['Sharing it', 'Yes, with an Apple Developer Program membership', 'No, it builds for your own Mac'],
+      ].map(([step, apple, viaduct]) => `
+        <tr><th scope="row">${esc(step)}</th><td data-label="Apple's packager">${esc(apple)}</td><td data-label="Viaduct">${esc(viaduct)}</td></tr>`).join('')}
+      </tbody>
+    </table>`],
+    ],
+    faqs: [
+      ['Which one should I use?',
+        "To publish an extension for other people, Apple's packager and the Apple Developer Program. To run a Chrome extension in your own Safari without keeping an Xcode project, Viaduct."],
+      ['Can I get the Xcode project?', "No, Viaduct doesn't hand you one. Use Apple's packager when you want a project to edit."],
+      ['Does it convert Manifest V2 extensions?', 'Yes, both V2 and V3.'],
+      PRICE_FAQ,
+    ],
+  },
+  {
+    slug: 'arc-to-safari',
+    h1: 'Moving from Arc to Safari, extensions included',
+    crumb: 'Arc to Safari',
+    description: 'Arc stops working on December 22, 2026. Viaduct reads the extensions in your Arc profiles and converts them for Safari, with their settings.',
+    lede: "Arc stops working on December 22, 2026. Viaduct converts its extensions for Safari straight from your Arc profile, settings and all.",
+    demo: ['Bring its extensions over', 'batch', [
+      setupStep('When it asks to read your browsers, click Allow Access.'),
+      ['<strong>Choose File → Import from Chrome.</strong> Arc is listed with each of its profiles.', null],
+      ['<strong>Tick the extensions and click Convert.</strong> The settings they saved in Arc come along.', BA.convert],
+      ['<strong>Switch them on.</strong> When the batch finishes, click Open Safari Settings.', BA.on],
+    ], BATCH_NOTE],
+    sections: [
+      ["What's happening to Arc", `
+    <p>The Browser Company announced on October 22, 2026 that Arc for Mac and Windows stops working on December 22, and it's pointing Arc users to Dia. <a href="https://resources.arc.net/hc/en-us/articles/44412972248471-Arc-Sunset-Key-Dates-and-What-to-Expect" rel="noopener">Arc's own timeline</a> has the dates for exporting your data.</p>`],
+    ],
+    faqs: [
+      ['Does Arc have to be open?', "No. Viaduct reads Arc's profile folder on your Mac."],
+      ['Will every Arc extension work in Safari?',
+        'Most will. Some rely on Chrome features Safari doesn\'t have, and <a href="/viaduct/extensions/">the extension list</a> shows the known ones.'],
+      ['What about bookmarks and passwords?',
+        'Safari imports those directly only from Chrome and Firefox. Viaduct moves extensions, not browsing data.'],
+      PRICE_FAQ,
+    ],
+  },
+];
+
+const guideLinks = (gs) => gs.map((g) => [g.crumb, `/viaduct/guides/${g.slug}/`]);
+
+function guidePage(g) {
+  const canonical = `${SITE}/viaduct/guides/${g.slug}/`;
+  const updated = lastmod(canonical);
+  const title = `${g.title || g.h1} · Viaduct`;
+  const i = GUIDES.indexOf(g);
+  const others = [...GUIDES.slice(i + 1), ...GUIDES.slice(0, i)].slice(0, 3);
+
+  const jsonld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'TechArticle',
+        headline: g.h1,
+        description: g.description,
+        url: canonical,
+        inLanguage: 'en-US',
+        image: OG_IMAGE,
+        dateModified: updated,
+        author: ORG,
+        publisher: ORG,
+        about: { '@type': 'SoftwareApplication', name: 'Safari', applicationCategory: 'BrowserApplication', operatingSystem: 'macOS' },
+        mentions: { '@type': 'SoftwareApplication', '@id': `${SITE}/viaduct/#app`, name: 'Viaduct', url: `${SITE}/viaduct/` },
+      },
+      breadcrumbs([['Viaduct', `${SITE}/viaduct/`], [g.crumb]]),
+    ],
+  };
+
+  return head({
+    title,
+    description: g.description,
+    canonical,
+    imageAlt: `The Viaduct app window on macOS, which converts Chrome extensions for Safari. Guide: ${g.h1}`,
+    jsonld,
+    css: g.css,
+    demo: true,
+  }) + chrome(`${pageTop({
+    crumbs: `<a href="/viaduct/">Viaduct</a> / ${esc(g.crumb)}`,
+    h1: esc(g.h1),
+    lede: esc(g.lede),
+  })}
+${demoAct(...g.demo)}
+${g.sections.map(([h, body]) => ledger(esc(h), body)).join('\n')}
+${faqRow(g.faqs)}
+${moreLine([
+    ...guideLinks(others),
+    [GENERAL.crumb, `/viaduct/extensions/${GENERAL.slug}/`],
+    ['guides for each extension', '/viaduct/extensions/'],
+  ])}`, updated);
+}
+
+function generalPage() {
+  const canonical = `${SITE}/viaduct/extensions/${GENERAL.slug}/`;
+  const updated = lastmod(canonical);
+  const title = `${GENERAL.h1} on a Mac · Viaduct`;
+  const description = "Safari can't install from the Chrome Web Store. Three ways to run a Chrome extension in it: an official Safari version, Apple's Xcode packager, or Viaduct.";
+
+  const jsonld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'TechArticle',
+        headline: GENERAL.h1,
+        description,
+        url: canonical,
+        inLanguage: 'en-US',
+        image: OG_IMAGE,
+        dateModified: updated,
+        author: ORG,
+        publisher: ORG,
+        about: { '@type': 'SoftwareApplication', name: 'Safari', applicationCategory: 'BrowserApplication', operatingSystem: 'macOS' },
+        mentions: { '@type': 'SoftwareApplication', '@id': `${SITE}/viaduct/#app`, name: 'Viaduct', url: `${SITE}/viaduct/` },
+      },
+      breadcrumbs([['Viaduct', `${SITE}/viaduct/`], ['Extensions', `${SITE}/viaduct/extensions/`], [GENERAL.crumb]]),
+    ],
+  };
+
+  // Each way: its name, then one cell per column in cols.
+  const cols = ["Who it's for", 'What you need', 'What you get'];
+  const ways = [
+    ['An official Safari version', 'Anyone, if one exists',
+      "The App Store, or the developer's site. Some are paid.",
+      "The developer's own Safari build, which can differ from the Chrome one"],
+    ["Apple's packager", 'Developers', "Xcode and the extension's files",
+      "An Xcode project to build and sign yourself. Fixing what Safari doesn't support is up to you."],
+    ['Viaduct', 'Everyone else', 'macOS 13 or later, and Xcode (free), which Viaduct runs for you',
+      'The Chrome extension itself, converted, signed and installed, with fixes where Safari behaves differently'],
+  ];
+
+  const limited = andList(EXTENSIONS.filter((x) => x.limit)
+    .map((x) => `<a href="/viaduct/extensions/${x.slug}/">${esc(x.name)}</a>`));
+
+  return head({
+    title,
+    description,
+    canonical,
+    imageAlt: 'The Viaduct app window on macOS, its drop target ready to take a Chrome extension and make it run in Safari',
+    jsonld,
+    css: '.ways.three thead th { width:22%; } .ways.three thead th:nth-child(3) { width:24%; } .ways.three thead th:last-child { width:32%; }',
+    demo: true,
+  }) + chrome(`${pageTop({
+    crumbs: `<a href="/viaduct/">Viaduct</a> / <a href="/viaduct/extensions/">Extensions</a> / ${esc(GENERAL.crumb)}`,
+    h1: esc(GENERAL.h1),
+    lede: "Safari can't install from the Chrome Web Store, but most Chrome extensions still run in it once they're packaged inside a Mac app. Viaduct does that from the store page.",
+  })}
+${demoAct('With Viaduct', 'store', [
+    setupStep('It walks you through installing Xcode, signing in to it with any Apple ID and turning on the Add to Safari button.'),
+    ['<strong>Open the extension\'s page on the <a href="https://chromewebstore.google.com/" rel="noopener">Chrome Web Store</a> in Safari.</strong>', ST.open],
+    ['<strong>Click Add to Safari.</strong> Viaduct downloads, converts and signs it.', ST.click],
+    ["<strong>Switch it on</strong> in Safari → Settings → Extensions, and it's in your toolbar.", ST.on],
+  ])}
+${ledger('Three ways', `    <table class="ways three">
+      <thead><tr><th scope="col"><span class="sr">Way</span></th>${cols.map((c) => `<th scope="col">${esc(c)}</th>`).join('')}</tr></thead>
+      <tbody>${ways.map(([way, ...cells]) => `
+        <tr><th scope="row">${esc(way)}</th>${cells.map((c, i) => `<td data-label="${esc(cols[i])}">${esc(c)}</td>`).join('')}</tr>`).join('')}
+      </tbody>
+    </table>
+    <p style="margin-top:20px">Check for an official version first: <a href="/viaduct/extensions/">the extension list</a> shows which popular extensions have one. For Apple's packager, <a href="/viaduct/guides/safari-web-extension-converter-alternative/">the comparison</a> has the command.</p>`)}
+${faqRow([
+    ["What won't work in Safari?",
+      `Features built on an API Safari doesn't have, such as some sign-in flows or blocking network requests. Viaduct patches many differences, but that's why ${limited} only partly work.`],
+    ['Can Safari load an extension without an app?',
+      "Only to test it. With Safari's developer features turned on, Settings → Developer → Add Temporary Extension loads a folder or .zip. Safari removes it after 24 hours or when you quit."],
+    ['Does this work on iPhone or iPad?',
+      "Viaduct is Mac only. On iPhone and iPad, Safari extensions come inside apps, so you need the official version from the App Store, or Apple's packager and an Apple Developer Program membership to build one yourself."],
+    PRICE_FAQ,
+  ])}
+${namesRow('Extensions', EXTENSIONS.map((x) => [x.name, `/viaduct/extensions/${x.slug}/`]))}
+${moreLine(guideLinks(GUIDES))}`, updated);
 }
 
 function hubPage() {
   const canonical = `${SITE}/viaduct/extensions/`;
-  const tiles = EXTENSIONS.map((x) =>
-    `<a class="row" href="/viaduct/extensions/${x.slug}/"><b>${esc(x.name)}</b><span class="d">${esc(x.desc.charAt(0).toUpperCase() + x.desc.slice(1))}</span><span class="c">${esc(x.category)}</span></a>`
-  ).join('\n    ');
+  const groups = categories();
   const title = 'Chrome extensions you can run in Safari · Viaduct';
-  const description = 'Per-extension guides for running popular Chrome extensions natively in Safari with Viaduct: uBlock Origin, Tampermonkey, MetaMask, SponsorBlock, and more.';
+  const description = 'Popular Chrome extensions in Safari, with their official Safari versions, known limits and a guide for each: uBlock Origin, Tampermonkey, MetaMask and more.';
+  // The general guide comes first on the page, then the extension guides, then
+  // the topic guides.
+  const items = [
+    [GENERAL.h1, `${SITE}/viaduct/extensions/${GENERAL.slug}/`],
+    ...groups.flatMap(([, xs]) => xs).map((x) => [x.h1 || `Run ${x.name} in Safari`, `${SITE}/viaduct/extensions/${x.slug}/`]),
+    ...GUIDES.map((g) => [g.h1, `${SITE}/viaduct/guides/${g.slug}/`]),
+  ];
   return head({
     title,
     description,
     canonical,
     imageAlt: 'The Viaduct app window on macOS, its drop target ready to convert a Chrome extension into a native Safari extension',
     // The hub is an index, not a guide, so it describes itself as a collection and
-    // lists the guides it links to rather than claiming to be one of them.
+    // lists the guides it links to, in the order the page shows them, rather than
+    // claiming to be one of them.
     jsonld: {
       '@context': 'https://schema.org',
-      '@type': 'CollectionPage',
-      name: title,
-      description,
-      url: canonical,
-      inLanguage: 'en-US',
-      image: OG_IMAGE,
-      publisher: { '@type': 'Organization', name: 'Magicelk Labs', url: SITE },
-      mainEntity: {
-        '@type': 'ItemList',
-        numberOfItems: EXTENSIONS.length,
-        itemListElement: EXTENSIONS.map((x, i) => ({
-          '@type': 'ListItem',
-          position: i + 1,
-          name: `Run ${x.name} in Safari`,
-          url: `${SITE}/viaduct/extensions/${x.slug}/`,
-        })),
-      },
+      '@graph': [
+        {
+          '@type': 'CollectionPage',
+          name: title,
+          description,
+          url: canonical,
+          inLanguage: 'en-US',
+          image: OG_IMAGE,
+          publisher: ORG,
+          mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: items.length,
+            itemListElement: items.map(([name, url], i) => ({ '@type': 'ListItem', position: i + 1, name, url })),
+          },
+        },
+        breadcrumbs([['Viaduct', `${SITE}/viaduct/`], ['Extensions']]),
+      ],
     },
-  }) + chrome(`
-<div class="hero">
-  <h1>Chrome extensions,<br />running in Safari</h1>
-  <p class="lede">Safari can't load Chrome extensions. Viaduct converts them into
-  native Safari extensions, signed and installed in one click. Guides for the
-  extensions people miss most:</p>
-</div>
-<section>
-  <div class="index">
-    ${tiles}
-  </div>
-</section>
-<section>
-  <p class="lede" style="font-size:15px;color:var(--mute)">Missing one? Viaduct isn't
-  limited to this list. It converts any extension from a <code>.zip</code>,
-  <code>.crx</code>, or unpacked folder, and Import from Chrome converts the ones you
-  already have in Chrome, Brave, Edge, Arc and other Chromium browsers.
-  <a href="/viaduct/">See how it works →</a></p>
-</section>`);
+  }) + chrome(`${pageTop({
+    crumbs: '<a href="/viaduct/">Viaduct</a> / Extensions',
+    h1: 'Chrome extensions, running in Safari',
+    lede: `Each extension here has a guide: whether its developer makes a Safari version, what changes once Viaduct converts it, and how to install it. New to this? Start with <a href="/viaduct/extensions/${GENERAL.slug}/">how Chrome extensions get into Safari</a>.`,
+  })}
+${groups.map(([category, xs]) => ledger(esc(category), `    <table class="compat" aria-labelledby="${slugify(category)}-h">
+      <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <tbody>
+        ${xs.map(compatRow).join('\n        ')}
+      </tbody>
+    </table>`, slugify(category))).join('\n')}
+${ledger('Guides', `    <ul class="names">
+      ${guideLinks(GUIDES).map(([name, href]) => `<li><a href="${href}">${esc(name)}</a></li>`).join('\n      ')}
+    </ul>`, 'guides')}
+${ledger('Not on the list?', `    <p>Viaduct isn't limited to these. It converts any extension from the Chrome Web Store, a <code>.zip</code>, a <code>.crx</code> or an unpacked folder, and Import from Chrome converts the ones you already have in Chrome, Brave, Edge, Arc and other Chromium browsers. <a href="/viaduct/">See how Viaduct works</a>.</p>`)}`);
 }
 
 // ── emit ──
@@ -478,7 +1125,14 @@ for (const x of EXTENSIONS) {
   fs.writeFileSync(path.join(dir, 'index.html'), extensionPage(x));
   count++;
 }
+fs.mkdirSync(path.join(__dirname, GENERAL.slug), { recursive: true });
+fs.writeFileSync(path.join(__dirname, GENERAL.slug, 'index.html'), generalPage());
 fs.writeFileSync(path.join(__dirname, 'index.html'), hubPage());
+for (const g of GUIDES) {
+  const dir = path.join(ROOT, 'viaduct', 'guides', g.slug);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), guidePage(g));
+}
 
 // Sitemap for the whole site, not just the viaduct section. This is the only
 // generator that writes it, so anything added here by hand gets overwritten on
@@ -494,22 +1148,10 @@ const urls = [
   `${SITE}/lector/`,
   ...LEGAL.map((p) => `${SITE}/lector/${p}.html`),
   `${SITE}/viaduct/extensions/`,
+  `${SITE}/viaduct/extensions/${GENERAL.slug}/`,
   ...EXTENSIONS.map((x) => `${SITE}/viaduct/extensions/${x.slug}/`),
+  ...GUIDES.map((g) => `${SITE}/viaduct/guides/${g.slug}/`),
 ];
-
-// lastmod comes from the last commit that touched the page, not from mtime, so
-// regenerating these files doesn't tell crawlers the content changed.
-const ROOT = path.join(__dirname, '..', '..');
-function lastmod(url) {
-  let rel = url.slice(`${SITE}/`.length);
-  if (rel === '' || rel.endsWith('/')) rel += 'index.html';
-  const date = execFileSync('git', ['log', '-1', '--format=%cs', '--', rel], {
-    cwd: ROOT,
-    encoding: 'utf8',
-  }).trim();
-  // Uncommitted page: fall back to today rather than emitting an empty element.
-  return date || new Date().toISOString().slice(0, 10);
-}
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -517,4 +1159,4 @@ ${urls.map((u) => `  <url><loc>${u}</loc><lastmod>${lastmod(u)}</lastmod></url>`
 </urlset>\n`;
 fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemap);
 
-console.log(`${count} extension pages + hub + sitemap.xml written.`);
+console.log(`${count} extension pages, ${GUIDES.length} topic guides, the general guide, the hub and sitemap.xml written.`);

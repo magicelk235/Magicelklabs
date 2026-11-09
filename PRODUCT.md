@@ -11,8 +11,8 @@ zero build step except `viaduct/extensions/build.js`.
 Brand / marketing. Design IS the product here: the site must sell $9–$19
 one-time utilities, plus Spyglass's optional Spyglass Drive subscription, to
 design-conscious Mac users. Pages: studio landing (`/`),
-three product pages (`/spyglass/`, `/viaduct/`, `/lector/`), 21 SEO extension guides
-+ hub (`/viaduct/extensions/`), privacy pages.
+three product pages (`/spyglass/`, `/viaduct/`, `/lector/`), 29 SEO extension guides
++ hub (`/viaduct/extensions/`), 6 topic guides (`/viaduct/guides/`), privacy pages.
 
 ## Audience
 

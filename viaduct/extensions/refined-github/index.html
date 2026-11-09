@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com https://api.fontshare.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Run Refined GitHub in Safari · Viaduct</title>
 <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
 <link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png" />
 <link rel="manifest" href="/viaduct/assets/viaduct.webmanifest" />
 <meta name="theme-color" content="#070908" />
-<meta name="description" content="Refined GitHub on Safari: what the official option covers, and how to run the Chrome version natively in Safari with Viaduct." />
+<meta name="description" content="Refined GitHub, dozens of quality-of-life improvements for GitHub, has an official Safari port. Or run the Chrome version with Viaduct." />
 <link rel="canonical" href="https://magicelklabs.com/viaduct/extensions/refined-github/" />
 <meta property="og:site_name" content="Magicelk Labs" />
 <meta property="og:locale" content="en_US" />
 <meta property="og:title" content="Run Refined GitHub in Safari · Viaduct" />
-<meta property="og:description" content="Refined GitHub on Safari: what the official option covers, and how to run the Chrome version natively in Safari with Viaduct." />
+<meta property="og:description" content="Refined GitHub, dozens of quality-of-life improvements for GitHub, has an official Safari port. Or run the Chrome version with Viaduct." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://magicelklabs.com/viaduct/extensions/refined-github/" />
 <meta property="og:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
@@ -23,121 +23,256 @@
 <meta property="og:image:alt" content="The Viaduct app window on macOS, its drop target ready to convert the Refined GitHub Chrome extension into a native Safari extension" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Run Refined GitHub in Safari · Viaduct" />
-<meta name="twitter:description" content="Refined GitHub on Safari: what the official option covers, and how to run the Chrome version natively in Safari with Viaduct." />
+<meta name="twitter:description" content="Refined GitHub, dozens of quality-of-life improvements for GitHub, has an official Safari port. Or run the Chrome version with Viaduct." />
 <meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
+<link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="/assets/fonts.css?v=1" />
 <link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
+<link rel="stylesheet" href="/viaduct/assets/scrollcraft.css?v=2" />
 <style>
 /* The pages only ship dark. The canvas is a near-black with a trace of green in
    it, so the teal accent sits on it like something lit, not a sticker on grey. */
 :root {
   color-scheme:dark;
   --canvas:#070908; --surface:#0E1211; --elevated:#151A19; --card:#1B211F;
-  --ink:#ECF2F0; --body:#A3B0AD; --mute:#85938F; --ash:#4E5B58; --stone:#333D3B;
+  --ink:#ECF2F0; --body:#A3B0AD; --mute:#85938F;
   --teal:#2DD4BF; --teal-press:#5FE3D2; --on-teal:#04211D;
-  --ok:#30D158; --bad:#FF7A7F;
-  --hair:rgba(255,255,255,.075); --hair-soft:rgba(255,255,255,.045); --hair-strong:rgba(255,255,255,.14);
-  --glow:rgba(45,212,191,.09); --brass:var(--teal);
+  --hair:rgba(255,255,255,.075); --hair-soft:rgba(255,255,255,.045);
   --lip:inset 0 1px 0 rgba(255,255,255,.055);
+  --ease:cubic-bezier(.16,1,.3,1);
 }
 * { box-sizing:border-box; }
+html { scroll-padding-top:86px; }
 body {
   margin:0; background:var(--canvas); color:var(--body);
   font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',system-ui,sans-serif;
-  line-height:1.6; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden;
+  font-size:16.5px; line-height:1.65; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden;
 }
 ::selection { background:var(--teal); color:var(--on-teal); }
-/* Film grain over the whole page. Keeps the near-black from banding on the big
-   gradients and takes the plastic off the flat fills. */
+/* Film grain over the whole page. Keeps the near-black from banding and takes
+   the plastic off the flat fills. */
 body::after {
   content:""; position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:.035;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-h1,h2,h3 { color:var(--ink); letter-spacing:-.02em; line-height:1.15; }
-h1,h2 { font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; letter-spacing:-.025em; }
+h1,h2,h3 { color:var(--ink); margin:0; font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; letter-spacing:-.025em; line-height:1.08; text-wrap:balance; }
+p { margin:0 0 16px; text-wrap:pretty; }
 a { color:var(--teal); text-decoration:none; }
-a:hover { text-decoration:underline; }
-code { font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular','SF Mono',Menlo,monospace; color:var(--teal); font-size:.92em; }
-.wrap { max-width:760px; margin:0 auto; padding:0 24px; }
-main.wrap { padding-top:110px; padding-bottom:24px; }
+a:hover { text-decoration:underline; text-underline-offset:3px; }
+strong { color:var(--ink); font-weight:600; }
+code { font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospace; color:var(--ink); font-size:.86em; padding:1px 5px; border-radius:5px; background:var(--elevated); }
+.wrap { max-width:1152px; margin:0 auto; padding:0 24px; }
 .btn-teal, .btn-ghost {
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  font-size:15px; padding:11px 22px; text-decoration:none;
+  font-size:15px; padding:11px 22px; text-decoration:none; border-radius:999px;
 }
 .btn-sm { font-size:13.5px; padding:7px 14px; }
 .btn-teal:hover, .btn-ghost:hover { text-decoration:none; }
-.btn-teal { background:var(--teal); color:var(--on-teal); font-weight:600; border-radius:999px; box-shadow:inset 0 1px 0 rgba(255,255,255,.3); transition:transform .22s cubic-bezier(.2,.8,.2,1), background .2s, box-shadow .25s; }
-.btn-teal:hover { background:var(--teal-press); transform:translateY(-1px); box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 6px 28px -6px rgba(45,212,191,.55); }
-.btn-teal:active { transform:translateY(0) scale(.99); }
-.btn-ghost { background:rgba(255,255,255,.05); color:var(--ink); border:1px solid rgba(255,255,255,.12); border-radius:999px; box-shadow:var(--lip); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); transition:transform .22s cubic-bezier(.2,.8,.2,1), border-color .2s, background .2s; }
+.btn-teal { background:var(--teal); color:var(--on-teal); font-weight:600; box-shadow:inset 0 1px 0 rgba(255,255,255,.3); transition:transform .22s var(--ease), background .2s; }
+.btn-teal:hover { background:var(--teal-press); transform:translateY(-1px); }
+.btn-ghost { background:rgba(255,255,255,.05); color:var(--ink); border:1px solid rgba(255,255,255,.12); box-shadow:var(--lip); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); transition:transform .22s var(--ease), border-color .2s, background .2s; }
 .btn-ghost:hover { background:rgba(255,255,255,.09); border-color:rgba(255,255,255,.2); transform:translateY(-1px); }
-.btn-ghost:active { transform:translateY(0) scale(.99); }
-.crumb { font-size:13px; color:var(--mute); margin:0 0 14px; }
+
+/* Page head: crumb, the extension's own icon when there is one, a big
+   headline and one paragraph. */
+.top { padding:148px 0 72px; }
+.crumb { font-size:13.5px; color:var(--mute); margin:0 0 40px; }
 .crumb a { color:var(--mute); }
-.hero h1 { font-size:clamp(2.2rem,5.5vw,3.4rem); margin:0 0 16px; text-wrap:balance; }
-.hero p.lede { font-size:18px; max-width:56ch; }
-.card { background:var(--surface); border:1px solid var(--hair); border-radius:14px; padding:24px; box-shadow:var(--lip); }
-.callout { border:1px solid color-mix(in srgb, var(--teal) 45%, transparent); background:color-mix(in srgb, var(--teal) 8%, var(--surface)); }
-.steps { counter-reset:step; list-style:none; padding:0; margin:0; border-bottom:1px solid var(--hair); }
-.steps li { counter-increment:step; border-top:1px solid var(--hair); padding:22px 0 22px 58px; position:relative; }
-.steps li::before {
-  content:counter(step); position:absolute; left:2px; top:16px;
-  font-family:'Cabinet Grotesk',Inter,sans-serif; font-weight:800; font-size:30px; color:var(--teal);
+.crumb a:hover { color:var(--ink); }
+.top h1 { font-size:clamp(2.5rem,5.4vw,4.25rem); line-height:1.02; max-width:17ch; margin-bottom:24px; }
+.lede { font-size:clamp(1.08rem,1.9vw,1.25rem); line-height:1.6; max-width:40rem; margin:0; }
+
+/* The ledger: each section is a row, its heading held in the left column while
+   the body scrolls past on the right. */
+.row { display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:24px clamp(40px,5vw,72px); padding:64px 0; border-top:1px solid var(--hair); }
+.row > h2 { position:sticky; top:112px; align-self:start; font-size:clamp(1.55rem,2.5vw,2rem); max-width:13ch; }
+.row__body { min-width:0; }
+.row__body > :last-child { margin-bottom:0; }
+.row__body p { max-width:62ch; }
+
+/* Steps: bare numerals in the accent, hairlines between. In the
+   demonstration the numbers of the steps the recording shows are buttons. */
+.steps { list-style:none; padding:0; margin:0; }
+.steps li { display:grid; grid-template-columns:44px minmax(0,1fr); gap:0 16px; padding:18px 0; border-top:1px solid var(--hair); }
+.steps li:last-child { border-bottom:1px solid var(--hair); }
+.steps p { margin:0; padding-top:6px; }
+.step__n { display:block; width:44px; height:44px; margin:0; padding:0; border:0; background:none; text-align:left; font:800 32px/44px 'Cabinet Grotesk',Inter,sans-serif; color:var(--teal); }
+button.step__n { cursor:pointer; border-radius:8px; }
+button.step__n:hover { color:var(--teal-press); }
+button.step__n:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
+
+/* The demonstration: the steps on the lead side, the recording framed on the
+   trail side, capped by the stage height so the whole window stays on screen
+   while the act holds. While it tracks, the step the footage is on is lit
+   and the rest fall back to the muted ink. */
+.demo { --ar:16 / 9; border-top:1px solid var(--hair); }
+.demo__stage {
+  display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); grid-template-rows:1fr auto auto 1fr;
+  grid-template-areas:". f" "h f" "s f" ". f"; gap:0 clamp(32px,4vw,64px); align-items:center;
+  max-width:1152px; margin:0 auto; padding:96px 24px 40px;
 }
-.steps li strong { color:var(--ink); }
-section { margin:56px 0; }
-h2 { font-size:clamp(1.5rem,3.4vw,2rem); margin:0 0 16px; }
-main > section > h2 { border-top:1px solid var(--hair); padding-top:28px; }
-details { border-bottom:1px solid var(--hair); padding:14px 0; }
-details summary { cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
+.demo__stage > h2 { grid-area:h; font-size:clamp(1.55rem,2.5vw,2rem); margin-bottom:20px; }
+.demo__stage > .steps { grid-area:s; align-self:start; }
+.demo__frame { grid-area:f; justify-self:end; margin:0; width:min(100%, (100svh - 230px) * (var(--ar)) + 14px); }
+.demo__slot { position:relative; aspect-ratio:var(--ar); border-radius:11px; overflow:hidden; background:var(--elevated); }
+.demo__slot > img, .demo__slot > video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.demo--plain .demo__slot > img { display:none; }
+.demo__frame figcaption { padding:10px 6px 4px; font-size:13.5px; color:var(--mute); }
+.demo--plain .demo__stage { padding-top:64px; padding-bottom:64px; }
+.demo.is-tracking .steps li { color:var(--mute); transition:color .3s var(--ease); }
+.demo.is-tracking .steps li strong { color:var(--mute); transition:color .3s var(--ease); }
+.demo.is-tracking .steps li .step__n { color:var(--mute); transition:color .3s var(--ease); }
+.demo.is-tracking .steps li.is-on, .demo.is-tracking .steps li.is-on strong { color:var(--ink); }
+.demo.is-tracking .steps li.is-on .step__n { color:var(--teal); }
+
+/* Screenshots sit in the product page's frame: a lipped surface, 6px of it
+   showing round the image. */
+.frame { margin:24px 0 0; padding:6px; background:var(--surface); border:1px solid var(--hair); border-radius:16px; box-shadow:var(--lip), 0 24px 60px -30px rgba(0,0,0,.7); }
+.frame img { display:block; width:100%; height:auto; border-radius:11px; }
+
+/* Other guides, as one line. */
+.more { border-top:1px solid var(--hair); padding:32px 0; margin:0; color:var(--mute); }
+.more a { color:var(--ink); }
+.more a:hover { color:var(--teal); text-decoration:none; }
+
+/* The padding sits on the summary, so the whole row takes the tap. */
+details { border-bottom:1px solid var(--hair); }
+details:first-child { border-top:1px solid var(--hair); }
+details summary { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 0; cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
 details summary::-webkit-details-marker { display:none; }
-details p { margin:10px 0 0; font-size:15px; }
+details p { margin:0 0 18px; max-width:62ch; }
+.chev { width:20px; height:20px; flex:none; fill:none; stroke:var(--mute); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .3s var(--ease); }
+details[open] .chev { transform:rotate(180deg); }
+
+/* Other guides, by name only. */
+.names { list-style:none; margin:0; padding:0; columns:2 220px; column-gap:32px; }
+.names li { break-inside:avoid; }
+.names a { display:block; padding:8px 0; color:var(--ink); }
+.names a:hover { color:var(--teal); text-decoration:none; }
+
+.meta { border-top:1px solid var(--hair); padding:32px 0 0; margin-top:8px; font-size:13px; line-height:1.6; color:var(--mute); }
+.meta p { max-width:70ch; margin:0 0 8px; }
 footer { border-top:1px solid var(--hair); margin-top:72px; padding:32px 0 48px; font-size:13px; color:var(--mute); }
-footer .links { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:16px; }
-footer .links a { color:var(--mute); }
-footer .links a:hover { color:var(--teal); }
-.legal { max-width:760px; margin:64px auto 0; padding:0 24px; font-size:12.5px; line-height:1.6; color:var(--mute); }
-.legal a { color:var(--mute); }
-.index { margin:0; padding:0; list-style:none; }
-.index a.row { display:grid; grid-template-columns:240px 1fr auto; gap:20px; align-items:baseline; padding:16px 12px; margin:0 -12px; border-top:1px solid var(--hair); color:inherit; transition:background .2s; }
-.index a.row:last-child { border-bottom:1px solid var(--hair); }
-.index a.row:hover { background:var(--glow); text-decoration:none; }
-.index .row b { font-family:'Cabinet Grotesk',Inter,sans-serif; font-size:16px; font-weight:700; color:var(--ink); }
-.index .row .d { font-size:14px; color:var(--mute); }
-.index .row .c { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--teal); white-space:nowrap; }
-@media (max-width:640px) { .index a.row { grid-template-columns:1fr; gap:4px; } .index .row .c { order:-1; } }
-.tag { display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--teal); margin-bottom:8px; }
+
+/* Read aloud, not shown. */
+.sr { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+/* Side-by-side tables (the general guide's three ways, the developer guide's
+   comparison): phones drop the header row and label each cell instead. */
+.ways { width:100%; border-collapse:collapse; table-layout:fixed; font-size:15px; line-height:1.55; }
+.ways th, .ways td { text-align:left; vertical-align:baseline; padding:16px 16px 16px 0; border-top:1px solid var(--hair); }
+.ways th:last-child, .ways td:last-child { padding-right:0; }
+.ways thead th { border-top:0; padding-top:0; font-size:13.5px; font-weight:400; color:var(--mute); }
+.ways tbody th { font-weight:600; color:var(--ink); }
+.ways tbody tr:last-child > * { border-bottom:1px solid var(--hair); }
+.ways td::before { content:attr(data-label); display:none; }
+
+/* The hub's tables: extension, its official Safari version, its limits. */
+.compat { width:100%; border-collapse:collapse; table-layout:fixed; font-size:15px; line-height:1.5; }
+.compat .c-ext { width:36%; }
+.compat .c-off { width:30%; }
+.compat thead th { padding:0; border:0; }
+.compat tbody th, .compat td { text-align:left; font-weight:400; vertical-align:middle; padding:14px 16px 14px 0; border-top:1px solid var(--hair); }
+.compat td:last-child { padding-right:0; }
+.compat .ext { display:flex; align-items:center; gap:14px; color:var(--ink); }
+.compat .ext img, .compat .ph { width:32px; height:32px; flex:none; }
+.compat .ext b { font-weight:600; transition:color .2s; }
+.compat .ext:hover { text-decoration:none; }
+.compat .ext:hover b { color:var(--teal); }
+.compat .no { color:var(--mute); }
+
+pre { margin:20px 0; padding:16px 18px; background:var(--surface); border:1px solid var(--hair); border-radius:12px; box-shadow:var(--lip); white-space:pre-wrap; overflow-x:auto; }
+pre code { padding:0; background:none; font-size:13.5px; color:var(--teal); }
+/* Broken after one of its hyphens, the tool's name reads as two words. */
+pre .nw { white-space:nowrap; }
+
 a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--teal); outline-offset:3px; border-radius:6px; }
+
+@media (max-width:860px) {
+  .top { padding:124px 0 48px; }
+  .crumb { margin-bottom:28px; }
+  .row { grid-template-columns:1fr; padding:48px 0; }
+  .row > h2 { position:static; max-width:none; }
+}
+@media (max-width:640px) {
+  .demo__stage { grid-template-columns:1fr; grid-template-rows:none; grid-template-areas:"h" "f" "s"; padding-left:0; padding-right:0; }
+  .demo__frame { justify-self:stretch; width:auto; margin-bottom:24px; }
+  .ways thead { display:none; }
+  .ways, .ways tbody, .ways tr, .ways tbody th, .ways td { display:block; width:auto; }
+  .ways tbody tr { padding:16px 0; border-top:1px solid var(--hair); }
+  .ways tbody tr:last-child { border-bottom:1px solid var(--hair); }
+  .ways tbody th, .ways td, .ways tbody tr:last-child > * { padding:0; border:0; }
+  .ways td { margin-top:10px; }
+  .ways td::before { display:block; font-size:13.5px; color:var(--mute); }
+  .compat thead { display:none; }
+  .compat, .compat tbody, .compat tr, .compat tbody th, .compat td { display:block; width:auto; }
+  .compat tbody tr { padding:16px 0; border-top:1px solid var(--hair); }
+  .compat tbody th, .compat td { padding:0; border:0; }
+  .compat td { margin:6px 0 0 46px; }
+}
+/* One-line links in tables and lists; widen what catches a tap. */
+@media (pointer:coarse) {
+  .compat td a, .names a { position:relative; }
+  .compat td a::after { content:""; position:absolute; inset:-13px -6px; }
+  .names a { padding:11px 0; }
+}
+@media (prefers-reduced-motion: reduce) { .btn-teal, .btn-ghost, .chev, .compat .ext b { transition:none; } }
 </style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "TechArticle",
-  "headline": "Run Refined GitHub in Safari · Viaduct",
-  "description": "Refined GitHub on Safari: what the official option covers, and how to run the Chrome version natively in Safari with Viaduct.",
-  "url": "https://magicelklabs.com/viaduct/extensions/refined-github/",
-  "inLanguage": "en-US",
-  "image": "https://magicelklabs.com/viaduct/assets/viaduct-og.jpg",
-  "author": {
-    "@type": "Organization",
-    "name": "Magicelk Labs",
-    "url": "https://magicelklabs.com"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Magicelk Labs",
-    "url": "https://magicelklabs.com"
-  },
-  "about": {
-    "@type": "SoftwareApplication",
-    "name": "Refined GitHub",
-    "description": "Dozens of quality-of-life improvements for GitHub",
-    "applicationCategory": "BrowserApplication",
-    "url": "https://chromewebstore.google.com/detail/hlepfoohegkhhmjieoechaddaejaokhf"
-  }
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "Run Refined GitHub in Safari",
+      "description": "Refined GitHub, dozens of quality-of-life improvements for GitHub, has an official Safari port. Or run the Chrome version with Viaduct.",
+      "url": "https://magicelklabs.com/viaduct/extensions/refined-github/",
+      "inLanguage": "en-US",
+      "image": "https://magicelklabs.com/viaduct/assets/viaduct-og.jpg",
+      "dateModified": "2026-10-31",
+      "author": {
+        "@type": "Organization",
+        "@id": "https://magicelklabs.com/#organization",
+        "name": "Magicelk Labs",
+        "url": "https://magicelklabs.com/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "@id": "https://magicelklabs.com/#organization",
+        "name": "Magicelk Labs",
+        "url": "https://magicelklabs.com/"
+      },
+      "about": {
+        "@type": "SoftwareApplication",
+        "name": "Refined GitHub",
+        "description": "Dozens of quality-of-life improvements for GitHub",
+        "applicationCategory": "BrowserApplication",
+        "url": "https://chromewebstore.google.com/detail/hlepfoohegkhhmjieoechaddaejaokhf"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Viaduct",
+          "item": "https://magicelklabs.com/viaduct/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Extensions",
+          "item": "https://magicelklabs.com/viaduct/extensions/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Refined GitHub"
+        }
+      ]
+    }
+  ]
 }
 </script>
 <script defer src="/assets/analytics.js"></script>
@@ -163,84 +298,48 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 </header>
 <main class="wrap">
 
-<div class="crumb"><a href="/viaduct/extensions/">Extensions</a> / Refined GitHub</div>
-<div class="hero">
-  <span class="tag">Developer tools</span>
+<div class="top">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="/viaduct/">Viaduct</a> / <a href="/viaduct/extensions/">Extensions</a> / Refined GitHub</nav>
   <h1>Run Refined GitHub in Safari</h1>
-  <p class="lede">There's an official Safari option for Refined GitHub (linked below). There's also
-       Viaduct, which runs the actual Chrome build in Safari, the same way it runs the
-       thousands of extensions that never got a port.</p>
+  <p class="lede">Its developer makes a Safari version too. Viaduct runs the Chrome one you already know.</p>
 </div>
 
-<section>
-  <div class="card callout">
-    <strong style="color:var(--ink)">Good news first: an official option exists.</strong>
-    <p style="margin:8px 0 0">Refined GitHub has an official Safari port on the Mac App Store. If that works for you, use it. Viaduct is for running the Chrome build directly, or for extensions with no port at all.<br />
-    → <a href="https://apps.apple.com/us/app/refined-github/id1519867270" rel="noopener">Refined GitHub (Mac App Store)</a></p>
+<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4" data-phone-ar="960 / 720" aria-labelledby="demo-h" style="--ar:1440 / 810">
+  <div class="demo__stage" data-sc-stage>
+    <h2 id="demo-h">Install it</h2>
+    <ol class="steps">
+      <li><span class="step__n" aria-hidden="true">1</span><p><strong><a href="/viaduct/">Get Viaduct</a> and run its setup.</strong> It walks you through installing Xcode (free), signing in to it with any Apple ID and turning on the Add to Safari button.</p></li>
+      <li data-t="0"><button type="button" class="step__n" aria-label="Show step 2 in the recording">2</button><p><strong>Open <a href="https://chromewebstore.google.com/detail/hlepfoohegkhhmjieoechaddaejaokhf" rel="noopener">Refined GitHub on the Chrome Web Store</a> in Safari.</strong></p></li>
+      <li data-t="6.2"><button type="button" class="step__n" aria-label="Show step 3 in the recording">3</button><p><strong>Click Add to Safari.</strong> Viaduct downloads, converts and signs it.</p></li>
+      <li data-t="14"><button type="button" class="step__n" aria-label="Show step 4 in the recording">4</button><p><strong>Switch it on</strong> in Safari → Settings → Extensions, and it's in your toolbar.</p></li>
+    </ol>
+    <figure class="frame demo__frame"><div class="demo__slot">
+      <img class="sc-stage__poster" src="/viaduct/assets/viaduct-install-poster.webp" width="1440" height="810" alt="" />
+      <video data-sc-scrub data-sc-src="/viaduct/assets/viaduct-install.mp4" data-sc-src-mobile="/viaduct/assets/viaduct-install-phone.mp4" data-phone-poster="/viaduct/assets/viaduct-install-phone-poster.webp" width="1440" height="810" muted playsinline aria-label="Screen recording in Safari: Add to Safari is clicked on the Dark Reader listing in the Chrome Web Store, Viaduct builds and signs it, the button becomes Remove from Safari, and Dark Reader's popup opens from the toolbar."></video>
+    </div><figcaption>Recorded with Dark Reader. Every store install goes the same way.</figcaption></figure>
   </div>
 </section>
-<section>
-  <h2>The whole process, three steps</h2>
-  <ol class="steps">
-    <li><strong><a href="/viaduct/">Get Viaduct</a></strong>. Free for your first 2 conversions. Turn on its small Safari extension once, and it upgrades the Chrome Web Store.</li>
-    <li><strong>Open Refined GitHub's Chrome Web Store page in Safari.</strong><br />
-        <a href="https://chromewebstore.google.com/detail/hlepfoohegkhhmjieoechaddaejaokhf" rel="noopener">Refined GitHub on the Chrome Web Store →</a></li>
-    <li><strong>Click "Add to Safari."</strong> The store's "Add to Chrome" button becomes "Add to Safari." If Viaduct points you to the official version first, choose Convert Anyway. It then fetches Refined GitHub, converts it to a native Safari extension, signs it, and installs it. Switch it on once in Safari's settings and it appears in the toolbar, like any other extension.</li>
-  </ol>
+
+<section class="row" aria-labelledby="questions-h">
+  <h2 id="questions-h">Questions</h2>
+  <div class="row__body">
+    <details><summary>Does its developer make one for Safari?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>Yes: <a href="https://apps.apple.com/us/app/refined-github/id1519867270" rel="noopener">Refined GitHub</a> (Mac App Store).</p></details>
+    <details><summary>Is it the real extension, or a clone?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>The real one. Viaduct downloads the same package Chrome installs from the Web Store and adds fixes where Safari behaves differently.</p></details>
+    <details><summary>Will it update itself?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>With Pro, yes. Turn on Update Chrome Web Store extensions weekly in Viaduct's settings, and it rebuilds the extension when the store has a new version.</p></details>
+    <details><summary>What does Viaduct cost?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>Two conversions are free, and Viaduct removes them after 7 days. Pro is $19 once: it converts as many as you like and keeps them installed.</p></details>
+  </div>
 </section>
 
-<!-- MEDIA-SLOT: refined-github. Uncomment and fill after testing this extension.
-<section>
-  <h2>Refined GitHub running in Safari</h2>
-  <figure class="card" style="padding:12px">
-    <img src="media/refined-github-safari.png" alt="Refined GitHub running natively in Safari" style="width:100%;border-radius:8px;display:block" />
-    <figcaption style="font-size:13px;color:var(--mute);margin-top:8px">Refined GitHub, converted by Viaduct, running in Safari's own engine.</figcaption>
-  </figure>
-</section>
--->
-
-<section>
-  <h2>What's actually happening</h2>
-  <p>Viaduct downloads the exact Refined GitHub package published on the Chrome Web Store (same code, same version) and rebuilds it as a native Safari Web Extension
-  (<code>.appex</code>). It handles the conversion, the code-signing, and the macOS
-  registration that normally require Xcode wrangling and a terminal. Because the result
-  runs inside Safari's own engine, you keep Safari's battery life. No second Chromium
-  process runs in the background.</p>
-  <p>Safari supports the same WebExtension API family that Chrome extensions are built
-  on, and Viaduct patches the places where Safari behaves differently, so most extensions
-  work. Some Chrome-only APIs have no Safari equivalent, and
-  the features built on them won't work. If an extension can't work in Safari at all,
-  Viaduct tells you before you convert.</p>
-</section>
-<section>
-  <h2>Questions</h2>
-  <details><summary>Is this the real Refined GitHub, or a clone?</summary>
-    <p>The real one. Viaduct converts the exact package its developers published on the Chrome Web Store
-    and adds the fixes Safari needs to run it. Nothing is hosted or redistributed; the
-    conversion happens locally on your Mac.</p></details>
-  <details><summary>Will it stop working after a week?</summary>
-    <p>On the free plan, yes: Viaduct removes converted extensions after 7 days.
-    Viaduct Pro keeps them installed for good.</p></details>
-  <details><summary>I already use Refined GitHub in Chrome. Do my settings come with it?</summary>
-    <p>Usually, if it's installed in Chrome, Brave, Edge, Arc, Vivaldi, Opera or Chromium on
-    the same Mac. Viaduct reads its saved settings from the browser and brings them into
-    the Safari version. Import from Chrome in Viaduct lists everything you have installed
-    there and converts the ones you pick in one batch.</p></details>
-  <details><summary>What do I need?</summary>
-    <p>macOS 13+, on Apple Silicon or Intel. Viaduct is a universal app, so one download
-    runs natively on either chip. Node is bundled inside Viaduct, so there's nothing
-    to install. Xcode is required (free, from the App Store), with an Apple ID signed in
-    (a free one works), because Apple offers no other way to code-sign a Safari extension
-    on a free account. Viaduct's first-launch setup walks you through both.</p></details>
-  <details><summary>What does Viaduct cost?</summary>
-    <p>Free for your first 2 conversions, which Viaduct removes after 7 days. Pro is $19
-    one-time: unlimited conversions, and your extensions stay installed. The conversion
-    engine is source-available (PolyForm Shield).</p></details>
-</section>
+<nav class="more" aria-label="More guides">More guides: <a href="/viaduct/extensions/user-agent-switcher/">User-Agent Switcher and Manager</a>, <a href="/viaduct/extensions/react-developer-tools/">React Developer Tools</a>, <a href="/viaduct/extensions/zotero-connector/">Zotero Connector</a>, <a href="/viaduct/extensions/chrome-extensions-in-safari/">Chrome extensions in Safari</a> and <a href="/viaduct/extensions/">every extension</a>.</nav>
+<div class="meta">
+  <p>Updated <time datetime="2026-10-31">October 31, 2026</time></p>
+  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple or Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
+</div>
 </main>
-<p class="legal">All extension names are trademarks of their respective owners. Viaduct is not
-affiliated with or endorsed by the developers of the extensions listed here, nor by Apple or
-Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
 <div id="site-footer"></div>
 <script src="/assets/footer.js" data-product="Viaduct" data-links-only="1" data-links="Viaduct|/viaduct/, All extensions|/viaduct/extensions/, How it works|/viaduct/#how, Privacy|/viaduct/privacy.html, Terms|/viaduct/terms.html"></script>
 <noscript>
@@ -259,5 +358,7 @@ Google. Viaduct converts extensions locally on your Mac; nothing is redistribute
 </noscript>
 <script src="/viaduct/assets/nav.js?v=1"></script>
 <script src="/assets/attribution.js"></script>
+<script src="/viaduct/assets/scrollcraft.js?v=2"></script>
+<script src="/viaduct/assets/guide.js?v=1"></script>
 </body>
 </html>

@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<<<<<<< HEAD
   <url><loc>https://magicelklabs.com/</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://magicelklabs.com/about/</loc><lastmod>2026-10-31</lastmod></url>
+=======
+  <url><loc>https://magicelklabs.com/</loc><lastmod>2026-11-08</lastmod></url>
+  <url><loc>https://magicelklabs.com/about/</loc><lastmod>2026-11-08</lastmod></url>
+>>>>>>> cd5d712 (Rebuild the Viaduct guides around a recorded install)
   <url><loc>https://magicelklabs.com/spyglass/</loc><lastmod>2026-11-08</lastmod></url>
   <url><loc>https://magicelklabs.com/spyglass/privacy.html</loc><lastmod>2026-11-08</lastmod></url>
   <url><loc>https://magicelklabs.com/spyglass/terms.html</loc><lastmod>2026-11-08</lastmod></url>
   <url><loc>https://magicelklabs.com/spyglass/license.html</loc><lastmod>2026-11-08</lastmod></url>
   <url><loc>https://magicelklabs.com/spyglass/security.html</loc><lastmod>2026-11-08</lastmod></url>
+<<<<<<< HEAD
   <url><loc>https://magicelklabs.com/viaduct/</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://magicelklabs.com/viaduct/privacy.html</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://magicelklabs.com/viaduct/terms.html</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://magicelklabs.com/viaduct/license.html</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://magicelklabs.com/viaduct/security.html</loc><lastmod>2026-10-31</lastmod></url>
+=======
+  <url><loc>https://magicelklabs.com/viaduct/</loc><lastmod>2026-11-08</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/privacy.html</loc><lastmod>2026-11-08</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/terms.html</loc><lastmod>2026-11-08</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/license.html</loc><lastmod>2026-11-08</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/security.html</loc><lastmod>2026-11-08</lastmod></url>
+>>>>>>> cd5d712 (Rebuild the Viaduct guides around a recorded install)
   <url><loc>https://magicelklabs.com/lector/</loc><lastmod>2026-11-08</lastmod></url>
   <url><loc>https://magicelklabs.com/lector/privacy.html</loc><lastmod>2026-11-08</lastmod></url>
   <url><loc>https://magicelklabs.com/lector/terms.html</loc><lastmod>2026-11-08</lastmod></url>
   <url><loc>https://magicelklabs.com/lector/license.html</loc><lastmod>2026-11-08</lastmod></url>
   <url><loc>https://magicelklabs.com/lector/security.html</loc><lastmod>2026-11-08</lastmod></url>
   <url><loc>https://magicelklabs.com/viaduct/extensions/</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/extensions/chrome-extensions-in-safari/</loc><lastmod>2026-11-09</lastmod></url>
   <url><loc>https://magicelklabs.com/viaduct/extensions/claude-in-chrome/</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://magicelklabs.com/viaduct/extensions/ublock-origin/</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://magicelklabs.com/viaduct/extensions/tampermonkey/</loc><lastmod>2026-10-31</lastmod></url>
@@ -39,4 +53,18 @@
   <url><loc>https://magicelklabs.com/viaduct/extensions/web-archives/</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://magicelklabs.com/viaduct/extensions/user-agent-switcher/</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://magicelklabs.com/viaduct/extensions/xbrowsersync/</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/extensions/vimium/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/extensions/enhancer-for-youtube/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/extensions/onetab/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/extensions/react-developer-tools/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/extensions/vue-devtools/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/extensions/redux-devtools/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/extensions/colorzilla/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/extensions/google-translate/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/guides/safari-extension-7-day-limit/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/guides/chrome-extension-to-safari-converter/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/guides/move-chrome-extensions-to-safari/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/guides/install-crx-file-mac/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/guides/safari-web-extension-converter-alternative/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://magicelklabs.com/viaduct/guides/arc-to-safari/</loc><lastmod>2026-11-09</lastmod></url>
 </urlset>

@@ -157,6 +157,24 @@ scheme is a bug.
   approach paragraph, closing CTA band) restated the pricing or the pitch a
   second time and was cut. The whole page is 84 words.
 - Section headers: left-aligned h2, optional hairline `border-top` rule above.
+- Viaduct's guides (extension guides, topic guides, the general guide, the
+  hub) share one page built by `viaduct/extensions/build.js` on the product
+  page's system. The head holds only the crumb, a large h1 and one sentence.
+  Straight after it comes the demonstration, the page's one peak: the
+  numbered steps on the lead side and a real recording framed on the trail
+  side, a scroll-craft `scrub` act (span 2.4, no dwell) on desktop. The steps
+  are the recording's chapters: `viaduct/assets/guide.js` lights the step the
+  footage is on, and a step's number is a button that takes the recording to
+  that moment (on desktop by scrolling to where the engine puts it). Phones
+  and reduced motion get a plain `<video>` instead, decided before the engine
+  mounts: phones play the `-phone` cut muted on a loop while it is on screen,
+  reduced motion shows controls. Where the recording isn't the page's own
+  extension, one line under it says what it shows. After it, at most two 4/8
+  ledger rows, the FAQ (the price is one answer in it), and the other guides
+  as one line. No facts strip, callout cards, icons in the head, category
+  eyebrow, closing price band or link arrows. The "Updated" date sits at the
+  foot beside the trademark note. Only the hub has no recording; it is a
+  catalogue, with each extension's icon in its tables.
 
 ### The shelf
 
@@ -472,7 +490,8 @@ $15 one-time (unlimited, plus live translation in beta). Upgrade $6. macOS 15+.
     `ffmpeg -i <src> -an -vf "tpad=start_mode=clone:start_duration=3.3:stop_mode=clone:stop_duration=4.4,fps=20,scale=1440:810:flags=lanczos,format=yuv420p" -c:v libx264 -preset slow -tune stillimage -crf 25 -g 10 -keyint_min 10 -sc_threshold 0 -movflags +faststart viaduct-install.mp4`
     (phone: `scale=854:480`, `-crf 27 -g 8 -keyint_min 8`).
     `viaduct-install-poster.webp` and `viaduct-install-end.webp` are its first
-    and last frames.
+    and last frames. The poster also illustrates the Viaduct route on the
+    general guide (`/viaduct/extensions/chrome-extensions-in-safari/`).
   - `viaduct/assets/viaduct-store-{top,banner,body}.webp` (2800 wide),
     `viaduct-store-listing-m.webp` (1136×362, the title block for phones) and
     `viaduct-store-nag.webp` (696×437): the Dark Reader listing on the Chrome
@@ -484,8 +503,46 @@ $15 one-time (unlimited, plus live translation in beta). Upgrade $6. macOS 15+.
     Every position in the `.flip` CSS (plane offsets, the 128px shift, the
     button and the card) is in units of that 1400px-wide crop, so a re-capture
     has to re-measure them.
+  - `viaduct/assets/viaduct-dark-reader-safari.webp` (1400×1071): Dark Reader
+    running in Safari, shown on the Dark Reader guide. From the media kit's
+    `viaduct-safari-extension-running.png`, converted to sRGB, cropped to its
+    top-left 1700×1300, then `cwebp -q 82 -m 6 -sharp_yuv -resize 1400 0`.
+  - `viaduct/assets/viaduct-drop.mp4` (1260×940) + `-poster.webp` (first
+    frame): the media kit's `videos/viaduct-drop-and-convert.mp4`, cropped to
+    the window below its title bar (`crop=1260:940:330:90`), first frame held
+    0.8s and last 1.5s, then encoded for scrubbing as `encode.sh` does (`-g 8
+    -crf 21` at native height). The demonstration on the file guides and the
+    uBlock Origin, ClearURLs and xBrowserSync guides.
+  - `viaduct/assets/viaduct-batch.mp4` (1388×1016) + `-poster.webp`: the media
+    kit's `videos/viaduct_twp.mp4` below its title bar
+    (`crop=1388:1016:12:52`), seconds 3 to 15 of the build compressed 4x, last
+    frame held 1.2s, same encode. The demonstration on the Chrome and Arc
+    moving guides.
+  - `viaduct/assets/viaduct-{install,drop,batch}-phone.mp4` (960×720, 640×720,
+    686×720) + `-phone-poster.webp`: the phone cuts the guides play, cropped in
+    on the action so the UI reads at phone width (install: the media kit
+    original with the same holds as `viaduct-install.mp4`,
+    `crop=1440:1080:230:0`; drop `crop=800:900:230:0`; batch
+    `crop=810:850:290:150`), 720 high, `-crf 26 -g 20` since phones play them
+    rather than scrub them. `viaduct-install-m.mp4` stays the product page's.
+  - The step times each recording is annotated with live in `VIDEOS` in
+    build.js; a re-encode that shifts the footage has to re-read them.
+  - `viaduct/assets/icons/<slug>.webp` (128×128, alpha): each extension's own
+    icon, the largest one its Chrome Web Store package declares (from the
+    project's GitHub repo for uBlock Origin, ClearURLs, xBrowserSync and
+    Refined GitHub, whose store packages didn't download), then
+    `cwebp -q 90 -alpha_q 100 -m 6 -resize 128 128`. Shown at 32px in the hub's
+    tables.
 
 ## Build
 
 Static, zero build step, except `viaduct/extensions/build.js` which generates
-the 21 extension guides + hub + sitemap: `node build.js` after editing it.
+the 29 extension guides, the general guide (`chrome-extensions-in-safari/`),
+the hub (one compatibility table per category, then the topic guides), the six
+topic guides in `viaduct/guides/` and the sitemap: `node build.js` after
+editing it. The topic guides use the extension guides' page, with their own
+body, a "Viaduct / <guide>" breadcrumb and no hub crumb.
+Each guide prints an "Updated" date at its foot, and uses the same date as its
+JSON-LD `dateModified` and its sitemap `lastmod`: the date of the last commit
+that touched the guide's file. A changed guide shows its new date only after
+it is committed and build.js runs again.
