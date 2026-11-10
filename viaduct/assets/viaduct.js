@@ -2,7 +2,7 @@
    scroll and publishes each act's progress as --sc-p; the store act's
    choreography is CSS reading that value. This file owns the letter split
    and word widths for the rolling button, where the lifted button travels
-   to, the extension plate, and the hero's light rays. The nav is nav.js. */
+   to, the extension wall, and the hero's light rays. The nav is nav.js. */
 (function () {
   'use strict';
 
@@ -84,234 +84,89 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
   })();
 
-  /* ---- The extension plate ----------------------------------------------------------
-     The reader drops their own extension (or picks a sample) and it goes
-     through the same first step Dark Reader did: Viaduct reads its manifest,
-     and its button flips. assets/inspect.js does the reading, in memory; the
-     samples were read by the same script ahead of time (assets/samples/).
-     This only draws the result. Every string from a package is set as text,
-     never as markup. */
+  /* ---- The extension reel ----------------------------------------------------------
+     One frame plays the 22 recordings back to back. Each icon under it is a
+     link to that extension's guide, which is what it stays without this
+     script; here it becomes a button that jumps the reel to its recording,
+     and a click with a modifier key still opens the guide. Nothing is fetched
+     until the frame is on screen, and it plays muted only while it is and the
+     tab is visible. With reduced motion or Save-Data it gets controls and
+     never starts on its own; when a recording ends the next one is loaded. */
   (function () {
-    var plate = document.getElementById('plate');
-    if (!plate || !window.ViaductInspect) return;
-    var I = window.ViaductInspect;
-    var fileIn = document.getElementById('pick-file');
-    var dirIn = document.getElementById('pick-folder');
-    var picks = document.querySelectorAll('.pick[data-sample]');
-    var errEl = document.getElementById('plate-error');
-    var icon = document.getElementById('r-icon');
-    // The extension's name. The heading is made on the first render, so the
-    // page never ships an empty one.
-    var nameEl = null;
-    var metaEl = document.getElementById('r-meta');
-    var descEl = document.getElementById('r-desc');
-    var stats = document.getElementById('r-stats');
-    var groups = document.getElementById('r-groups');
-    var btn = document.getElementById('r-btn');
-    var current = null;
-    var runId = 0;
-    var flipTimer = 0;
-    // The same puzzle mark as the empty plate, for packages whose icon is
-    // missing or won't decode.
-    var PUZZLE = 'data:image/svg+xml,' + encodeURIComponent(
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-6 -6 36 36"><path fill="#4FB8AA" d="' +
-      plate.querySelector('.plate__icon path').getAttribute('d') + '"/></svg>');
-    icon.addEventListener('error', function () { if (icon.src !== PUZZLE) icon.src = PUZZLE; });
+    var video = document.getElementById('reel-video');
+    var strip = document.querySelector('.reel__strip');
+    var icons = document.querySelectorAll('.reel__icon[data-ext]');
+    if (!video || !strip || !icons.length) return;
+    var still = reduce || !!(navigator.connection && navigator.connection.saveData);
+    var index = 0;
+    var loaded = false;
+    var onScreen = !window.IntersectionObserver;
+    if (still) video.controls = true;
 
-    function setState(s) { plate.setAttribute('data-state', s); }
-
-    function el(tag, cls, text) {
-      var n = document.createElement(tag);
-      if (cls) n.className = cls;
-      if (text != null) n.textContent = text;
-      return n;
-    }
-
-    function stat(label, value) {
-      var d = el('div');
-      d.appendChild(el('dt', null, label));
-      d.appendChild(el('dd', null, String(value)));
-      stats.appendChild(d);
-    }
-
-    // A titled group of tags. Long lists show the first `cap` and a button
-    // that reveals the rest in place; a button that hides one or two tags
-    // costs more room than it saves, so short overflows show in full.
-    function tagGroup(title, items, cap) {
-      var g = el('div', 'group');
-      g.appendChild(el('h4', 'group__title', title));
-      var ul = el('ul', 'tags');
-      ul.tabIndex = -1;
-      function add(list) { list.forEach(function (t) { var li = el('li'); li.appendChild(el('span', 'tag', t)); ul.appendChild(li); }); }
-      if (items.length - cap < 3) cap = items.length;
-      add(items.slice(0, cap));
-      if (items.length > cap) {
-        var li = el('li');
-        var more = el('button', 'tag tag--more', '+' + (items.length - cap) + ' more');
-        more.type = 'button';
-        more.setAttribute('aria-label', 'Show all ' + items.length + ' ' + title.toLowerCase());
-        more.addEventListener('click', function () {
-          ul.removeChild(li);
-          add(items.slice(cap));
-          ul.focus();
+    function show(i) {
+      icons[index].style.removeProperty('--p');
+      index = i;
+      var slug = icons[i].getAttribute('data-ext');
+      var name = icons[i].querySelector('img').alt;
+      video.poster = './assets/install/' + slug + '-poster.webp';
+      video.src = './assets/install/' + slug + '.mp4';
+      video.setAttribute('aria-label', 'Screen recording in Safari: Add to Safari is clicked on the ' + name +
+        ' listing in the Chrome Web Store, and Viaduct builds, signs and installs it.');
+      for (var k = 0; k < icons.length; k++) icons[k].setAttribute('aria-pressed', String(k === i));
+      // Where the row scrolls (phones), bring the lit icon to its middle
+      // without moving the page.
+      if (strip.scrollWidth > strip.clientWidth) {
+        strip.scrollTo({
+          left: icons[i].offsetLeft - (strip.clientWidth - icons[i].offsetWidth) / 2,
+          behavior: reduce ? 'auto' : 'smooth'
         });
-        li.appendChild(more);
-        ul.appendChild(li);
       }
-      g.appendChild(ul);
-      groups.appendChild(g);
-      return g;
+      loaded = true;
+    }
+    function play() {
+      if (still || !onScreen || document.hidden) return;
+      var p = video.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+    function jump(i) {
+      // Pressing the one already playing starts it again.
+      if (i === index && loaded) video.currentTime = 0;
+      else show(i);
+      play();
     }
 
-    function note(kind, label, text) {
-      var p = el('p', 'note' + (kind === 'bad' ? ' is-bad' : ''));
-      p.appendChild(el('b', null, label));
-      p.appendChild(el('span', null, text));
-      return p;
-    }
+    video.addEventListener('timeupdate', function () {
+      if (video.duration) icons[index].style.setProperty('--p', (video.currentTime / video.duration).toFixed(3));
+    });
+    video.addEventListener('ended', function () {
+      show((index + 1) % icons.length);
+      play();
+    });
 
-    function list(items, max) {
-      if (items.length <= max) return items.join(', ');
-      return items.slice(0, max).join(', ') + ', and ' + (items.length - max) + ' more';
-    }
-
-    var BACKGROUND = { service_worker: 'service worker', scripts: 'background scripts', page: 'background page' };
-
-    function render(r) {
-      current = r;
-      icon.src = r.iconUrl || PUZZLE;
-      if (!nameEl) { nameEl = el('h3'); metaEl.parentNode.insertBefore(nameEl, metaEl); }
-      nameEl.textContent = r.name || 'Unnamed extension';
-      var meta = [];
-      if (r.version) meta.push('Version ' + r.version);
-      if (r.manifestVersion) meta.push('Manifest V' + r.manifestVersion);
-      if (r.background) meta.push(BACKGROUND[r.background]);
-      metaEl.textContent = meta.join(' · ');
-      descEl.textContent = r.description || '';
-      descEl.hidden = !r.description;
-
-      var all = r.hostPermissions.some(function (h) { return h === '<all_urls>' || h === '*://*/*'; });
-      stats.textContent = '';
-      stat('Permissions', r.permissions.length);
-      stat('Site access', all ? 'All' : r.hostPermissions.length || 'None');
-      stat('Chrome APIs', r.namespaces.length);
-      stat('Files', r.files);
-
-      groups.textContent = '';
-      if (r.permissions.length) tagGroup('Permissions', r.permissions, 10);
-      if (!all && r.hostPermissions.length) tagGroup('Sites', r.hostPermissions, 6);
-      if (r.namespaces.length) {
-        var g = tagGroup('Chrome APIs', r.namespaces, 12);
-        if (r.truncatedScan) g.appendChild(el('p', 'group__note', 'From the first 25 MB of its scripts.'));
-      }
-
-      // What the compatibility layer above will do for this one.
-      var notes = [];
-      if (r.manifestVersion === 3 && r.background === 'service_worker') {
-        notes.push(note('patch', 'Patched', 'Safari omits onInstalled and parts of self.registration. Viaduct backfills them, so the worker loads.'));
-      }
-      if (r.caseMismatches.length) {
-        var pairs = r.caseMismatches.map(function (m) { return m.ref + ' is really ' + m.actual; });
-        notes.push(note('patch', 'Patched', 'The manifest\u2019s letter case doesn\u2019t match the files (' + list(pairs, 3) +
-          '). Safari is case sensitive here; Viaduct normalizes the casing.'));
-      }
-      if (r.missing.length) {
-        notes.push(note('bad', 'Missing', 'The manifest names ' + list(r.missing, 3) +
-          (r.missing.length === 1 ? ', which isn\u2019t' : ', which aren\u2019t') + ' in the package.'));
-      }
-      if (notes.length) {
-        var ng = el('div', 'group');
-        notes.forEach(function (n) { ng.appendChild(n); });
-        groups.appendChild(ng);
-      }
-
-      setState('result');
-      measureRolls(plate);
-      btn.classList.remove('is-flipped');
-      // Let the reader see it arrive as a Chrome extension before it flips.
-      clearTimeout(flipTimer);
-      flipTimer = setTimeout(function () { btn.classList.add('is-flipped'); }, reduce ? 0 : 650);
-    }
-
-    function fail(e) {
-      errEl.textContent = (e && e.message) || 'The page couldn\u2019t read that package.';
-      setState('error');
-    }
-
-    // Only the latest request draws, so a slow package can't overwrite a
-    // sample picked after it.
-    function run(promise) {
-      var id = ++runId;
-      if (current) { I.revoke(current); current = null; }
-      clearTimeout(flipTimer);
-      setState('busy');
-      promise.then(function (r) { if (id === runId) render(r); else I.revoke(r); },
-                   function (e) { if (id === runId) fail(e); });
-    }
-
-    function press(which) {
-      for (var i = 0; i < picks.length; i++) picks[i].setAttribute('aria-pressed', String(picks[i] === which));
-    }
-
-    var samples = null;
-    function sample(slug) {
-      samples = samples || fetch('./assets/samples/samples.json').then(function (res) {
-        if (!res.ok) throw new Error('The samples didn\u2019t load. Drop in your own instead.');
-        return res.json();
-      });
-      return samples.then(function (all) {
-        for (var i = 0; i < all.length; i++) {
-          if (all[i].slug !== slug) continue;
-          var r = JSON.parse(JSON.stringify(all[i]));
-          r.iconUrl = r.icon;
-          return r;
-        }
-        throw new Error('That sample is missing.');
-      }, function (e) { samples = null; throw e; });
-    }
-    // Each sample is a link to its guide, which is what it stays without this
-    // script. Here it becomes a toggle that reads the sample onto the plate; a
-    // click with a modifier key still opens the guide.
-    Array.prototype.forEach.call(picks, function (b) {
-      function pick() { press(b); run(sample(b.getAttribute('data-sample'))); }
-      b.setAttribute('role', 'button');
-      b.setAttribute('aria-pressed', 'false');
-      b.addEventListener('click', function (e) {
+    Array.prototype.forEach.call(icons, function (t, i) {
+      t.setAttribute('role', 'button');
+      t.setAttribute('aria-pressed', String(i === index));
+      t.addEventListener('click', function (e) {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
         e.preventDefault();
-        pick();
+        jump(i);
       });
       // A link answers Enter on its own; a button also answers Space.
-      b.addEventListener('keydown', function (e) { if (e.key === ' ') e.preventDefault(); });
-      b.addEventListener('keyup', function (e) { if (e.key === ' ') pick(); });
+      t.addEventListener('keydown', function (e) { if (e.key === ' ') e.preventDefault(); });
+      t.addEventListener('keyup', function (e) { if (e.key === ' ') jump(i); });
     });
 
-    // Copy the files out before clearing the input, so picking the same file
-    // again still fires a change.
-    function fromInput(input) {
-      if (!input.files.length) return;
-      var files = Array.prototype.slice.call(input.files);
-      input.value = '';
-      press(null);
-      run(I.fromFiles(files));
-    }
-    fileIn.addEventListener('change', function () { fromInput(fileIn); });
-    dirIn.addEventListener('change', function () { fromInput(dirIn); });
-
-    // Drag and drop, in any state. The plate takes the drop; anywhere else on
-    // the page a stray drop is swallowed so the browser doesn't open the file.
-    var depth = 0;
-    plate.addEventListener('dragenter', function (e) { e.preventDefault(); depth++; plate.classList.add('is-over'); });
-    plate.addEventListener('dragover', function (e) { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
-    plate.addEventListener('dragleave', function () { if (--depth <= 0) { depth = 0; plate.classList.remove('is-over'); } });
-    plate.addEventListener('drop', function (e) {
-      e.preventDefault();
-      depth = 0; plate.classList.remove('is-over');
-      press(null);
-      run(I.fromDataTransfer(e.dataTransfer));
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) video.pause();
+      else play();
     });
-    addEventListener('dragover', function (e) { if (!plate.contains(e.target)) { e.preventDefault(); e.dataTransfer.dropEffect = 'none'; } });
-    addEventListener('drop', function (e) { if (!plate.contains(e.target)) e.preventDefault(); });
+    if (!window.IntersectionObserver) return;
+    new IntersectionObserver(function (entries) {
+      onScreen = entries[entries.length - 1].isIntersecting;
+      if (!onScreen) { video.pause(); return; }
+      if (!loaded) show(index);
+      play();
+    }, { threshold: 0.35 }).observe(video);
   })();
 
   /* ---- Hero light rays ----------------------------------------------------------

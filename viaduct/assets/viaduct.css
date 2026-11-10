@@ -4,11 +4,6 @@
    engine owns every [data-sc-*] selector; everything here is the page's own
    markup. */
 
-/* The two flip values are registered so the extension plate can transition
-   them; the store act drives the same two from scroll position instead. */
-@property --roll { syntax: "<number>"; inherits: true; initial-value: 0; }
-@property --c { syntax: "<number>"; inherits: true; initial-value: 0; }
-
 :root {
   color-scheme: dark;
   --canvas: #070908;  --surface: #0E1211;  --elevated: #151A19;  --card: #1B211F;
@@ -67,9 +62,7 @@ b { color: var(--ink); font-weight: 600; }
   transform: translateY(-200%);
 }
 .skip:focus-visible { transform: none; }
-/* The file inputs are visually hidden; their focus shows on the label that
-   follows each one, which is the button the reader sees. */
-a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible + label {
+a:focus-visible, button:focus-visible, summary:focus-visible {
   outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 8px;
 }
 
@@ -186,8 +179,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   opacity: calc(1 - var(--nag));
 }
 
-/* The install button, shared by the store act and the extension plate.
-   --roll moves each letter (staggered by --i), --c moves the colour. */
+/* The install button in the store act. --roll moves each letter (staggered
+   by --i), --c moves the colour. */
 .flip__btn {
   position: absolute; z-index: 2;
   left: 76.644%; top: 56.957%; width: 10.499%; height: 8.696%;
@@ -274,98 +267,37 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 .fix.sc-in .fix__fix { opacity: 1; transform: none; }
 .no-js .fix .fix__fix { opacity: 1; transform: none; }
 
-/* ------------------------------------------------------------------ try --
-   The plate is drawn in Viaduct's own idiom: the dashed drop zone from the
-   app's main window, then the listing the extension would get. The plate
-   takes a drop in any state, and the pickers beside it never go away, so
-   trying another is one click or one drop from anywhere. */
-.try__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(40px, 5vw, 72px); align-items: start; }
-.try__intro p { margin: 18px 0 0; font-size: 17px; line-height: 1.65; max-width: 34ch; }
-/* The reader's own file or folder: the same tiles as the samples below, so
-   the two ways in read as one set of choices. */
-.own { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 24px; }
-.picks { margin-top: 36px; }
-.picks__title { font: 600 15px/1.4 var(--sc-font-text); letter-spacing: 0; color: var(--ink); margin-bottom: 12px; }
-.picks__list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.pick {
-  display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 12px;
-  font: 500 14.5px/1.25 var(--sc-font-text); color: var(--ink); text-align: left; text-decoration: none; cursor: pointer;
-  background: var(--surface); border: 1px solid var(--hair); border-radius: 12px; box-shadow: var(--lip);
-  transition: border-color .2s, background-color .2s;
+/* ----------------------------------------------------------------- reel --
+   Twenty-two more extensions, each with its own recorded install, played back
+   to back in one frame. The icons under it are the playlist: the one playing
+   is lit and its bar fills as the recording runs (--p, set by viaduct.js),
+   and pressing any other jumps to it. On phones and touch screens the icons
+   keep a full tap size and the row scrolls sideways. */
+.reel__head p { margin: 18px 0 0; font-size: 17px; line-height: 1.65; max-width: 40ch; }
+.reel__frame { margin-top: 32px; }
+.reel__slot { aspect-ratio: 16 / 9; }
+.reel__slot video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.reel__strip { position: relative; margin-top: 14px; }
+.reel__icons { display: grid; grid-template-columns: repeat(22, minmax(0, 1fr)); gap: 4px; }
+.reel__icon {
+  position: relative; display: grid; place-items: center; aspect-ratio: 1; border-radius: 10px;
+  opacity: .5; transition: opacity .2s, background-color .2s;
 }
-.pick img { width: 24px; height: 24px; flex: none; object-fit: contain; border-radius: 5px; }
-.pick__glyph { width: 24px; height: 24px; flex: none; fill: none; stroke: #4FB8AA; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-@media (hover: hover) { .pick:hover { border-color: rgba(255, 255, 255, .18); background: var(--elevated); } }
-.pick[aria-pressed="true"] { border-color: color-mix(in srgb, var(--teal) 60%, transparent); background: color-mix(in srgb, var(--teal) 9%, var(--surface)); }
-.pick:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
-
-.plate {
-  position: relative; border-radius: 18px; padding: 10px;
-  background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip), var(--sc-e2);
-  min-height: 340px; display: grid;
-  transition: border-color .2s;
+.reel__icon img { width: 66%; max-width: 28px; height: auto; aspect-ratio: 1; object-fit: contain; border-radius: 5px; }
+.reel__icon::after {
+  content: ""; position: absolute; left: 22%; right: 22%; bottom: 3px; height: 2px; border-radius: 1px;
+  background: var(--teal); transform: scaleX(var(--p, 0)); transform-origin: left; opacity: 0;
 }
-.plate.is-over { border-color: var(--teal); }
-.plate > * { display: none; }
-.plate[data-state="idle"] .plate__idle,
-.plate[data-state="busy"] .plate__busy,
-.plate[data-state="error"] .plate__error,
-.plate[data-state="result"] .plate__result { display: grid; }
-.plate__idle, .plate__busy, .plate__error {
-  place-items: center; align-content: center; gap: 14px; text-align: center; padding: 40px 24px;
-  border-radius: 12px; border: 1.5px dashed rgba(255, 255, 255, .2);
-  transition: border-color .2s, background-color .2s;
+@media (hover: hover) { .reel__icon:hover { opacity: 1; } }
+.reel__icon[aria-pressed="true"] { opacity: 1; background: var(--elevated); box-shadow: inset 0 0 0 1px var(--hair), var(--lip); }
+.reel__icon[aria-pressed="true"]::after { opacity: 1; transition: transform .25s linear; }
+.reel__icon:focus-visible { opacity: 1; outline-offset: 2px; }
+.no-js .reel__icon { opacity: 1; }
+@media (max-width: 720px), (pointer: coarse) {
+  .reel__strip { margin-inline: -24px; padding-inline: 24px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .reel__strip::-webkit-scrollbar { display: none; }
+  .reel__icons { grid-template-columns: repeat(22, 44px); width: max-content; }
 }
-.plate__idle { cursor: pointer; }
-.plate.is-over .plate__idle { border-color: var(--teal); background: color-mix(in srgb, var(--teal) 7%, transparent); }
-.plate__icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, .1); background: var(--elevated); box-shadow: var(--lip); }
-.plate__icon svg { width: 30px; height: 30px; fill: #4FB8AA; }
-.plate__title { margin: 0; font: 600 18px/1.35 var(--sc-font-text); color: var(--ink); max-width: 32ch; }
-.plate__hint { margin: 0; font-size: 15px; color: var(--body); }
-.plate__busy .plate__title { color: var(--body); }
-.plate__result { padding: 22px 22px 6px; gap: 0; align-content: start; }
-
-.listing { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; align-items: center; gap: 16px; }
-.listing__icon { width: 64px; height: 64px; border-radius: 12px; object-fit: contain; background: var(--elevated); }
-.listing__name h3 { font: 700 21px/1.2 var(--sc-font-display); letter-spacing: -.015em; overflow-wrap: anywhere; }
-.listing__name p { margin: 4px 0 0; font-size: 14px; color: var(--body); }
-.listing__btn {
-  position: relative; inset: auto; width: auto; height: 40px; padding: 0 20px;
-  font-size: 14px; z-index: auto;
-  --c: 0; --roll: 0;
-}
-/* Only the flip to Safari animates. The transition lives on the flipped
-   state, so dropping the class (picking another extension) snaps back to
-   Chrome instantly instead of rolling backwards first. */
-.listing__btn.is-flipped {
-  --c: 1; --roll: 1;
-  transition: --c .45s ease .1s, --roll .9s cubic-bezier(.65, 0, .35, 1);
-}
-@media (hover: hover) { .listing__btn.is-flipped:hover { background: var(--teal-press); } }
-.listing__desc { margin: 16px 0 0; font-size: 15px; line-height: 1.6; color: var(--body); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-/* The readout: four counts across, then the names behind the counts as
-   tags, long lists cut to a first handful with a button for the rest, then
-   anything Viaduct will patch or can't find. */
-.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 20px 0 0; border-block: 1px solid var(--hair); }
-.stats > div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 6px; padding: 14px 12px 14px 0; }
-.stats > div + div { padding-left: 14px; border-left: 1px solid var(--hair-soft); }
-.stats dt { font: 500 11px/1.3 var(--sc-font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--mute); }
-.stats dd { margin: 0; font: 800 26px/1.05 var(--sc-font-display); letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
-.group { padding: 16px 0; border-bottom: 1px solid var(--hair-soft); }
-.group:last-child { border-bottom: 0; }
-.group__title { margin: 0 0 10px; font: 500 11px/1.3 var(--sc-font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--mute); }
-.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.tag { font: 500 12.5px/1.2 var(--sc-font-mono); color: var(--body); padding: 5px 9px; border-radius: 7px; background: var(--elevated); border: 1px solid var(--hair); }
-.tag--more { font: 600 12.5px/1.2 var(--sc-font-text); color: var(--teal); background: transparent; border-style: dashed; cursor: pointer; }
-@media (hover: hover) { .tag--more:hover { border-color: var(--teal); } }
-.tag--more:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
-.group__note { margin: 10px 0 0; font-size: 13.5px; color: var(--mute); }
-.note { display: grid; grid-template-columns: 5.2rem minmax(0, 1fr); gap: 12px; margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink); }
-.note + .note { margin-top: 12px; }
-.note b { font: 500 11px/2.2 var(--sc-font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--teal); }
-.note.is-bad b { color: var(--bad); }
-.note code { overflow-wrap: anywhere; }
 
 /* ------------------------------------------------------------- features -- */
 .feat__grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(40px, 5vw, 72px); }
@@ -439,7 +371,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
 
 /* ------------------------------------------------------------ responsive -- */
 @media (max-width: 960px) {
-  .compat__grid, .feat__grid, .try__grid { grid-template-columns: 1fr; }
+  .compat__grid, .feat__grid { grid-template-columns: 1fr; }
   .install__stage { grid-template-columns: 1fr; align-content: center; gap: 24px; padding-top: 88px; }
   .install__frame { width: min(100%, (100svh - 330px) * (var(--ar)) + 14px); justify-self: center; order: -1; }
   .install__copy h2 { font-size: clamp(1.6rem, 6vw, 2.2rem); margin-bottom: 14px; }
@@ -469,23 +401,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .fix { grid-template-columns: 1fr; padding: 22px 0; }
   .fix b { grid-row: auto; margin-bottom: 6px; }
   .plans { grid-template-columns: 1fr; }
-  .plate__result { padding: 16px 12px 4px; }
-  .stats { grid-template-columns: 1fr 1fr; }
-  .stats > div:nth-child(3) { padding-left: 0; border-left: 0; }
-  .stats > div:nth-child(n+3) { border-top: 1px solid var(--hair-soft); }
-  .note { grid-template-columns: 1fr; gap: 0; }
-  .listing { grid-template-columns: 52px minmax(0, 1fr); }
-  .listing__icon { width: 52px; height: 52px; }
-  .listing__btn { grid-column: 1 / -1; justify-self: start; margin-top: 4px; }
   .eng__cell { padding-right: 12px; }
   .eng__cell + .eng__cell { padding-left: 12px; }
   .foot { justify-content: center; text-align: center; }
-}
-
-/* Two samples across leave Tampermonkey and SponsorBlock wider than their
-   tiles on the narrowest phones, so the samples stack there. */
-@media (max-width: 370px) {
-  .picks__list { grid-template-columns: 1fr; }
 }
 
 /* ------------------------------------------------------- reduced motion --
@@ -500,6 +418,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .roll__from { opacity: calc(1 - var(--roll)); }
   .roll__to { opacity: var(--roll); }
   .flip__nag { transform: none; }
-  .fix__txt, .fix .fix__fix, .listing__btn.is-flipped { transition: none; }
+  .fix__txt, .fix .fix__fix { transition: none; }
+  .reel__icon[aria-pressed="true"]::after { transition: none; }
   .btn-teal, .btn-ghost, .chev { transition: none; }
 }

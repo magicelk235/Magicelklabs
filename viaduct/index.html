@@ -31,7 +31,7 @@
 <link rel="stylesheet" href="/assets/fonts.css?v=1">
 <!-- Bump ?v= when these files change; Pages lets browsers cache them for ten minutes. -->
 <link rel="stylesheet" href="./assets/scrollcraft.css?v=2">
-<link rel="stylesheet" href="./assets/viaduct.css?v=9">
+<link rel="stylesheet" href="./assets/viaduct.css?v=10">
 <link rel="stylesheet" href="./assets/nav.css?v=1">
 <script>document.documentElement.classList.remove('no-js');</script>
 <script type="application/ld+json">
@@ -200,58 +200,46 @@
   </div>
 </section>
 
-<!-- THE HANDOVER: the reader's own extension takes Dark Reader's place.
-     assets/inspect.js reads it in the browser; nothing is uploaded. The
-     samples were read by the same script from their store packages (see
-     assets/samples/build.mjs), so they show what dropping the file would. -->
-<section id="try" class="try section" aria-labelledby="try-h">
-  <div class="wrap try__grid">
-    <div class="try__intro">
-      <div data-sc-in data-sc-stagger="70">
-        <h2 id="try-h">Now try yours.</h2>
-        <p>See what Viaduct finds inside your extension.</p>
-        <div class="own">
-          <input class="sr-only" type="file" id="pick-file" accept=".crx,.zip,application/zip,application/x-chrome-extension">
-          <label class="pick" for="pick-file"><svg class="pick__glyph" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#4FB8AA" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>A .crx or .zip</label>
-          <input class="sr-only" type="file" id="pick-folder" webkitdirectory>
-          <label class="pick" for="pick-folder"><svg class="pick__glyph" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#4FB8AA" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>A folder</label>
-        </div>
-      </div>
-      <div class="picks" data-sc-in>
-        <h3 class="picks__title" id="picks-h">Or look inside one of these</h3>
-        <div class="picks__list" role="group" aria-labelledby="picks-h">
-          <a class="pick" href="/viaduct/extensions/dark-reader/" data-sample="dark-reader"><img src="./assets/samples/dark-reader.png" width="24" height="24" alt="" loading="lazy">Dark Reader</a>
-          <a class="pick" href="/viaduct/extensions/tampermonkey/" data-sample="tampermonkey"><img src="./assets/samples/tampermonkey.png" width="24" height="24" alt="" loading="lazy">Tampermonkey</a>
-          <a class="pick" href="/viaduct/extensions/sponsorblock/" data-sample="sponsorblock"><img src="./assets/samples/sponsorblock.png" width="24" height="24" alt="" loading="lazy">SponsorBlock</a>
-          <a class="pick" href="/viaduct/extensions/return-youtube-dislike/" data-sample="return-youtube-dislike"><img src="./assets/samples/return-youtube-dislike.png" width="24" height="24" alt="" loading="lazy">Return YouTube Dislike</a>
-          <a class="pick" href="/viaduct/extensions/video-speed-controller/" data-sample="video-speed-controller"><img src="./assets/samples/video-speed-controller.png" width="24" height="24" alt="" loading="lazy">Video Speed Controller</a>
-          <a class="pick" href="/viaduct/extensions/stylus/" data-sample="stylus"><img src="./assets/samples/stylus.png" width="24" height="24" alt="" loading="lazy">Stylus</a>
-        </div>
-      </div>
+<!-- THE REEL: Dark Reader was one extension; these are 22 more, each
+     recorded going from the Chrome Web Store into Safari (the clips their
+     guides play). The frame plays them back to back; the icons under it mark
+     the one playing and jump to any other. Without the script each icon is a
+     link to its guide. -->
+<section id="extensions" class="reel section" aria-labelledby="reel-h">
+  <div class="wrap wrap--4">
+    <div class="reel__head" data-sc-in data-sc-stagger="70">
+      <h2 id="reel-h">Not just Dark Reader.</h2>
+      <p>Twenty-two more, each recorded going from the Chrome Web Store into Safari.</p>
     </div>
-    <div class="plate" id="plate" data-state="idle" data-sc-in>
-      <label class="plate__idle" for="pick-file">
-        <span class="plate__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 3.5a2 2 0 0 1 4 0V5h3.5A1.5 1.5 0 0 1 18 6.5V10h1.5a2 2 0 0 1 0 4H18v3.5a1.5 1.5 0 0 1-1.5 1.5H13v-1.5a2 2 0 0 0-4 0V19H5.5A1.5 1.5 0 0 1 4 17.5V14h1.5a2 2 0 0 0 0-4H4V6.5A1.5 1.5 0 0 1 5.5 5H9z"/></svg></span>
-        <span class="plate__title">Drop an extension here</span>
-      </label>
-      <div class="plate__busy" role="status"><span class="plate__title">Reading the manifest</span></div>
-      <div class="plate__error" role="alert">
-        <p class="plate__title" id="plate-error"></p>
-        <p class="plate__hint">Drop a different one here, or pick another.</p>
+    <figure class="frame reel__frame" data-sc-in>
+      <div class="slot reel__slot">
+        <video id="reel-video" muted playsinline preload="none" width="1440" height="810" poster="./assets/install/tampermonkey-poster.webp" aria-label="Screen recording in Safari: Add to Safari is clicked on the Tampermonkey listing in the Chrome Web Store, and Viaduct builds, signs and installs it."></video>
       </div>
-      <div class="plate__result" aria-live="polite">
-        <div class="listing">
-          <img class="listing__icon" id="r-icon" width="64" height="64" alt="">
-          <div class="listing__name">
-            <p id="r-meta"></p>
-          </div>
-          <a class="flip__btn listing__btn" id="r-btn" href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg">
-            <span class="flip__btn-in">Add to <span class="roll"><span class="roll__from" aria-hidden="true">Chrome</span><span class="roll__to">Safari</span></span></span>
-          </a>
-        </div>
-        <p class="listing__desc" id="r-desc"></p>
-        <dl class="stats" id="r-stats"></dl>
-        <div class="groups" id="r-groups"></div>
+    </figure>
+    <div class="reel__strip" data-sc-in>
+      <div class="reel__icons" role="group" aria-label="Recordings">
+        <a class="reel__icon" href="/viaduct/extensions/tampermonkey/" data-ext="tampermonkey" title="Tampermonkey"><img src="./assets/icons/tampermonkey.webp" width="28" height="28" alt="Tampermonkey" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/sponsorblock/" data-ext="sponsorblock" title="SponsorBlock"><img src="./assets/icons/sponsorblock.webp" width="28" height="28" alt="SponsorBlock" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/vimium/" data-ext="vimium" title="Vimium"><img src="./assets/icons/vimium.webp" width="28" height="28" alt="Vimium" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/google-translate/" data-ext="google-translate" title="Google Translate"><img src="./assets/icons/google-translate.webp" width="28" height="28" alt="Google Translate" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/video-speed-controller/" data-ext="video-speed-controller" title="Video Speed Controller"><img src="./assets/icons/video-speed-controller.webp" width="28" height="28" alt="Video Speed Controller" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/stylus/" data-ext="stylus" title="Stylus"><img src="./assets/icons/stylus.webp" width="28" height="28" alt="Stylus" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/refined-github/" data-ext="refined-github" title="Refined GitHub"><img src="./assets/icons/refined-github.webp" width="28" height="28" alt="Refined GitHub" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/react-developer-tools/" data-ext="react-developer-tools" title="React Developer Tools"><img src="./assets/icons/react-developer-tools.webp" width="28" height="28" alt="React Developer Tools" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/zotero-connector/" data-ext="zotero-connector" title="Zotero Connector"><img src="./assets/icons/zotero-connector.webp" width="28" height="28" alt="Zotero Connector" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/onetab/" data-ext="onetab" title="OneTab"><img src="./assets/icons/onetab.webp" width="28" height="28" alt="OneTab" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/violentmonkey/" data-ext="violentmonkey" title="Violentmonkey"><img src="./assets/icons/violentmonkey.webp" width="28" height="28" alt="Violentmonkey" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/enhancer-for-youtube/" data-ext="enhancer-for-youtube" title="Enhancer for YouTube"><img src="./assets/icons/enhancer-for-youtube.webp" width="28" height="28" alt="Enhancer for YouTube" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/reddit-enhancement-suite/" data-ext="reddit-enhancement-suite" title="Reddit Enhancement Suite"><img src="./assets/icons/reddit-enhancement-suite.webp" width="28" height="28" alt="Reddit Enhancement Suite" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/colorzilla/" data-ext="colorzilla" title="ColorZilla"><img src="./assets/icons/colorzilla.webp" width="28" height="28" alt="ColorZilla" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/redux-devtools/" data-ext="redux-devtools" title="Redux DevTools"><img src="./assets/icons/redux-devtools.webp" width="28" height="28" alt="Redux DevTools" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/vue-devtools/" data-ext="vue-devtools" title="Vue.js devtools"><img src="./assets/icons/vue-devtools.webp" width="28" height="28" alt="Vue.js devtools" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/i-still-dont-care-about-cookies/" data-ext="i-still-dont-care-about-cookies" title="I still don&rsquo;t care about cookies"><img src="./assets/icons/i-still-dont-care-about-cookies.webp" width="28" height="28" alt="I still don&rsquo;t care about cookies" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/decentraleyes/" data-ext="decentraleyes" title="Decentraleyes"><img src="./assets/icons/decentraleyes.webp" width="28" height="28" alt="Decentraleyes" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/ublacklist/" data-ext="ublacklist" title="uBlacklist"><img src="./assets/icons/ublacklist.webp" width="28" height="28" alt="uBlacklist" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/user-agent-switcher/" data-ext="user-agent-switcher" title="User-Agent Switcher and Manager"><img src="./assets/icons/user-agent-switcher.webp" width="28" height="28" alt="User-Agent Switcher and Manager" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/web-archives/" data-ext="web-archives" title="Web Archives"><img src="./assets/icons/web-archives.webp" width="28" height="28" alt="Web Archives" loading="lazy"></a>
+        <a class="reel__icon" href="/viaduct/extensions/augmented-steam/" data-ext="augmented-steam" title="Augmented Steam"><img src="./assets/icons/augmented-steam.webp" width="28" height="28" alt="Augmented Steam" loading="lazy"></a>
       </div>
     </div>
   </div>
@@ -413,9 +401,8 @@
 </noscript>
 
 <script src="./assets/scrollcraft.js?v=2"></script>
-<script src="./assets/inspect.js?v=2"></script>
 <script src="./assets/nav.js?v=1"></script>
-<script src="./assets/viaduct.js?v=4"></script>
+<script src="./assets/viaduct.js?v=5"></script>
 <script src="/assets/attribution.js"></script>
 </body>
 </html>

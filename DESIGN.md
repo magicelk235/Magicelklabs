@@ -279,16 +279,17 @@ Viaduct follows one real extension, Dark Reader, through the page:
   keyed to those moments. Change the span and the holds have to be redone.
 - **Compatibility:** each break is struck through and answered as its row
   enters the viewport (`data-sc-in`).
-- **Now try yours (`#try`):** the reader drops a .crx, a .zip or a folder
-  (onto the plate, in any state) or picks one of six sample extensions beside
-  it. `viaduct/assets/inspect.js` reads a dropped package in memory (ZIP
-  central directory, CRX2/3 headers, `DecompressionStream`); the samples were
-  read by the same script ahead of time, because the page can't fetch from
-  the Web Store (`viaduct/assets/samples/`, see the README). The plate shows
-  the listing, flips its button the same way, then four counts (permissions,
-  site access, Chrome APIs, files) and the names behind them as tags, long
-  lists cut short with a "+N more" button, and anything Viaduct will patch.
-  Nothing is uploaded.
+- **Not just Dark Reader (`#extensions`):** one frame plays the recordings of
+  22 more extensions back to back (`viaduct/assets/install/<slug>.mp4`, the
+  same clips their guides scrub), muted, then wraps to the first. Under it is
+  a row of their icons: the one playing is lit, with a teal bar that fills as
+  its recording runs, and pressing any icon jumps there. On phones and touch
+  screens the icons keep a 44px tap size and the row scrolls sideways, kept
+  centred on the one playing. Nothing loads until the frame is on screen; it
+  pauses off screen and in a hidden tab, and with reduced motion or Save-Data
+  it shows controls and never starts on its own. Each icon is a link to its
+  guide in the markup; `viaduct.js` turns it into a button, and a click with
+  a modifier key still opens the guide.
 - **Features:** the heading sticks while the numbered rows scroll past it.
   The grid must stretch its items (no `align-items: start`), or the sticky
   heading's container is no taller than the heading and it never moves.
