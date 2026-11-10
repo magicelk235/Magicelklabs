@@ -3,6 +3,14 @@
   "click": 2.6,
   "on": 19.8
  },
+ "claude-in-chrome": {
+  "click": 2.6,
+  "on": 13.3
+ },
+ "clearurls": {
+  "drop": 2.9,
+  "on": 23.0
+ },
  "colorzilla": {
   "click": 2.6,
   "on": 17.3
@@ -22,6 +30,10 @@
  "i-still-dont-care-about-cookies": {
   "click": 2.6,
   "on": 17.6
+ },
+ "metamask": {
+  "click": 2.8,
+  "on": 24.0
  },
  "onetab": {
   "click": 2.6,
@@ -43,6 +55,10 @@
   "click": 2.7,
   "on": 19.3
  },
+ "return-youtube-dislike": {
+  "click": 2.7,
+  "on": 17.9
+ },
  "sponsorblock": {
   "click": 2.6,
   "on": 22.0
@@ -58,6 +74,10 @@
  "ublacklist": {
   "click": 2.6,
   "on": 19.6
+ },
+ "ublock-origin": {
+  "drop": 2.9,
+  "on": 23.2
  },
  "user-agent-switcher": {
   "click": 2.6,
@@ -82,6 +102,10 @@
  "web-archives": {
   "click": 2.7,
   "on": 17.8
+ },
+ "xbrowsersync": {
+  "drop": 2.9,
+  "on": 21.7
  },
  "zotero-connector": {
   "click": 2.6,

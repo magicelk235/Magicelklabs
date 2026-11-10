@@ -538,13 +538,20 @@ $15 one-time (unlimited, plus live translation in beta). Upgrade $6. macOS 15+.
     covers the store's signed-in avatar with the header colour
     (`drawbox=x=2438:y=118:w=102:h=102:color=0x111111`). Desktop cut
     1440×810, 20 fps, `-crf 27 -g 10`; phone cut `crop=1000:562:1440:240`
-    (the store button and the progress card) at 960×540, `-g 20`; posters
-    are each cut's first frame. Kit masters (1920×1080, `-crf 18`) are in the
-    media kit's `videos/extensions/`. `viaduct/extensions/recordings.json`
-    holds each cut's click and Installed-card times, which build.js reads; a
-    guide without an entry plays the Dark Reader install with a line saying
-    so. Claude in Chrome, MetaMask, Return YouTube Dislike and the three
-    off-store extensions have none yet.
+    (the store button and the progress card; `x=980` for Return YouTube
+    Dislike, whose listing has a sidebar) at 960×540, `-g 20`; posters are
+    each cut's first frame. Kit masters (1920×1080, `-crf 18`) are in the
+    media kit's `videos/extensions/`. The three off-store extensions (uBlock
+    Origin, ClearURLs, xBrowserSync) were recorded instead in Viaduct 1.4.0's
+    window (630×470 pt below the title bar, cursor shown) as the developer's
+    release .zip is dragged from Finder onto it and Convert & Install is
+    clicked: desktop cut 1260×940 at capture size, phone cut
+    `crop=900:940:180:0` (the drop zone) at 690×720. Kit masters stay at
+    1260×940. `viaduct/extensions/recordings.json` holds each cut's step
+    times (click and Installed card, or drop and Installed), which build.js
+    reads; a guide without an entry plays the Dark Reader install with a line
+    saying so. Only Dark Reader's own guide has none, since that recording is
+    its install.
   - `viaduct/assets/icons/<slug>.webp` (128×128, alpha): each extension's own
     icon, the largest one its Chrome Web Store package declares (from the
     project's GitHub repo for uBlock Origin, ClearURLs, xBrowserSync and

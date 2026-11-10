@@ -455,17 +455,21 @@ const VIDEOS = {
     label: 'Screen recording of Viaduct converting TWP - Translate Web Pages: it builds and signs the extension, then shows Installed in Safari.' },
 };
 
-// Each extension's own install, recorded by clicking Add to Safari on its store
-// listing (viaduct/assets/install/<slug>.mp4, -phone.mp4 and their posters;
-// DESIGN.md, Assets). recordings.json holds where the click and the Installed
-// card land in each cut. An extension without one plays the Dark Reader install.
+// Each extension's own install (viaduct/assets/install/<slug>.mp4, -phone.mp4
+// and their posters; DESIGN.md, Assets). Store extensions were recorded by
+// clicking Add to Safari on their listing, off-store ones by dropping the
+// developer's .zip on Viaduct. recordings.json holds where each step lands in
+// each cut. An extension without one plays the Dark Reader install.
 const RECORDINGS = JSON.parse(fs.readFileSync(path.join(__dirname, 'recordings.json'), 'utf8'));
 const ownRecording = (x) => {
-  const r = !x.offStore && RECORDINGS[x.slug];
-  // travel: these start on the store page and end on Remove from Safari, both
-  // still frames, so the clip can sit on them while the stage slides in and
-  // out, and every step's moment lands inside the pin.
-  return r && { file: `install/${x.slug}`, w: 1440, h: 810, phone: [960, 540], travel: true, at: { open: 0, click: r.click, on: r.on },
+  const r = RECORDINGS[x.slug];
+  if (!r) return null;
+  // travel: these start and end on still frames, so the clip can sit on them
+  // while the stage slides in and out, and every step's moment lands inside
+  // the pin.
+  if (x.offStore) return { file: `install/${x.slug}`, w: 1260, h: 940, phone: [690, 720], travel: true, at: { drop: r.drop, on: r.on },
+    label: `Screen recording of Viaduct: ${x.name}'s .zip is dropped on the window, Convert & Install is clicked, and Viaduct builds, signs and installs it.` };
+  return { file: `install/${x.slug}`, w: 1440, h: 810, phone: [960, 540], travel: true, at: { open: 0, click: r.click, on: r.on },
     label: `Screen recording in Safari: Add to Safari is clicked on the ${x.name} listing in the Chrome Web Store, and Viaduct builds, signs and installs it.` };
 };
 
