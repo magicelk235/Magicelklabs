@@ -2,7 +2,7 @@
 <html lang="en" class="no-js" data-browser="safari">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src https://buy.polar.sh https://polar.sh">
 <script src="/viaduct/assets/browser.js?v=1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Viaduct: run Chrome extensions in Safari and Firefox on your Mac</title>
@@ -62,6 +62,8 @@
 }
 </script>
 <script defer src="/assets/analytics.js"></script>
+<!-- Opens the Polar checkout links marked data-polar-checkout in an overlay on this page. Without it they open Polar's own page. -->
+<script defer data-auto-init src="/assets/polar-checkout-0.6.0.js"></script>
 </head>
 <body>
 
@@ -395,7 +397,7 @@
           <li class="p-row">Works on 3 Macs</li>
           <li class="p-row p-row--no">Doesn't cover Firefox</li>
         </ul>
-        <a href="https://buy.polar.sh/polar_cl_Ns3uKKSVeiB34PlvHjqM864ytr9YRigIvqc1j1Yy2cF" data-product="Viaduct Safari" class="btn-teal btn-block">Buy for Safari</a>
+        <a href="https://buy.polar.sh/polar_cl_Ns3uKKSVeiB34PlvHjqM864ytr9YRigIvqc1j1Yy2cF" data-product="Viaduct Safari" class="btn-teal btn-block" data-polar-checkout data-polar-checkout-theme="dark">Buy for Safari</a>
       </div>
       <div class="plan">
         <h3>Firefox</h3>
@@ -407,7 +409,7 @@
           <li class="p-row">Works on 3 Macs</li>
           <li class="p-row p-row--no">Doesn't cover Safari</li>
         </ul>
-        <a href="https://buy.polar.sh/polar_cl_kYYElpaU4pmRWDwI5KJAtcbd6epjDwG5HcHZE08b7gp" data-product="Viaduct Firefox" class="btn-teal btn-block">Buy for Firefox</a>
+        <a href="https://buy.polar.sh/polar_cl_kYYElpaU4pmRWDwI5KJAtcbd6epjDwG5HcHZE08b7gp" data-product="Viaduct Firefox" class="btn-teal btn-block" data-polar-checkout data-polar-checkout-theme="dark">Buy for Firefox</a>
       </div>
       <div class="plan plan--both">
         <h3>Both <span class="plan__tag">Save $9</span></h3>
@@ -418,7 +420,7 @@
           <li class="p-row">Weekly Web Store updates</li>
           <li class="p-row">Works on 3 Macs</li>
         </ul>
-        <a href="https://buy.polar.sh/polar_cl_DoWnpwb5gqYljHloz8IEjnuG6FA6ItQIgiEYf04EsGx" data-product="Viaduct Mixed" class="btn-teal btn-block">Buy for both</a>
+        <a href="https://buy.polar.sh/polar_cl_DoWnpwb5gqYljHloz8IEjnuG6FA6ItQIgiEYf04EsGx" data-product="Viaduct Mixed" class="btn-teal btn-block" data-polar-checkout data-polar-checkout-theme="dark">Buy for both</a>
       </div>
     </div>
   </div>
