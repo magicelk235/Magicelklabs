@@ -27,7 +27,7 @@
     v0.removeAttribute('data-sc-scrub');
     demo.classList.add('demo--plain');
     if (phone) demo.style.setProperty('--ar', demo.getAttribute('data-phone-ar'));
-    v0.poster = phone ? v0.getAttribute('data-phone-poster') : demo.querySelector('.sc-stage__poster').getAttribute('src');
+    v0.poster = v0.getAttribute(phone ? 'data-phone-poster' : 'data-poster');
     v0.src = v0.getAttribute(phone ? 'data-sc-src-mobile' : 'data-sc-src');
     v0.muted = true;
     v0.playsInline = true;

@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" data-browser="safari">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'">
+<script src="/viaduct/assets/browser.js?v=1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Viaduct: run Chrome extensions in Safari and Firefox on your Mac</title>
 <meta name="description" content="Viaduct converts any Chrome extension into a native Safari Web Extension, or a Firefox add-on that stays installed. One click, and you never open a terminal.">
@@ -31,8 +32,8 @@
 <link rel="stylesheet" href="/assets/fonts.css?v=1">
 <!-- Bump ?v= when these files change; Pages lets browsers cache them for ten minutes. -->
 <link rel="stylesheet" href="./assets/scrollcraft.css?v=2">
-<link rel="stylesheet" href="./assets/viaduct.css?v=11">
-<link rel="stylesheet" href="./assets/nav.css?v=1">
+<link rel="stylesheet" href="./assets/viaduct.css?v=18">
+<link rel="stylesheet" href="./assets/nav.css?v=4">
 <script>document.documentElement.classList.remove('no-js');</script>
 <script type="application/ld+json">
 {
@@ -94,8 +95,9 @@
 <section id="top" class="hero">
   <canvas class="rays" id="hero-rays" aria-hidden="true"></canvas>
   <div class="hero__inner">
-    <h1 class="rise">Run Chrome extensions<br class="br-wide"> <span class="nowrap">in <span class="teal">Safari.</span></span></h1>
-    <p class="hero__lede rise" style="--rise-delay:.12s">Viaduct converts any Chrome extension into a native Safari Web Extension, or a Firefox add-on that stays installed. You never have to open a terminal.</p>
+    <h1 class="rise">Run Chrome extensions<br class="br-wide"> <span class="nowrap">in <span class="teal"><span data-for="safari">Safari.</span><span data-for="firefox">Firefox.</span></span></span></h1>
+    <p class="hero__lede rise" style="--rise-delay:.12s" data-for="safari">Viaduct converts any Chrome extension into a native Safari Web Extension, or a Firefox add-on that stays installed. You never have to open a terminal.</p>
+    <p class="hero__lede rise" style="--rise-delay:.12s" data-for="firefox">Viaduct turns any Chrome extension into a Firefox add-on that stays installed after Firefox quits. You never have to open a terminal.</p>
     <div class="hero__actions rise" style="--rise-delay:.2s">
       <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-lg">Download</a>
       <a href="#pricing" class="btn-teal btn-lg">Buy</a>
@@ -103,19 +105,21 @@
   </div>
 </section>
 
-<!-- THE PEAK: the real Web Store listing as Safari gets it. The nag is
-     dismissed, the install button lifts out of the page, its word rolls from
-     Chrome to Safari while the teal band floods in behind it, and it settles
-     back into its slot. Then the "Switch to Chrome" banner goes and the
-     listing moves up into its place, the way the page lays out without it.
-     The button is drawn in markup over the space the capture left empty, so
-     it can change; everything else is the capture, cut into planes. -->
-<section id="how" class="flip" data-sc-act="pin" data-sc-span="3.6" aria-labelledby="flip-h">
+<!-- THE PEAK: the real Web Store listing as Safari and Firefox both get it:
+     the store serves the two the same page, so one capture stands for both.
+     The nag is dismissed, the install button lifts out of the page, its word
+     rolls from Chrome to the visitor's browser while the teal band floods in
+     behind it, and it settles back into its slot. Then the "Switch to
+     Chrome" banner goes and the listing moves up into its place, the way the
+     page lays out without it. The button is drawn in markup over the space
+     the capture left empty, so it can change; everything else is the
+     capture, cut into planes. -->
+<section id="how" class="flip" data-sc-act="pin" data-sc-span="3.6" aria-labelledby="flip-h" data-ff data-ff-aria-labelledby="flip-h-ff">
   <div data-sc-stage class="flip__stage">
     <div class="flip__band" aria-hidden="true"></div>
     <div class="flip__layout">
       <figure class="flip__shot" id="flip-shot">
-        <div class="flip__page" role="img" aria-label="The Dark Reader listing on the Chrome Web Store, opened in Safari. A banner across it reads: Switch to Chrome to install extensions and themes.">
+        <div class="flip__page" role="img" aria-label="The Dark Reader listing on the Chrome Web Store, opened in Safari. A banner across it reads: Switch to Chrome to install extensions and themes." data-ff data-ff-aria-label="The Dark Reader listing on the Chrome Web Store, opened in Firefox. A banner across it reads: Switch to Chrome to install extensions and themes.">
           <img class="flip__body" src="./assets/viaduct-store-body.webp" width="2800" height="936" alt="">
           <img class="flip__top" src="./assets/viaduct-store-top.webp" width="2800" height="224" alt="">
           <img class="flip__banner" src="./assets/viaduct-store-banner.webp" width="2800" height="256" alt="">
@@ -123,14 +127,16 @@
         </div>
         <img class="flip__nag" src="./assets/viaduct-store-nag.webp" width="696" height="437" alt="A pop-up on the same page: Switch to Chrome? Google recommends using Chrome when using extensions and themes.">
         <span class="flip__btn" id="flip-btn" aria-hidden="true">
-          <span class="flip__btn-in">Add to <span class="roll"><span class="roll__from">Chrome</span><span class="roll__to">Safari</span></span></span>
+          <span class="flip__btn-in">Add to <span class="roll"><span class="roll__from">Chrome</span><span class="roll__to" data-for="safari">Safari</span><span class="roll__to" data-for="firefox">Firefox</span></span></span>
         </span>
       </figure>
       <div class="flip__words">
-        <p class="flip__lede" data-sc-cue="0 0.3 0">In Safari, every listing in the Chrome Web Store ends in a button you can't press.</p>
+        <p class="flip__lede" data-sc-cue="0 0.3 0"><span data-for="safari">In Safari,</span><span data-for="firefox">In Firefox,</span> every listing in the Chrome Web Store ends in a button you can't press.</p>
         <div class="flip__copy" data-sc-cue="0.58 1 0.1 0.03">
-          <h2 id="flip-h" data-sc-kinetic="lines">“Add to Chrome” becomes “Add to Safari.”</h2>
-          <p>With Viaduct's Safari extension on, the button points at Safari instead. Click it once and Viaduct does the rest.</p>
+          <h2 id="flip-h" data-sc-kinetic="lines" data-for="safari">“Add to Chrome” becomes “Add to Safari.”</h2>
+          <h2 id="flip-h-ff" data-sc-kinetic="lines" data-for="firefox">“Add to Chrome” becomes “Add to Firefox.”</h2>
+          <p data-for="safari">With Viaduct's Safari extension on, the button points at Safari instead. Click it once and Viaduct does the rest.</p>
+          <p data-for="firefox">With Viaduct's store button on in Firefox, the button points at Firefox instead. Click it once and Viaduct does the rest.</p>
         </div>
       </div>
     </div>
@@ -138,27 +144,36 @@
 </section>
 
 <!-- The same button, clicked: the media kit's recording of installing Dark
-     Reader from the store in Safari, scrubbed by the wheel. The clip holds
-     its first and last frames a little longer (see DESIGN.md) so the click
-     lands as the stage pins and the popup opens just before it lets go. -->
+     Reader from the store, one made in Safari and one in Firefox, scrubbed
+     by the wheel. Each version loads only its own clip and stills, and has
+     its own captions timed to its recording. The clips hold their first and
+     last frames a little longer (see DESIGN.md) so the click lands as the
+     stage pins and the popup opens just before it lets go. -->
 <section class="install" data-sc-act="scrub" data-sc-span="3" aria-labelledby="install-h">
   <div data-sc-stage class="install__stage">
     <div class="install__copy">
-      <h2 id="install-h">One click, and it's in Safari.</h2>
+      <h2 id="install-h"><span data-for="safari">One click, and it's in Safari.</span><span data-for="firefox">One click, and it's in Firefox.</span></h2>
       <div class="install__caps">
-        <p data-sc-cue="0 0.58 0 0.06">Viaduct fetches the extension, converts it and signs it, right there on the store page.</p>
-        <p data-sc-cue="0.54 0.88 0.06 0.06">Switch it on once in Safari's settings, like any other extension.</p>
-        <p data-sc-cue="0.85 1 0.05 0.03">Dark Reader is in the toolbar, running inside Safari.</p>
+        <p data-for="safari" data-sc-cue="0 0.58 0 0.06">Viaduct fetches the extension, converts it and signs it, right there on the store page.</p>
+        <p data-for="safari" data-sc-cue="0.54 0.88 0.06 0.06">Switch it on once in Safari's settings, like any other extension.</p>
+        <p data-for="safari" data-sc-cue="0.85 1 0.05 0.03">Dark Reader is in the toolbar, running inside Safari.</p>
+        <p data-for="firefox" data-sc-cue="0 0.5 0 0.06">Viaduct fetches the extension and converts it, right there on the store page.</p>
+        <p data-for="firefox" data-sc-cue="0.46 0.7 0.06 0.06">There's nothing to switch on. Firefox has already loaded it.</p>
+        <p data-for="firefox" data-sc-cue="0.67 1 0.05 0.03">Dark Reader opens from Firefox's Extensions button.</p>
       </div>
     </div>
     <figure class="frame install__frame">
       <div class="slot install__slot">
         <!-- With reduced motion the clip never loads, so the still is the outcome rather than the click. -->
-        <picture>
+        <picture data-for="safari">
           <source media="(prefers-reduced-motion: reduce)" srcset="./assets/viaduct-install-end.webp" width="1440" height="810">
-          <img class="sc-stage__poster" src="./assets/viaduct-install-poster.webp" width="1440" height="810" alt="">
+          <img class="sc-stage__poster" src="./assets/viaduct-install-poster.webp" width="1440" height="810" alt="" loading="lazy">
         </picture>
-        <video data-sc-scrub data-sc-src="./assets/viaduct-install.mp4" data-sc-src-mobile="./assets/viaduct-install-m.mp4" muted playsinline preload="none" width="1440" height="810" aria-label="Screen recording in Safari: Add to Safari is clicked on the Dark Reader listing in the Chrome Web Store, Viaduct builds and signs it, the button becomes Remove from Safari, and Dark Reader's popup opens from the toolbar."></video>
+        <picture data-for="firefox">
+          <source media="(prefers-reduced-motion: reduce)" srcset="./assets/viaduct-install-firefox-end.webp" width="1440" height="810">
+          <img class="sc-stage__poster" src="./assets/viaduct-install-firefox-poster.webp" width="1440" height="810" alt="" loading="lazy">
+        </picture>
+        <video data-sc-scrub data-sc-src="./assets/viaduct-install.mp4" data-sc-src-mobile="./assets/viaduct-install-m.mp4" muted playsinline preload="none" width="1440" height="810" aria-label="Screen recording in Safari: Add to Safari is clicked on the Dark Reader listing in the Chrome Web Store, Viaduct builds and signs it, the button becomes Remove from Safari, and Dark Reader's popup opens from the toolbar." data-ff data-ff-data-sc-src="./assets/viaduct-install-firefox.mp4" data-ff-data-sc-src-mobile="./assets/viaduct-install-firefox-m.mp4" data-ff-aria-label="Screen recording in Firefox: Add to Firefox is clicked on the Dark Reader listing in the Chrome Web Store, Viaduct converts and installs it, and Dark Reader's popup opens from Firefox's Extensions button."></video>
       </div>
     </figure>
   </div>
@@ -172,38 +187,66 @@
     <div class="compat__head">
       <div class="compat__sticky" data-sc-in data-sc-stagger="70">
         <h2 id="compat-h">Converting isn't the hard part. Working is.</h2>
-        <p>Safari implements dozens of <code>chrome.*</code> APIs differently, or not at all, so a converted extension installs fine and then quietly stops working. Viaduct ships a runtime layer that patches the gaps.</p>
-        <p class="stat"><span class="stat__num" data-sc-count="0 60" data-sc-count-ms="1300">60</span><span class="stat__plus">+</span></p>
-        <p class="stat__cap"><code>chrome.*</code> namespaces the runtime layer normalizes, so your extension keeps working after the move.</p>
+        <p data-for="safari">Safari implements dozens of <code>chrome.*</code> APIs differently, or not at all, so a converted extension installs fine and then quietly stops working. Viaduct ships a runtime layer that patches the gaps.</p>
+        <p data-for="firefox">Firefox drops any add-on Mozilla didn't sign when it quits, and it implements parts of <code>chrome.*</code> differently or not at all. Viaduct keeps yours loaded and ships a runtime layer that patches the gaps.</p>
+        <p class="stat" data-for="safari"><span class="stat__num" data-sc-count="0 60" data-sc-count-ms="1300">60</span><span class="stat__plus">+</span></p>
+        <p class="stat__cap" data-for="safari"><code>chrome.*</code> namespaces the runtime layer normalizes, so your extension keeps working after the move.</p>
+        <p class="stat" data-for="firefox"><span class="stat__num" data-sc-count="0 10" data-sc-count-ms="900">10</span></p>
+        <p class="stat__cap" data-for="firefox"><code>chrome.*</code> namespaces the runtime layer adds or corrects in Firefox, so your extension keeps working after the move.</p>
       </div>
     </div>
     <div class="fixes">
-      <div class="fix" data-sc-in>
+      <div class="fix" data-sc-in data-for="safari">
         <b>Dark Reader</b>
         <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Popup buttons go dead. Background ports route by an extension id that Safari reports differently.</span></p>
         <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct rewrites the id so the popup reaches the background.</p>
       </div>
-      <div class="fix" data-sc-in>
+      <div class="fix" data-sc-in data-for="safari">
         <b>Grammarly</b>
         <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Its own bundled resources fail to load. Safari's resource server is case sensitive.</span></p>
         <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct normalizes the casing.</p>
       </div>
-      <div class="fix" data-sc-in>
+      <div class="fix" data-sc-in data-for="safari">
         <b>Service workers</b>
         <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Safari omits <code>onInstalled</code> and parts of <code>self.registration</code>, so the worker throws at load.</span></p>
         <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct backfills what's missing.</p>
       </div>
-      <div class="fix" data-sc-in>
+      <div class="fix" data-sc-in data-for="safari">
         <b>Frozen namespaces</b>
         <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Safari exposes <code>chrome.*</code> as immutable native objects, so extensions that patch them crash at startup.</span></p>
         <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct makes them writable again.</p>
+      </div>
+      <div class="fix" data-sc-in data-for="firefox">
+        <b>Every add-on</b>
+        <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Firefox removes any add-on Mozilla didn't sign the moment it quits.</span></p>
+        <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct loads yours again every time Firefox opens, with their settings.</p>
+      </div>
+      <div class="fix" data-sc-in data-for="firefox">
+        <b>Adblock Plus</b>
+        <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">It turns on 56,000 blocking rules and Firefox allows an add-on 30,000, so none of EasyList loads.</span></p>
+        <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct raises Firefox's limit to match Chrome's.</p>
+      </div>
+      <div class="fix" data-sc-in data-for="firefox">
+        <b>Tampermonkey</b>
+        <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">It reads <code>chrome.runtime.id</code> where user scripts run, and Firefox leaves it out there.</span></p>
+        <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct defines it before any user script loads.</p>
+      </div>
+      <div class="fix" data-sc-in data-for="firefox">
+        <b>Grammarly</b>
+        <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Its background waits on <code>storage.session.setAccessLevel</code>, which Firefox doesn't have, so it never gets an answer.</span></p>
+        <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct answers the call.</p>
+      </div>
+      <div class="fix" data-sc-in data-for="firefox">
+        <b>Side panels</b>
+        <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Firefox has no <code>chrome.sidePanel</code>, so an extension that lives in Chrome's side panel has nowhere to open.</span></p>
+        <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct builds it on Firefox's own sidebar.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- THE REEL: Dark Reader was one extension; these are 22 more, each
-     recorded going from the Chrome Web Store into Safari (the clips their
+     recorded going from the Chrome Web Store into Safari and into Firefox (the clips their
      guides play). The frame plays them back to back; the icons under it mark
      the one playing and jump to any other. Without the script each icon is a
      link to its guide. -->
@@ -211,11 +254,12 @@
   <div class="wrap wrap--4">
     <div class="reel__head" data-sc-in data-sc-stagger="70">
       <h2 id="reel-h">Not just Dark Reader.</h2>
-      <p>Twenty-two more, each recorded going from the Chrome Web Store into Safari.</p>
+      <p><span data-for="safari">Twenty-two more, each recorded going from the Chrome Web Store into Safari.</span><span data-for="firefox">Twenty-two more, each recorded going from the Chrome Web Store into Firefox.</span></p>
     </div>
     <figure class="frame reel__frame" data-sc-in>
       <div class="slot reel__slot">
-        <video id="reel-video" muted playsinline preload="none" width="1440" height="810" poster="./assets/install/tampermonkey-poster.webp" aria-label="Screen recording in Safari: Add to Safari is clicked on the Tampermonkey listing in the Chrome Web Store, and Viaduct builds, signs and installs it."></video>
+        <video id="reel-video" data-dir="./assets/install/" data-in="Safari" muted playsinline preload="none" width="1440" height="810" aria-label="Screen recording in Safari: Add to Safari is clicked on the Tampermonkey listing in the Chrome Web Store, and Viaduct builds, signs and installs it." data-ff data-ff-data-dir="./assets/install/firefox/" data-ff-data-in="Firefox" data-ff-aria-label="Screen recording in Firefox: Add to Firefox is clicked on the Tampermonkey listing in the Chrome Web Store, and Viaduct converts and installs it."></video>
+        <noscript><img src="./assets/install/tampermonkey-poster.webp" width="1440" height="810" alt="The Tampermonkey listing in the Chrome Web Store, open in Safari"></noscript>
       </div>
     </figure>
     <div class="reel__strip" data-sc-in>
@@ -259,19 +303,23 @@
       <div class="feat" data-sc-in>
         <span class="feat__num">01</span>
         <div>
-          <h3>Keeps Safari's battery life</h3>
-          <p>Converted extensions run inside Safari's native engine, not a second Chromium process running in the background. Faster, and far easier on your battery.</p>
+          <h3 data-for="safari">Keeps Safari's battery life</h3>
+          <h3 data-for="firefox">One browser, not two</h3>
+          <p data-for="safari">Converted extensions run inside Safari's native engine, not a second Chromium process running in the background. Faster, and far easier on your battery.</p>
+          <p data-for="firefox">Converted extensions run inside Firefox itself, so Chrome doesn't have to stay open in the background for the sake of one extension.</p>
           <div class="eng" role="img" aria-label="Browser engines running: two if you keep Chrome for the extension, one with Viaduct">
             <div class="eng__cell"><p class="eng__num">2</p><p class="eng__cap">engines running if you keep Chrome around for one extension</p></div>
-            <div class="eng__cell"><p class="eng__num teal">1</p><p class="eng__cap">with Viaduct. The extension lives inside Safari</p></div>
+            <div class="eng__cell"><p class="eng__num teal">1</p><p class="eng__cap">with Viaduct. The extension lives inside <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></p></div>
           </div>
         </div>
       </div>
       <div class="feat" data-sc-in>
         <span class="feat__num">02</span>
         <div>
-          <h3>In Firefox too</h3>
-          <p>Pick Firefox above the drop zone and the extension becomes a Firefox add-on that stays installed when Firefox quits, with its settings. On the Chrome Web Store, Add to Firefox does the same from the listing.</p>
+          <h3 data-for="safari">In Firefox too</h3>
+          <h3 data-for="firefox">In Safari too</h3>
+          <p data-for="safari">Pick Firefox above the drop zone and the extension becomes a Firefox add-on that stays installed when Firefox quits, with its settings. On the Chrome Web Store, Add to Firefox does the same from the listing.</p>
+          <p data-for="firefox">Pick Safari above the drop zone and the extension becomes a native Safari Web Extension, signed on your Mac with Xcode. A Mixed license covers both browsers.</p>
         </div>
       </div>
       <div class="feat" data-sc-in>
@@ -292,7 +340,8 @@
         <span class="feat__num">05</span>
         <div>
           <h3>MV2 &amp; MV3 aware</h3>
-          <p>Converts Manifest V2 and V3 extensions. If one can't work in Safari, Viaduct tells you before it converts. If the maker ships an official Safari version, it points you there.</p>
+          <p data-for="safari">Converts Manifest V2 and V3 extensions. If one can't work in Safari, Viaduct tells you before it converts. If the maker ships an official Safari version, it points you there.</p>
+          <p data-for="firefox">Converts Manifest V2 and V3 extensions. If one can't work in Firefox, Viaduct tells you before it converts.</p>
         </div>
       </div>
       <div class="feat" data-sc-in>
@@ -320,48 +369,57 @@
   </div>
 </section>
 
-<!-- PRICING: the free plan first, as one ruled line, then the licenses. A
-     license makes one browser unlimited; Mixed covers both and carries the
-     lit panel. What every license shares is said once, in the ledger row
-     under the cards, so the cards only say what differs. -->
+<!-- PRICING: four cards, the free plan and the three licenses. Both is the
+     one drenched in teal; the other three stay on the plain surface. -->
 <section id="get" class="section" aria-labelledby="pricing-h">
   <div id="pricing" class="wrap wrap--4">
     <h2 id="pricing-h" class="pricing__title" data-sc-in>Start free. Pay once for your browser.</h2>
-    <div class="free" data-sc-in>
-      <p class="free__num price-num">$0</p>
-      <div>
+    <div class="plans" data-sc-in data-sc-stagger="80">
+      <div class="plan">
         <h3>Free</h3>
-        <p>Convert <b>2 extensions</b> in Safari or Firefox. Viaduct removes them after 7 days.</p>
+        <p class="price"><span class="price-num">$0</span></p>
+        <ul class="plan__rows">
+          <li class="p-row"><span>Convert up to <b>2 extensions</b></span></li>
+          <li class="p-row">Safari or Firefox</li>
+          <li class="p-row">Extensions kept for 7 days</li>
+        </ul>
+        <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-block">Download</a>
       </div>
-      <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-lg">Download</a>
-    </div>
-    <div class="plans plans--3" data-sc-in data-sc-stagger="80">
       <div class="plan">
         <h3>Safari</h3>
         <p class="price"><span class="price-num">$19</span><span class="price-note">one time</span></p>
-        <p class="plan__what"><b>Unlimited</b> in Safari</p>
+        <ul class="plan__rows">
+          <li class="p-row"><span><b>Unlimited</b> conversions in Safari</span></li>
+          <li class="p-row">Extensions stay installed</li>
+          <li class="p-row">Weekly Web Store updates</li>
+          <li class="p-row">Works on 3 Macs</li>
+          <li class="p-row p-row--no">Doesn't cover Firefox</li>
+        </ul>
         <a href="https://buy.polar.sh/polar_cl_Ns3uKKSVeiB34PlvHjqM864ytr9YRigIvqc1j1Yy2cF" data-product="Viaduct Safari" class="btn-teal btn-block">Buy for Safari</a>
       </div>
       <div class="plan">
         <h3>Firefox</h3>
         <p class="price"><span class="price-num">$19</span><span class="price-note">one time</span></p>
-        <p class="plan__what"><b>Unlimited</b> in Firefox</p>
+        <ul class="plan__rows">
+          <li class="p-row"><span><b>Unlimited</b> conversions in Firefox</span></li>
+          <li class="p-row">Extensions stay installed</li>
+          <li class="p-row">Weekly Web Store updates</li>
+          <li class="p-row">Works on 3 Macs</li>
+          <li class="p-row p-row--no">Doesn't cover Safari</li>
+        </ul>
         <a href="https://buy.polar.sh/polar_cl_kYYElpaU4pmRWDwI5KJAtcbd6epjDwG5HcHZE08b7gp" data-product="Viaduct Firefox" class="btn-teal btn-block">Buy for Firefox</a>
       </div>
-      <div class="plan plan--pro">
-        <h3>Mixed</h3>
+      <div class="plan plan--both">
+        <h3>Both <span class="plan__tag">Save $9</span></h3>
         <p class="price"><span class="price-num">$29</span><span class="price-note">one time</span></p>
-        <p class="plan__what"><b>Unlimited</b> in Safari and Firefox</p>
+        <ul class="plan__rows">
+          <li class="p-row"><span><b>Unlimited</b> conversions in Safari and Firefox</span></li>
+          <li class="p-row">Extensions stay installed</li>
+          <li class="p-row">Weekly Web Store updates</li>
+          <li class="p-row">Works on 3 Macs</li>
+        </ul>
         <a href="https://buy.polar.sh/polar_cl_DoWnpwb5gqYljHloz8IEjnuG6FA6ItQIgiEYf04EsGx" data-product="Viaduct Mixed" class="btn-teal btn-block">Buy for both</a>
       </div>
-    </div>
-    <div class="every" data-sc-in>
-      <h3>Every license</h3>
-      <ul>
-        <li class="p-row">Extensions stay installed</li>
-        <li class="p-row">Weekly Web Store updates</li>
-        <li class="p-row">Works on 3 Macs</li>
-      </ul>
     </div>
   </div>
 </section>
@@ -373,11 +431,12 @@
     <div class="faq" data-sc-in>
       <details>
         <summary>Will my Chrome extension actually work?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p>Most do. Before converting, Viaduct checks the extension for the browser you picked and tells you if it can't work there, for example when a file it needs is missing. Features built on Chrome-only APIs, like some OAuth sign-in flows, still won't work after conversion. If the maker ships an official Safari version, Viaduct points you to it.</p>
+        <p>Most do. Before converting, Viaduct checks the extension for the browser you picked and tells you if it can't work there, for example when a file it needs is missing. Features built on Chrome-only APIs, like some OAuth sign-in flows, still won't work after conversion.<span data-for="safari"> If the maker ships an official Safari version, Viaduct points you to it.</span></p>
       </details>
       <details>
         <summary>What do I need to run Viaduct?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p>A Mac on macOS 13 or later. For Safari you also need Xcode, which is free from Apple, because Apple requires it to sign extensions. Viaduct's setup walks you through signing in to it once with your Apple ID (a free one works), so Safari keeps your extensions on after it quits. For Firefox you need Firefox, and Viaduct asks once for Full Disk Access so it can read your Firefox profile. Xcode only matters for Safari.</p>
+        <p data-for="safari">A Mac on macOS 13 or later, and Xcode, which is free from Apple, because Apple requires it to sign extensions. Viaduct's setup walks you through signing in to it once with your Apple ID (a free one works), so Safari keeps your extensions on after it quits.</p>
+        <p data-for="firefox">A Mac on macOS 13 or later, and Firefox. Viaduct asks once for Full Disk Access so it can read your Firefox profile, and it has to stay on in Login Items so it can load your add-ons each time Firefox opens. Firefox needs neither Xcode nor an Apple ID.</p>
       </details>
       <details>
         <summary>Do I need to know how to code to use Viaduct?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
@@ -395,9 +454,9 @@
         <summary>I bought Viaduct Pro. What do I have now?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <p>Mixed. Your key keeps working, and Safari and Firefox are both unlimited.</p>
       </details>
-      <details>
+      <details data-for="firefox">
         <summary>How does Viaduct keep add-ons in Firefox?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p>Firefox only keeps add-ons that Mozilla has signed. So each time Firefox opens, Viaduct briefly turns on Firefox's remote debugging, loads your add-ons, and turns it off again. That leaves one Firefox setting changed while you have add-ons: Firefox won't ask before a debugger connects. Viaduct tells you before your first one, and removing your last add-on puts the setting back.</p>
+        <p>Firefox only keeps add-ons that Mozilla has signed. So each time Firefox opens, Viaduct briefly turns on Firefox's remote debugging, loads your add-ons, and turns it off again. That leaves one Firefox setting changed while you have add-ons: Firefox won't ask before a debugger connects. Viaduct tells you before your first one, and removing your last add-on puts the setting back. Firefox restarts once when the first add-on goes in, and your tabs come back.</p>
       </details>
       <details>
         <summary>Why isn't Viaduct on the Mac App Store?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
@@ -429,9 +488,10 @@
   </footer>
 </noscript>
 
+<script src="./assets/browser-swap.js?v=1"></script>
 <script src="./assets/scrollcraft.js?v=2"></script>
-<script src="./assets/nav.js?v=1"></script>
-<script src="./assets/viaduct.js?v=5"></script>
+<script src="./assets/nav.js?v=4"></script>
+<script src="./assets/viaduct.js?v=9"></script>
 <script src="/assets/attribution.js"></script>
 </body>
 </html>

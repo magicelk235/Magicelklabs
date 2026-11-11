@@ -3,6 +3,12 @@
    --ink/--body/--lip tokens; buttons come from the page's .btn-teal/.btn-ghost.
    nav.js adds html.glassy where the displacement map works (Chromium); the
    plain blur below is everyone else's glass. */
+
+/* Every Viaduct page holds a Safari and a Firefox version of what differs,
+   marked data-for. browser.js sets html[data-browser]; this hides the other. */
+html[data-browser="safari"] [data-for="firefox"],
+html[data-browser="firefox"] [data-for="safari"] { display: none !important; }
+
 .nav { position: fixed; top: 12px; inset-inline: 0; z-index: 60; padding-inline: 12px; }
 .nav-pill {
   position: relative; max-width: 1024px; margin-inline: auto; height: 54px;
@@ -30,6 +36,14 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(14, 18, 17, .58); }
 .nav-links a:hover { color: var(--ink); text-decoration: none; }
 .nav-actions { display: flex; align-items: center; gap: 6px; }
 .nav-actions a:hover { text-decoration: none; }
+/* The other browser's name, set like the section links. A tap swaps to it. */
+.nav-switch {
+  position: relative; height: 34px; padding: 0 8px; margin-right: 4px;
+  border: 0; border-radius: 8px; background: transparent; color: var(--body);
+  font: 500 14px/1 Inter, system-ui, sans-serif; cursor: pointer; transition: color .2s;
+}
+.nav-switch:hover { color: var(--ink); }
+.nav-switch:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 
 @media (max-width: 1023px) {
   .nav-links { display: none; }
@@ -38,10 +52,14 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(14, 18, 17, .58); }
   .nav { top: 10px; }
   .nav-pill { height: 50px; }
   .nav .nav-download { display: none; }
+  .nav-pill { gap: 8px; }
+  .nav-switch { margin-right: 0; padding: 0 6px; font-size: 13px; }
 }
 /* The logo and buttons are smaller than a fingertip; widen what catches the
    tap without changing how they look. */
 @media (pointer: coarse) {
   .brand, .nav-actions a { position: relative; }
   .brand::after, .nav-actions a::after { content: ""; position: absolute; inset: -8px; }
+  /* Taller only: side by side, a wider area would overlap the other button. */
+  .nav-switch::before { content: ""; position: absolute; inset: -6px 0; }
 }

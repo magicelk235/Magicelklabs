@@ -64,7 +64,7 @@ WCAG AA at the 11–14px sizes it is set in (the labels, the footer links).
 **Committed color, not timid accents.** Viaduct's brand surfaces are drenched
 in deep teal (`linear-gradient(168deg,#0F4D48,#093732)`, the `--band-top` /
 `--band-bot` pair in `viaduct/assets/viaduct.css`). It floods the store act
-the moment the install button flips, and carries the Mixed pricing panel. The
+the moment the install button flips, and fills the Both card in pricing. The
 rest of the page stays on the green-black canvas, so the flood is the one
 colour event on the page. On-band text: near-white ink
 `#F2FBF9`, body `#C6E3DE`, dim `#93C2BB`, bright accent `#6EE0D1`; on-band
@@ -119,8 +119,13 @@ scheme is a bug.
   the nav, `.btn-lg` 15px in the hero, `.btn-block` full width in pricing).
   The nav pill ends with a small ghost Download and a small accent Buy
   (Download hides under 720px); the hero pairs the same two at large size.
-  On Viaduct both Buy links go to `/viaduct/#pricing`, where each license card
-  has its own checkout button.
+  On Viaduct both Buy links go to `/viaduct/#pricing`: four cards (Free,
+  Safari, Firefox, Both). Both is the premium one: the only card on the teal
+  band, with the white on-band button, a teal glow under it, a "Save $9" tag,
+  and 12px more height above and below on desktop. The other three stay on
+  the plain surface. The Safari and Firefox cards end on a crossed row
+  naming the browser they don't cover. The row runs 1140px wide, two by two
+  under 1040px and one column on phones.
 - **FAQ rows.** Spyglass, Lector, Viaduct and the extension guides end their
   content on a FAQ of `<details>` rows split by hairlines, each with a chevron
   that turns when it opens. The vertical padding sits on the `<summary>`, not
@@ -176,6 +181,49 @@ scheme is a bug.
   eyebrow, closing price band or link arrows. The "Updated" date sits at the
   foot beside the trademark note. Only the hub has no recording; it is a
   catalogue, with each extension's icon in its tables.
+
+### Viaduct: Safari or Firefox
+
+Every Viaduct page (product, guides, hub, legal) is one URL that shows a
+Safari version or a Firefox version of itself.
+
+- **Which one.** `viaduct/assets/browser.js` loads blocking in `<head>`, right
+  after the CSP meta and before any stylesheet, and sets `html[data-browser]`.
+  First match wins: `?browser=safari|firefox` (also saved), the saved choice
+  (`localStorage['viaduct-browser']`), crawlers get Safari, Firefox gets
+  Firefox, Safari gets Safari, any other browser on a Mac, iPhone or iPad gets
+  Safari, everything else gets Firefox. The markup default is
+  `data-browser="safari"`, so crawlers and visitors without JavaScript read the
+  Safari page. Titles, descriptions, canonical URLs and JSON-LD are Safari's;
+  a guide's Firefox tab title rides in `<meta name="viaduct-title-firefox">`
+  and `nav.js` applies it.
+- **The switch.** `nav.js` puts the other browser's name at the front of
+  `.nav-actions` set like the section links (Safari on the Firefox version, Firefox on the Safari one); a tap swaps to that
+  browser. Choosing
+  saves the choice and reloads: the scroll engine measures its pinned sections
+  once, so a version is never swapped in place.
+- **Words** that differ sit side by side as `data-for="safari"` and
+  `data-for="firefox"` elements, and `nav.css` hides the other browser's.
+  build.js has `bx(safari, firefox)` for inline pairs.
+- **Images** are the same pairs, both `loading="lazy"`: a lazy image that
+  isn't displayed is never fetched.
+- **Recordings** stay one element. Its Firefox values sit in `data-ff-<attr>`
+  attributes on an element marked `data-ff`, and `viaductBrowser.swap()`
+  copies them onto `<attr>` on the Firefox version. `browser-swap.js` makes
+  that call and must sit directly before `scrollcraft.js`, so the engine only
+  ever reads one browser's sources. A version must never download the other
+  browser's video; check the network log.
+- **Firefox recordings** follow the Safari names: `viaduct-install-firefox*`,
+  `viaduct-drop-firefox*`, `viaduct-batch-firefox*`,
+  `install/firefox/<slug>*`, with step times in
+  `viaduct/extensions/recordings-firefox.json`. All 28 guide recordings and
+  the three shared ones exist. build.js uses one when its entry and its
+  `.mp4` both exist, and otherwise falls back to the Safari recording with a
+  note under it. On the product page the install scrub has a poster pair and
+  a caption set per browser, and the reel's first still is set by
+  `viaduct.js` so each version fetches only its own. The store page in the
+  Firefox footage is light: the Chrome Web Store ignores Firefox's dark mode.
+  That is the one accepted exception to "Dark only".
 
 ### The shelf
 

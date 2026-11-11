@@ -29,6 +29,10 @@ they can't select or read (Lector).
   (or `Viaduct Firefox`, `Viaduct Mixed`), which `analytics.js` reports as the
   Buy event's product. Nav, hero and footer Buy links go to `/viaduct/#pricing`.
   Viaduct Pro keys bought on Gumroad still activate and count as Mixed.
+  Every Viaduct page has a Safari and a Firefox version at the same URL
+  (DESIGN.md, "Viaduct: Safari or Firefox"). Link Firefox-aimed posts, ads and
+  the app itself to `/viaduct/?browser=firefox`; the choice sticks for the
+  visitor's later pages.
 - Spyglass: free GitHub download (every format free for 7 days); Get Pro
   ($12 once) and Get Drive ($4/month, 7-day trial) each open their own Polar
   checkout link as Polar's embedded checkout, set up the same way as Lector's

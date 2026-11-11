@@ -149,6 +149,48 @@ const EXTENSIONS = [
       a: "It does, with Apple's own translation, from the Translate button in the address bar. The extension gives you Google's translation of the text you select instead." } },
 ];
 
+// The Firefox side of each extension, merged in as x.firefox so the Safari
+// facts above stay readable. Same sourcing rule.
+// official = the developer's own Firefox add-on, checked against the author on
+//            addons.mozilla.org and a link from the developer's own site. An
+//            extension missing here has none: Video Speed Controller's
+//            look-alikes on addons.mozilla.org are not its developer's.
+// limit, h1, faq, fix, shot = as above, for Firefox. faq: true reuses the
+//            Safari question where the answer doesn't depend on the browser.
+const AMO = (name, slug) => ({ label: `${name} for Firefox (addons.mozilla.org)`, url: `https://addons.mozilla.org/firefox/addon/${slug}/` });
+const FIREFOX = {
+  'ublock-origin': { official: AMO('uBlock Origin', 'ublock-origin') },
+  'tampermonkey': { official: AMO('Tampermonkey', 'tampermonkey'),
+    fix: "Tampermonkey reads chrome.runtime.id in the world its user scripts run in, and Firefox leaves it out there. Viaduct defines it before any user script loads." },
+  'violentmonkey': { official: AMO('Violentmonkey', 'violentmonkey') },
+  'metamask': { official: AMO('MetaMask', 'ether-metamask') },
+  'return-youtube-dislike': { official: AMO('Return YouTube Dislike', 'return-youtube-dislikes') },
+  'sponsorblock': { official: AMO('SponsorBlock', 'sponsorblock') },
+  'stylus': { official: AMO('Stylus', 'styl-us') },
+  'dark-reader': { official: AMO('Dark Reader', 'darkreader'),
+    shot: { src: '/viaduct/assets/viaduct-dark-reader-firefox.webp', width: 1400, height: 1071,
+      alt: "Dark Reader's popup open from Firefox's Extensions button, over its own page on the Chrome Web Store" } },
+  'clearurls': { official: AMO('ClearURLs', 'clearurls') },
+  'decentraleyes': { official: AMO('Decentraleyes', 'decentraleyes') },
+  'i-still-dont-care-about-cookies': { official: AMO("I still don't care about cookies", 'istilldontcareaboutcookies') },
+  'augmented-steam': { official: AMO('Augmented Steam', 'augmented-steam') },
+  'reddit-enhancement-suite': { official: AMO('Reddit Enhancement Suite', 'reddit-enhancement-suite') },
+  'refined-github': { official: AMO('Refined GitHub', 'refined-github-') },
+  'zotero-connector': { official: { label: 'Zotero Connector for Firefox (zotero.org)', url: 'https://www.zotero.org/download/connectors' } },
+  'ublacklist': { official: AMO('uBlacklist', 'ublacklist') },
+  'web-archives': { official: AMO('Web Archives', 'view-page-archive') },
+  'user-agent-switcher': { official: AMO('User-Agent Switcher and Manager', 'user-agent-string-switcher') },
+  'xbrowsersync': { official: AMO('xBrowserSync', 'xbs') },
+  'vimium': { official: AMO('Vimium', 'vimium-ff') },
+  'enhancer-for-youtube': { official: AMO('Enhancer for YouTube', 'enhancer-for-youtube') },
+  'onetab': { official: AMO('OneTab', 'onetab') },
+  'react-developer-tools': { official: AMO('React Developer Tools', 'react-devtools') },
+  'vue-devtools': { official: AMO('Vue.js devtools', 'vue-js-devtools'), faq: true },
+  'redux-devtools': { official: AMO('Redux DevTools', 'reduxdevtools') },
+  'colorzilla': { official: AMO('ColorZilla', 'colorzilla') },
+};
+for (const x of EXTENSIONS) x.firefox = FIREFOX[x.slug] || {};
+
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 // desc as a list entry: "the extension that restores dislike counts" reads as
@@ -193,18 +235,31 @@ function related(x) {
 const icon = (slug) => fs.existsSync(path.join(ROOT, 'viaduct', 'assets', 'icons', `${slug}.webp`))
   ? `/viaduct/assets/icons/${slug}.webp` : null;
 
+// Every page holds a Safari and a Firefox version of what differs between the
+// browsers. viaduct/assets/browser.js picks one and nav.css hides the other's
+// [data-for] elements; the Safari one is the markup default, which is what
+// crawlers and visitors without JavaScript get. bx() pairs two runs of inline
+// HTML and returns the one string when they don't differ.
+const bx = (safari, firefox) => (firefox == null || firefox === safari ? safari
+  : `<span data-for="safari">${safari}</span><span data-for="firefox">${firefox}</span>`);
+
+// A label like "Dark Reader for Safari (Mac App Store)" without its source.
+const bare = (label) => label.replace(/\s*\([^)]*\)$/, '');
+
 // One extension in the hub's table, with its own icon. Each cell says what it
 // holds, so a row still reads right once it stacks on a phone. The limit is the
-// guide's own sentence without its "Converted by Viaduct" opening.
+// guide's own sentence without its "Converted by Viaduct" opening. The official
+// version and the limits each get a cell per browser.
 const compatRow = (x) => {
   const src = icon(x.slug);
-  const official = x.official
-    ? `<td><a href="${x.official.url}" rel="noopener">${esc(x.official.label.replace(/\s*\([^)]*\)$/, ''))}</a>${x.official.paid ? ', paid' : ''}</td>`
-    : '<td class="no">No Safari version</td>';
-  const limit = x.limit
-    ? `<td>${esc(cap(x.limit[1].replace(/^Converted by Viaduct, it /, '')))}</td>`
-    : '<td class="no">No known limits</td>';
-  return `<tr><th scope="row"><a class="ext" href="/viaduct/extensions/${x.slug}/">${src ? `<img src="${src}" width="32" height="32" alt="" loading="lazy" decoding="async" />` : '<span class="ph"></span>'}<b>${esc(x.name)}</b></a></th>${official}${limit}</tr>`;
+  const officialCell = (o, none, b) => (o
+    ? `<td data-for="${b}"><a href="${o.url}" rel="noopener">${esc(bare(o.label))}</a>${o.paid ? ', paid' : ''}</td>`
+    : `<td class="no" data-for="${b}">${none}</td>`);
+  const limitCell = (l, b) => (l
+    ? `<td data-for="${b}">${esc(cap(l[1].replace(/^Converted by Viaduct, it /, '')))}</td>`
+    : `<td class="no" data-for="${b}">No known limits</td>`);
+  const f = x.firefox || {};
+  return `<tr><th scope="row"><a class="ext" href="/viaduct/extensions/${x.slug}/">${src ? `<img src="${src}" width="32" height="32" alt="" loading="lazy" decoding="async" />` : '<span class="ph"></span>'}<b>${esc(x.name)}</b></a></th>${officialCell(x.official, 'No Safari version', 'safari')}${officialCell(f.official, 'No Firefox add-on', 'firefox')}${limitCell(x.limit, 'safari')}${limitCell(f.limit, 'firefox')}</tr>`;
 };
 
 // "a, b and c"
@@ -266,13 +321,14 @@ code { font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospac
 .crumb a:hover { color:var(--ink); }
 .top h1 { font-size:clamp(2.5rem,5.4vw,4.25rem); line-height:1.02; max-width:17ch; margin-bottom:24px; }
 .lede { font-size:clamp(1.08rem,1.9vw,1.25rem); line-height:1.6; max-width:40rem; margin:0; }
+.aside { max-width:40rem; margin:0 0 20px; font-size:15px; }
 
 /* The ledger: each section is a row, its heading held in the left column while
    the body scrolls past on the right. */
 .row { display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:24px clamp(40px,5vw,72px); padding:64px 0; border-top:1px solid var(--hair); }
 .row > h2 { position:sticky; top:112px; align-self:start; font-size:clamp(1.55rem,2.5vw,2rem); max-width:13ch; }
 .row__body { min-width:0; }
-.row__body > :last-child { margin-bottom:0; }
+.row__body > :last-child, .row__body > [data-for] > :last-child { margin-bottom:0; }
 .row__body p { max-width:62ch; }
 
 /* Steps: bare numerals in the accent, hairlines between. In the
@@ -321,8 +377,8 @@ button.step__n:focus-visible { outline:2px solid var(--teal); outline-offset:2px
 .more a:hover { color:var(--teal); text-decoration:none; }
 
 /* The padding sits on the summary, so the whole row takes the tap. */
+.qa { border-top:1px solid var(--hair); }
 details { border-bottom:1px solid var(--hair); }
-details:first-child { border-top:1px solid var(--hair); }
 details summary { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 0; cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
 details summary::-webkit-details-marker { display:none; }
 details p { margin:0 0 18px; max-width:62ch; }
@@ -404,11 +460,12 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 @media (prefers-reduced-motion: reduce) { .btn-teal, .btn-ghost, .chev, .compat .ext b { transition:none; } }
 `;
 
-// A ledger row: the heading on the left, everything else on the right.
-const ledger = (h2, body, id) => {
+// A ledger row: the heading on the left, everything else on the right. `only`
+// keeps the row to one browser's version of the page.
+const ledger = (h2, body, id, only) => {
   const hid = `${id || slugify(h2.replace(/<[^>]+>/g, ''))}-h`;
   return `
-<section class="row"${id ? ` id="${id}"` : ''} aria-labelledby="${hid}">
+<section class="row"${id ? ` id="${id}"` : ''}${only ? ` data-for="${only}"` : ''} aria-labelledby="${hid}">
   <h2 id="${hid}">${h2}</h2>
   <div class="row__body">
 ${body}
@@ -417,19 +474,34 @@ ${body}
 };
 
 // The head every page opens with, and all it holds: crumb, headline, one
-// sentence. The demonstration comes straight after it.
-const pageTop = ({ crumbs, h1, lede }) => `
+// sentence. The demonstration comes straight after it. `aside` is a line for
+// Firefox visitors on a guide that is about Safari.
+const pageTop = ({ crumbs, h1, lede, aside }) => `
 <div class="top">
   <nav class="crumb" aria-label="Breadcrumb">${crumbs}</nav>
   <h1>${h1}</h1>
-  <p class="lede">${lede}</p>
+  ${aside ? `<p class="aside" data-for="firefox">${aside}</p>
+  ` : ''}<p class="lede">${lede}</p>
 </div>`;
+
+const SAFARI_ONLY = 'This guide is about Safari. <a href="/viaduct/?browser=firefox">Viaduct converts Chrome extensions for Firefox too.</a>';
 
 const frame = (src, width, height, alt, lazy = true) =>
   `<figure class="frame"><img src="/viaduct/assets/${src}" width="${width}" height="${height}" alt="${alt}"${lazy ? ' loading="lazy"' : ''} decoding="async" /></figure>`;
 
-const faqRow = (faqs) => ledger('Questions', faqs.map(([q, a]) => `    <details><summary>${esc(q)}${CHEV}</summary>
-      <p>${a}</p></details>`).join('\n'));
+// faqs: [question, answer HTML, browser] rows. A row with a browser shows only
+// in that version of the page.
+const faqRow = (faqs) => ledger('Questions', `    <div class="qa">
+${faqs.map(([q, a, only]) => `    <details${only ? ` data-for="${only}"` : ''}><summary>${esc(q)}${CHEV}</summary>
+      <p>${a}</p></details>`).join('\n')}
+    </div>`);
+
+// A question whose answer differs by browser, as the two rows faqRow takes. A
+// missing answer leaves that browser's version without the question.
+const faqPair = (safari, firefox) => [
+  ...(safari ? [[...safari, 'safari']] : []),
+  ...(firefox ? [[...firefox, 'firefox']] : []),
+];
 
 const namesRow = (h2, links) => ledger(h2, `    <ul class="names">
       ${links.map(([name, href]) => `<li><a href="${href}">${esc(name)}</a></li>`).join('\n      ')}
@@ -473,12 +545,54 @@ const ownRecording = (x) => {
     label: `Screen recording in Safari: Add to Safari is clicked on the ${x.name} listing in the Chrome Web Store, and Viaduct builds, signs and installs it.` };
 };
 
+// The same recordings made in Firefox. recordings-firefox.json holds each
+// one's step times: a slug per extension, and "_store", "_drop" and "_batch"
+// (with w, h, phone and at) for the three shared ones. The files sit beside
+// the Safari ones: viaduct-install-firefox*, viaduct-drop-firefox*,
+// viaduct-batch-firefox* and install/firefox/<slug>*. A recording counts once
+// both its entry and its .mp4 exist; until then the Firefox version of a page
+// plays the Safari recording.
+const FF_JSON = path.join(__dirname, 'recordings-firefox.json');
+const FF_RECORDINGS = fs.existsSync(FF_JSON) ? JSON.parse(fs.readFileSync(FF_JSON, 'utf8')) : {};
+const recorded = (file) => fs.existsSync(path.join(ROOT, 'viaduct', 'assets', `${file}.mp4`));
+const ffShared = (key, label) => {
+  const r = FF_RECORDINGS[`_${key}`];
+  const file = `${VIDEOS[key].file}-firefox`;
+  return r && recorded(file) ? { file, w: r.w, h: r.h, phone: r.phone, travel: !!r.travel, at: r.at, label } : null;
+};
+const FF_VIDEOS = {
+  store: ffShared('store', "Screen recording in Firefox: Add to Firefox is clicked on the Dark Reader listing in the Chrome Web Store, Viaduct converts and installs it, and Dark Reader's popup opens from Firefox's Extensions button."),
+  drop: ffShared('drop', "Screen recording of Viaduct with Firefox chosen: Dark Reader's .crx is dropped on the window, Convert & Install is clicked, and Viaduct converts it and installs it in Firefox."),
+  batch: ffShared('batch', 'Screen recording of Viaduct converting TWP - Translate Web Pages with Firefox chosen: it converts the extension, then shows it installed in Firefox.'),
+};
+const ffRecording = (x) => {
+  const r = FF_RECORDINGS[x.slug];
+  const file = `install/firefox/${x.slug}`;
+  if (!r || !recorded(file)) return null;
+  if (x.offStore) return { file, w: r.w || 1260, h: r.h || 940, phone: r.phone || [690, 720], travel: true, at: { drop: r.drop, on: r.on },
+    label: `Screen recording of Viaduct with Firefox chosen: ${x.name}'s .zip is dropped on the window, Convert & Install is clicked, and Viaduct converts it and installs it in Firefox.` };
+  return { file, w: r.w || 1440, h: r.h || 810, phone: r.phone || [960, 540], travel: true, at: { open: 0, click: r.click, on: r.on },
+    label: `Screen recording in Firefox: Add to Firefox is clicked on the ${x.name} listing in the Chrome Web Store, and Viaduct converts and installs it.` };
+};
+// What the Firefox version of a page says under a recording made in Safari.
+const IN_SAFARI = { store: 'Recorded in Safari. In Firefox the button says Add to Firefox.', drop: 'Recorded with Safari chosen.', batch: 'Recorded with Safari chosen.' };
+
+// The Firefox side of a demonstration built on one of the three shared
+// recordings: its own heading, steps and note, and the Firefox recording once
+// there is one.
+const ffDemo = (key, heading, steps, note) => ({ heading, steps, video: FF_VIDEOS[key], note: FF_VIDEOS[key] ? note : IN_SAFARI[key] });
+
 // steps: [html, t] pairs. t is the second in the recording where that step
-// starts; a step the recording doesn't show (setup) has none.
-const stepsList = (steps) => `<ol class="steps">${steps.map(([html, t], i) => `
-      <li${t == null ? '' : ` data-t="${t}"`}>${t == null
+// starts; a step the recording doesn't show (setup) has none. ffSteps are the
+// same steps as Firefox does them, one for one, timed on the recording the
+// Firefox version plays.
+const stepsList = (steps, ffSteps) => `<ol class="steps">${steps.map(([html, t], i) => {
+  const [ffHtml, ffT] = ffSteps ? ffSteps[i] : [];
+  return `
+      <li${t == null ? '' : ` data-t="${t}"`}${ffT == null || ffT === t ? '' : ` data-ff data-ff-data-t="${ffT}"`}>${t == null
     ? `<span class="step__n" aria-hidden="true">${i + 1}</span>`
-    : `<button type="button" class="step__n" aria-label="Show step ${i + 1} in the recording">${i + 1}</button>`}<p>${html}</p></li>`).join('')}
+    : `<button type="button" class="step__n" aria-label="Show step ${i + 1} in the recording">${i + 1}</button>`}<p>${bx(html, ffHtml)}</p></li>`;
+}).join('')}
     </ol>`;
 
 // The page's peak: the steps beside the recording, scrubbed by the wheel on
@@ -487,17 +601,30 @@ const stepsList = (steps) => `<ol class="steps">${steps.map(([html, t], i) => `
 // slows the clip while the stage is pinned, which is where every step's moment
 // has to land for the steps to track it and for a step's button to reach it.
 // `kind` is a VIDEOS key or a recording of the same shape.
-const demoAct = (heading, kind, steps, note) => {
+// `ff` is the Firefox version: { heading, steps, note, video }. Its recording
+// rides on the same elements as data-ff-* attributes, which
+// viaductBrowser.swap() copies over before the engine reads them, so each
+// version only ever fetches its own clip. The two posters are a lazy pair for
+// the same reason: a lazy image that isn't displayed is never fetched.
+const demoAct = (heading, kind, steps, note, ff = {}) => {
   const v = typeof kind === 'string' ? VIDEOS[kind] : kind;
+  const f = ff.video;
+  if (ff.steps && (ff.steps.length !== steps.length || ff.steps.some(([, t], i) => (t == null) !== (steps[i][1] == null)))) {
+    throw new Error(`"${heading}": the Firefox steps don't line up with the Safari ones`);
+  }
+  const base = (r) => `/viaduct/assets/${r.file}`;
+  const ffNote = ff.note === undefined ? note : ff.note;
+  const caption = (text, only) => (text ? `<figcaption${only ? ` data-for="${only}"` : ''}>${text}</figcaption>` : '');
   return `
-<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4"${v.travel ? ' data-sc-clip-map="travel"' : ''} data-phone-ar="${v.phone[0]} / ${v.phone[1]}" aria-labelledby="demo-h" style="--ar:${v.w} / ${v.h}">
+<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4"${v.travel ? ' data-sc-clip-map="travel"' : ''} data-phone-ar="${v.phone[0]} / ${v.phone[1]}" aria-labelledby="demo-h" style="--ar:${v.w} / ${v.h}"${f ? ` data-ff data-ff-data-sc-clip-map="${f.travel ? 'travel' : 'full'}" data-ff-data-phone-ar="${f.phone[0]} / ${f.phone[1]}" data-ff-style="--ar:${f.w} / ${f.h}"` : ''}>
   <div class="demo__stage" data-sc-stage>
-    <h2 id="demo-h">${heading}</h2>
-    ${stepsList(steps)}
+    <h2 id="demo-h">${bx(heading, ff.heading)}</h2>
+    ${stepsList(steps, ff.steps)}
     <figure class="frame demo__frame"><div class="demo__slot">
-      <img class="sc-stage__poster" src="/viaduct/assets/${v.file}-poster.webp" width="${v.w}" height="${v.h}" alt="" />
-      <video data-sc-scrub data-sc-src="/viaduct/assets/${v.file}.mp4" data-sc-src-mobile="/viaduct/assets/${v.file}-phone.mp4" data-phone-poster="/viaduct/assets/${v.file}-phone-poster.webp" width="${v.w}" height="${v.h}" muted playsinline aria-label="${esc(v.label)}"></video>
-    </div>${note ? `<figcaption>${note}</figcaption>` : ''}</figure>
+      <img class="sc-stage__poster"${f ? ' data-for="safari" loading="lazy"' : ''} src="${base(v)}-poster.webp" width="${v.w}" height="${v.h}" alt="" />${f ? `
+      <img class="sc-stage__poster" data-for="firefox" loading="lazy" src="${base(f)}-poster.webp" width="${f.w}" height="${f.h}" alt="" />` : ''}
+      <video data-sc-scrub data-sc-src="${base(v)}.mp4" data-sc-src-mobile="${base(v)}-phone.mp4" data-poster="${base(v)}-poster.webp" data-phone-poster="${base(v)}-phone-poster.webp" width="${v.w}" height="${v.h}" muted playsinline aria-label="${esc(v.label)}"${f ? ` data-ff data-ff-data-sc-src="${base(f)}.mp4" data-ff-data-sc-src-mobile="${base(f)}-phone.mp4" data-ff-data-poster="${base(f)}-poster.webp" data-ff-data-phone-poster="${base(f)}-phone-poster.webp" data-ff-width="${f.w}" data-ff-height="${f.h}" data-ff-aria-label="${esc(f.label)}"` : ''}></video>
+    </div>${note === ffNote ? caption(note) : caption(note, 'safari') + caption(ffNote, 'firefox')}</figure>
   </div>
 </section>`;
 };
@@ -507,7 +634,7 @@ const setupStep = (rest) => [`<strong><a href="/viaduct/">Get Viaduct</a> and ru
 
 // The price, said once, in the one place on each page a reader looks for it.
 const PRICE_FAQ = ['What does Viaduct cost?',
-  'The first 2 conversions are free, and Viaduct removes them after 7 days. A Safari license costs $19 once, converts as many as you like and keeps them installed.'];
+  'The first 2 conversions are free, and Viaduct removes them after 7 days. A Safari or Firefox license costs $19 once, converts as many as you like in that browser and keeps them installed. Mixed covers both for $29.'];
 
 // These pages run no inline JavaScript: the scripts are the first-party
 // /assets/footer.js, /assets/attribution.js, /assets/analytics.js and
@@ -542,14 +669,18 @@ const CHEV = '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="
 
 // `demo`: the page has a demonstration, so it loads the scroll-craft engine's
 // stylesheet here and the engine with guide.js at the end of the body.
-function head({ title, description, canonical, imageAlt, jsonld, css = '', demo = false }) {
+// `ffTitle`: the tab title for the Firefox version, which nav.js applies. The
+// <title> itself stays the Safari one, the one that gets indexed.
+function head({ title, ffTitle, description, canonical, imageAlt, jsonld, css = '', demo = false }) {
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-browser="safari">
 <head>
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="${CSP}" />
+<script src="/viaduct/assets/browser.js?v=1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>${esc(title)}</title>
+<title>${esc(title)}</title>${ffTitle ? `
+<meta name="viaduct-title-firefox" content="${esc(ffTitle)}" />` : ''}
 <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
 <link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png" />
 <link rel="manifest" href="/viaduct/assets/viaduct.webmanifest" />
@@ -572,7 +703,7 @@ function head({ title, description, canonical, imageAlt, jsonld, css = '', demo 
 <meta name="twitter:image" content="${OG_IMAGE}" />
 <link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="/assets/fonts.css?v=1" />
-<link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />${demo ? `
+<link rel="stylesheet" href="/viaduct/assets/nav.css?v=4" />${demo ? `
 <link rel="stylesheet" href="/viaduct/assets/scrollcraft.css?v=2" />` : ''}
 <style>${CSS}${css}</style>
 <script type="application/ld+json">
@@ -610,7 +741,7 @@ function chrome(inner, updated) {
 ${inner}
 <div class="meta">${updated ? `
   <p>Updated <time datetime="${updated}">${longDate(updated)}</time></p>` : ''}
-  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple or Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
+  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple, Google or Mozilla. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
 </div>
 </main>
 <div id="site-footer"></div>
@@ -629,10 +760,11 @@ ${inner}
     </div>
   </footer>
 </noscript>
-<script src="/viaduct/assets/nav.js?v=1"></script>
+<script src="/viaduct/assets/nav.js?v=4"></script>
 <script src="/assets/attribution.js"></script>${demo ? `
+<script src="/viaduct/assets/browser-swap.js?v=1"></script>
 <script src="/viaduct/assets/scrollcraft.js?v=2"></script>
-<script src="/viaduct/assets/guide.js?v=1"></script>` : ''}
+<script src="/viaduct/assets/guide.js?v=2"></script>` : ''}
 </body>
 </html>`;
 }
@@ -695,12 +827,25 @@ function extensionPage(x) {
     : x.official ? 'Viaduct converts the Chrome version into a Safari extension on your Mac.'
     : 'It has no Safari version. Viaduct converts the Chrome one into a Safari extension on your Mac.';
 
+  // The Firefox version of the page. Its facts come from x.firefox and from the
+  // app's Firefox setup; the title, description and JSON-LD stay Safari's,
+  // which is the version crawlers are served.
+  const f = x.firefox || {};
+  const ffH1 = f.h1 || `Run ${x.name} in Firefox`;
+  const ffLede = f.limit ? esc(f.limit[1])
+    : f.official ? `${esc(x.name)} has its own Firefox add-on. Viaduct converts the Chrome version when that's the one you want.`
+    : 'It has no Firefox add-on. Viaduct converts the Chrome one into an add-on that stays installed after Firefox quits.';
+
   // Off the store, the package comes from the developer and gets dropped on
-  // Viaduct; on it, the store's "Add to Safari" button does the work. The
-  // times are where each step starts in the recording.
+  // Viaduct; on it, the store's "Add to Safari" or "Add to Firefox" button
+  // does the work. The times are where each step starts in the recording.
   const prompt = x.official?.prompt;
   const own = ownRecording(x);
-  const rec = own || VIDEOS[x.offStore ? 'drop' : 'store'];
+  const kind = x.offStore ? 'drop' : 'store';
+  const rec = own || VIDEOS[kind];
+  const ffOwn = ffRecording(x);
+  const ffVideo = ffOwn || FF_VIDEOS[kind];
+  const ffAt = (ffVideo || rec).at;
   const steps = x.offStore ? [
     setupStep('It walks you through installing Xcode (free) and signing in to it with any Apple ID.'),
     [`<strong>Download the .zip from <a href="${store}" rel="noopener">${esc(x.offStore.label)}</a>.</strong> It's no longer on the Chrome Web Store.`, null],
@@ -712,28 +857,57 @@ function extensionPage(x) {
     [`<strong>Click Add to Safari${prompt ? ', then Convert Anyway' : ''}.</strong> ${prompt ? 'Viaduct first offers the official Safari version, then ' : 'Viaduct '}downloads, converts and signs it.`, rec.at.click],
     ["<strong>Switch it on</strong> in Safari → Settings → Extensions, and it's in your toolbar.", rec.at.on],
   ];
+  const ffSteps = x.offStore ? [
+    setupStep('Choose Firefox, and it asks for Full Disk Access so it can reach your Firefox profile.'),
+    steps[1],
+    ['<strong>Set Browser to Firefox, drop the .zip on Viaduct and click Convert &amp; Install.</strong>', ffAt.drop],
+    ["<strong>It's under Firefox's Extensions button.</strong> There's nothing to switch on, and it stays after Firefox quits.", ffAt.on],
+  ] : [
+    setupStep('Choose Firefox, and it asks for Full Disk Access and turns on the Add to Firefox button.'),
+    [`<strong>Open <a href="${store}" rel="noopener">${esc(x.name)} on the Chrome Web Store</a> in Firefox.</strong>`, ffAt.open],
+    ['<strong>Click Add to Firefox.</strong> Viaduct downloads and converts it.', ffAt.click],
+    ["<strong>It's under Firefox's Extensions button.</strong> There's nothing to switch on, and it stays after Firefox quits.", ffAt.on],
+  ];
+  const note = own || x.slug === 'dark-reader' ? ''
+    : x.offStore ? "Recorded with Dark Reader's .crx. A .zip goes the same way." : 'Recorded with Dark Reader. Every store install goes the same way.';
+  const ffNote = !ffVideo ? IN_SAFARI[kind] : ffOwn || x.slug === 'dark-reader' ? '' : note;
 
   const off = x.official && x.official.label.match(/^(.*?)\s*\(([^)]*)\)$/);
   const officialAnswer = x.official && `Yes: <a href="${x.official.url}" rel="noopener">${esc(off ? off[1] : x.official.label)}</a>${off ? ` (${esc(off[2])}${x.official.paid ? ', paid' : ''})` : ''}. ${x.official.paid
     ? 'The Chrome version is free; buying the Safari one supports its developer.'
     : esc(x.official.note || (prompt ? 'Viaduct offers it before converting the Chrome one.' : ''))}`.trim();
+  const ffOff = f.official && f.official.label.match(/^(.*?)\s*\(([^)]*)\)$/);
+  const ffOfficialAnswer = f.official && `Yes: <a href="${f.official.url}" rel="noopener">${esc(ffOff ? ffOff[1] : f.official.label)}</a>${ffOff ? ` (${esc(ffOff[2])})` : ''}.${f.official.note ? ` ${esc(f.official.note)}` : ''}`;
 
-  return head({ title, description, canonical, imageAlt, jsonld, demo: true }) + chrome(`${pageTop({
+  // The row about the extension itself in one browser: a breakage Viaduct
+  // patches there, a screenshot of it running there, or both. The screenshot
+  // waits for its file.
+  const inBrowser = (name, o, only) => {
+    const shot = o.shot && fs.existsSync(path.join(ROOT, o.shot.src)) ? o.shot : null;
+    return o.fix || shot ? `
+${ledger(`${esc(x.name)} in ${name}`, `${o.fix ? `    <p>${esc(o.fix)}</p>` : ''}${shot ? `
+    <figure class="frame"><img src="${shot.src}" width="${shot.width}" height="${shot.height}" alt="${esc(shot.alt)}" loading="lazy" decoding="async" /></figure>` : ''}`, null, only)}` : '';
+  };
+  // faq: true on the Firefox side reuses the Safari question as it is.
+  const ffFaq = f.faq === true ? x.faq : f.faq;
+
+  return head({ title, ffTitle: `${ffH1} · Viaduct`, description, canonical, imageAlt, jsonld, demo: true }) + chrome(`${pageTop({
     crumbs: `<a href="/viaduct/">Viaduct</a> / <a href="/viaduct/extensions/">Extensions</a> / ${esc(x.name)}`,
-    h1: esc(h1),
-    lede,
+    h1: bx(esc(h1), esc(ffH1)),
+    lede: bx(lede, ffLede),
   })}
-${demoAct('Install it', rec, steps, own || x.slug === 'dark-reader' ? ''
-    : x.offStore ? "Recorded with Dark Reader's .crx. A .zip goes the same way." : 'Recorded with Dark Reader. Every store install goes the same way.')}${x.fix || x.shot ? `
-${ledger(`${esc(x.name)} in Safari`, `${x.fix ? `    <p>${esc(x.fix)}</p>` : ''}${x.shot ? `
-    <figure class="frame"><img src="${x.shot.src}" width="${x.shot.width}" height="${x.shot.height}" alt="${esc(x.shot.alt)}" loading="lazy" decoding="async" /></figure>` : ''}`)}` : ''}
+${demoAct('Install it', rec, steps, note, { steps: ffSteps, video: ffVideo, note: ffNote })}${inBrowser('Safari', x, 'safari')}${inBrowser('Firefox', f, 'firefox')}
 ${faqRow([
-    ...(x.official ? [['Does its developer make one for Safari?', officialAnswer]] : []),
-    ...(x.limit ? [["Why doesn't all of it work?", esc(x.limit[0])]] : []),
-    ...(x.faq ? [[x.faq.q, esc(x.faq.a)]] : []),
-    ['Is it the real extension, or a clone?', x.offStore
-      ? 'The real one. Viaduct converts the package its developers publish and adds fixes where Safari behaves differently.'
-      : 'The real one. Viaduct downloads the same package Chrome installs from the Web Store and adds fixes where Safari behaves differently.'],
+    ...faqPair(x.official && ['Does its developer make one for Safari?', officialAnswer],
+      f.official && ['Does its developer make one for Firefox?', ffOfficialAnswer]),
+    ...faqPair(x.limit && ["Why doesn't all of it work?", esc(x.limit[0])], f.limit && ["Why doesn't all of it work?", esc(f.limit[0])]),
+    ...(x.faq && ffFaq === x.faq ? [[x.faq.q, esc(x.faq.a)]]
+      : faqPair(x.faq && [x.faq.q, esc(x.faq.a)], ffFaq && [ffFaq.q, esc(ffFaq.a)])),
+    ['Does it stay after Firefox quits?',
+      "Yes. Firefox removes any add-on Mozilla didn't sign when it quits, so Viaduct loads yours again each time Firefox opens, with its settings. Viaduct has to stay on in Login Items for that.", 'firefox'],
+    ['Is it the real extension, or a clone?', `The real one. Viaduct ${x.offStore
+      ? 'converts the package its developers publish'
+      : 'downloads the same package Chrome installs from the Web Store'} and adds fixes where ${bx('Safari', 'Firefox')} behaves differently.`],
     ['Will it update itself?', x.offStore
       ? "Not by itself. Viaduct's weekly update check only covers Chrome Web Store installs, so drop each new release on Viaduct yourself."
       : "With a license, yes. Turn on Update Chrome Web Store extensions weekly in Viaduct's settings, and it rebuilds the extension when the store has a new version."],
@@ -770,8 +944,21 @@ const APPLE_ACCOUNT = 'https://developer.apple.com/help/account/basics/about-you
 // demo     = [heading, recording (a VIDEOS key), steps, note]: the page's peak.
 // sections = [heading, HTML body] pairs after it, one ledger row each.
 // faqs     = [question, HTML answer] pairs.
+// firefox  = the Firefox version of the guide: h1, lede, demo ([heading,
+//            steps, note], on the same recording key), and sections and faqs
+//            keyed by the Safari heading or question they stand in for. There,
+//            a string or [question, answer] is the Firefox wording and false
+//            leaves it out of the Firefox version; anything not named is
+//            shared. 'safari-only' marks a guide about Safari itself: Firefox
+//            visitors get one line pointing at Viaduct for Firefox.
 const { store: ST, drop: DR, batch: BA } = Object.fromEntries(Object.entries(VIDEOS).map(([k, v]) => [k, v.at]));
+// Step times on whatever the Firefox version plays: its own recording once it
+// exists, the Safari one until then.
+const { store: FST, drop: FDR, batch: FBA } = Object.fromEntries(Object.keys(VIDEOS).map((k) => [k, (FF_VIDEOS[k] || VIDEOS[k]).at]));
 const BATCH_NOTE = 'Recorded converting TWP. Import from Chrome converts each of yours the same way.';
+const FF_SETUP = setupStep('Choose Firefox, and it asks for Full Disk Access so it can reach your Firefox profile.');
+const FF_DONE = "<strong>It's under Firefox's Extensions button.</strong> There's nothing to switch on, and it stays after Firefox quits.";
+const FF_TEMPORARY = 'https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/';
 
 const GUIDES = [
   {
@@ -800,6 +987,7 @@ const GUIDES = [
       ["Is this the 7 days Viaduct's free plan mentions?",
         "No, that one is Viaduct's own: the free plan converts 2 extensions and removes them after 7 days, however they're signed. A Safari license is $19 once and keeps them."],
     ],
+    firefox: 'safari-only',
   },
   {
     slug: 'chrome-extension-to-safari-converter',
@@ -827,6 +1015,26 @@ const GUIDES = [
         'No. It downloads from the Chrome Web Store when you install from there, and converts on your Mac.'],
       PRICE_FAQ,
     ],
+    firefox: {
+      h1: 'Convert any Chrome extension to Firefox',
+      lede: 'Viaduct is a Mac app that converts a Chrome extension into a Firefox add-on, installs it, and keeps it there after Firefox quits.',
+      demo: ['Convert one', [
+        FF_SETUP,
+        ['<strong>Set Browser to Firefox and drop the extension on Viaduct.</strong> A .zip, a .crx or an unpacked folder. Viaduct checks it before converting.', FDR.drop],
+        ['<strong>Click Convert &amp; Install.</strong> Firefox needs no Xcode build and no signing.', FDR.convert],
+        [FF_DONE, FDR.on],
+      ]],
+      sections: {
+        'Other ways in': `
+    <p>From the Chrome Web Store it's one click: once Viaduct is set up, Add to Firefox sits where Add to Chrome was. For the extensions you already use, <a href="/viaduct/guides/move-chrome-extensions-to-safari/">Import from Chrome</a> converts them in one batch.</p>`,
+        'What it fixes': `
+    <p>Firefox runs most of Chrome's extension APIs, but some are missing or behave differently. Viaduct patches the differences it knows about, which is why <a href="/viaduct/extensions/tampermonkey/">Tampermonkey</a> finds <code>chrome.runtime.id</code> where its user scripts run. Features built on something Firefox doesn't give add-ons, such as web push, still won't work.</p>`,
+      },
+      faqs: {
+        'Do I need Xcode?': ['Do I need Xcode?',
+          'No. Xcode is only for Safari. For Firefox, Viaduct needs Full Disk Access and has to stay on in Login Items, so it can load your add-ons each time Firefox opens.'],
+      },
+    },
   },
   {
     slug: 'move-chrome-extensions-to-safari',
@@ -852,6 +1060,26 @@ const GUIDES = [
       ['Moving to a new Mac too?',
         "In Viaduct, Settings → Extensions → Move to another Mac exports everything you've converted as one file. Import it on the new Mac and Viaduct converts them again there."],
     ],
+    firefox: {
+      h1: 'Move your Chrome extensions to Firefox',
+      lede: 'Viaduct reads the extensions you already have in Chrome and other Chromium browsers, converts the ones you pick into Firefox add-ons and brings their settings along.',
+      demo: ['Move them over', [
+        setupStep('Choose Firefox. When it asks to read your browsers, click Allow Access.'),
+        ['<strong>Choose File → Import from Chrome and set its picker to Firefox.</strong> It lists the extensions in Chrome, Brave, Edge, Arc, Vivaldi and Opera, profile by profile.', null],
+        ['<strong>Tick the ones you want and click Convert.</strong> Their saved settings come along.', FBA.convert],
+        ["<strong>Click Open Firefox</strong> when the batch finishes. They're under the Extensions button, with nothing to switch on.", FBA.on],
+      ], BATCH_NOTE],
+      sections: {
+        'What stays behind': `
+    <p>Themes and Chrome apps aren't listed. Some extensions rely on Chrome features Firefox doesn't give add-ons. <a href="/viaduct/extensions/">The extension list</a> shows the known limits.</p>`,
+      },
+      faqs: {
+        'What about bookmarks, history and passwords?': ['What about bookmarks, history and passwords?',
+          'Firefox imports those itself from Settings → General → Import Browser Data, as <a href="https://support.mozilla.org/en-US/kb/import-bookmarks-google-chrome" rel="noopener">Mozilla describes</a>. For an extension that has a Firefox add-on, that import installs the add-on.'],
+        'Can I move them all on the free plan?': ['Can I move them all on the free plan?',
+          'Two of them, kept for 7 days. A Firefox license is $19 once and converts the rest, and the import list shows how many of your picks need it.'],
+      },
+    },
   },
   {
     slug: 'install-crx-file-mac',
@@ -878,6 +1106,24 @@ const GUIDES = [
         'No. A file has nothing to check for updates, so drop each new version on Viaduct. Extensions installed from the Chrome Web Store can update weekly with a license.'],
       PRICE_FAQ,
     ],
+    firefox: {
+      h1: 'Install a .crx file or unpacked extension in Firefox on Mac',
+      lede: "Firefox can't install a .crx. Viaduct converts it into a Firefox add-on and installs it, and does the same for a .zip or an unpacked folder.",
+      demo: ['Install it', [
+        FF_SETUP,
+        ['<strong>Set Browser to Firefox and drop the .crx, .zip or folder on Viaduct.</strong> Any folder with a <code>manifest.json</code> in it works.', FDR.drop],
+        ['<strong>Click Convert &amp; Install.</strong> Firefox needs no Xcode build and no signing.', FDR.convert],
+        [FF_DONE, FDR.on],
+      ]],
+      sections: {
+        'What a .crx is': `
+    <p>It's how the Chrome Web Store ships an extension: a zip of its files with a signature header on the front. Firefox only keeps add-ons Mozilla has signed, and a <code>.crx</code> isn't one, so it has to be converted first.</p>`,
+      },
+      faqs: {
+        'Can Safari load it without converting?': ['Can Firefox load it without converting?',
+          `Only for a while. <a href="${FF_TEMPORARY}" rel="noopener">Load Temporary Add-on</a> in about:debugging loads an unpacked extension until you restart Firefox, and Firefox doesn't run a Chrome service worker background as it is.`],
+      },
+    },
   },
   {
     slug: 'safari-web-extension-converter-alternative',
@@ -919,6 +1165,7 @@ const GUIDES = [
       ['Does it convert Manifest V2 extensions?', 'Yes, both V2 and V3.'],
       PRICE_FAQ,
     ],
+    firefox: 'safari-only',
   },
   {
     slug: 'arc-to-safari',
@@ -944,6 +1191,7 @@ const GUIDES = [
         'Safari imports those directly only from Chrome and Firefox. Viaduct moves extensions, not browsing data.'],
       PRICE_FAQ,
     ],
+    firefox: 'safari-only',
   },
 ];
 
@@ -955,6 +1203,8 @@ function guidePage(g) {
   const title = `${g.title || g.h1} · Viaduct`;
   const i = GUIDES.indexOf(g);
   const others = [...GUIDES.slice(i + 1), ...GUIDES.slice(0, i)].slice(0, 3);
+  const f = typeof g.firefox === 'object' ? g.firefox : null;
+  const [heading, kind, steps, note] = g.demo;
 
   const jsonld = {
     '@context': 'https://schema.org',
@@ -978,6 +1228,7 @@ function guidePage(g) {
 
   return head({
     title,
+    ffTitle: f ? `${f.h1} · Viaduct` : '',
     description: g.description,
     canonical,
     imageAlt: `The Viaduct app window on macOS, which converts Chrome extensions for Safari. Guide: ${g.h1}`,
@@ -986,12 +1237,24 @@ function guidePage(g) {
     demo: true,
   }) + chrome(`${pageTop({
     crumbs: `<a href="/viaduct/">Viaduct</a> / ${esc(g.crumb)}`,
-    h1: esc(g.h1),
-    lede: esc(g.lede),
+    h1: bx(esc(g.h1), f && esc(f.h1)),
+    lede: bx(esc(g.lede), f && esc(f.lede)),
+    aside: g.firefox === 'safari-only' ? SAFARI_ONLY : '',
   })}
-${demoAct(...g.demo)}
-${g.sections.map(([h, body]) => ledger(esc(h), body)).join('\n')}
-${faqRow(g.faqs)}
+${demoAct(heading, kind, steps, note, f ? ffDemo(kind, f.demo[0], f.demo[1], f.demo[2]) : {})}
+${g.sections.map(([h, body]) => {
+    const other = f?.sections?.[h];
+    if (other === undefined) return ledger(esc(h), body);
+    if (other === false) return ledger(esc(h), body, null, 'safari');
+    return ledger(esc(h), `    <div data-for="safari">${body}
+    </div>
+    <div data-for="firefox">${other}
+    </div>`);
+  }).join('\n')}
+${faqRow(g.faqs.flatMap((qa) => {
+    const other = f?.faqs?.[qa[0]];
+    return other === undefined ? [qa] : faqPair(qa, other);
+  }))}
 ${moreLine([
     ...guideLinks(others),
     [GENERAL.crumb, `/viaduct/extensions/${GENERAL.slug}/`],
@@ -1036,12 +1299,29 @@ function generalPage() {
     ['Viaduct', 'Everyone else', 'macOS 13 or later, and Xcode (free), which Viaduct runs for you',
       'The Chrome extension itself, converted, signed and installed, with fixes where Safari behaves differently'],
   ];
+  const ffWays = [
+    ['An official Firefox add-on', 'Anyone, if one exists',
+      "addons.mozilla.org, or the developer's site",
+      "The developer's own Firefox build, which can differ from the Chrome one"],
+    ['Loading it yourself', 'Developers', "The extension's files, with a manifest Firefox accepts",
+      'A temporary add-on that Firefox removes when it restarts'],
+    ['Viaduct', 'Everyone else', 'macOS 13 or later, and Firefox',
+      'The Chrome extension itself, converted and installed, with fixes where Firefox behaves differently. It stays after Firefox quits.'],
+  ];
+  const waysTable = (rows, only) => `    <table class="ways three" data-for="${only}">
+      <thead><tr><th scope="col"><span class="sr">Way</span></th>${cols.map((c) => `<th scope="col">${esc(c)}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(([way, ...cells]) => `
+        <tr><th scope="row">${esc(way)}</th>${cells.map((c, i) => `<td data-label="${esc(cols[i])}">${esc(c)}</td>`).join('')}</tr>`).join('')}
+      </tbody>
+    </table>`;
+  const ffH1 = 'How to use Chrome extensions in Firefox';
 
   const limited = andList(EXTENSIONS.filter((x) => x.limit)
     .map((x) => `<a href="/viaduct/extensions/${x.slug}/">${esc(x.name)}</a>`));
 
   return head({
     title,
+    ffTitle: `${ffH1} on a Mac · Viaduct`,
     description,
     canonical,
     imageAlt: 'The Viaduct app window on macOS, its drop target ready to take a Chrome extension and make it run in Safari',
@@ -1050,29 +1330,37 @@ function generalPage() {
     demo: true,
   }) + chrome(`${pageTop({
     crumbs: `<a href="/viaduct/">Viaduct</a> / <a href="/viaduct/extensions/">Extensions</a> / ${esc(GENERAL.crumb)}`,
-    h1: esc(GENERAL.h1),
-    lede: "Safari can't install from the Chrome Web Store, but most Chrome extensions still run in it once they're packaged inside a Mac app. Viaduct does that from the store page.",
+    h1: bx(esc(GENERAL.h1), esc(ffH1)),
+    lede: bx("Safari can't install from the Chrome Web Store, but most Chrome extensions still run in it once they're packaged inside a Mac app. Viaduct does that from the store page.",
+      "Firefox can't install from the Chrome Web Store, and it removes any add-on Mozilla didn't sign when it quits. Viaduct converts a Chrome extension from the store page and keeps it loaded."),
   })}
 ${demoAct('With Viaduct', 'store', [
     setupStep('It walks you through installing Xcode, signing in to it with any Apple ID and turning on the Add to Safari button.'),
     ['<strong>Open the extension\'s page on the <a href="https://chromewebstore.google.com/" rel="noopener">Chrome Web Store</a> in Safari.</strong>', ST.open],
     ['<strong>Click Add to Safari.</strong> Viaduct downloads, converts and signs it.', ST.click],
     ["<strong>Switch it on</strong> in Safari → Settings → Extensions, and it's in your toolbar.", ST.on],
-  ])}
-${ledger('Three ways', `    <table class="ways three">
-      <thead><tr><th scope="col"><span class="sr">Way</span></th>${cols.map((c) => `<th scope="col">${esc(c)}</th>`).join('')}</tr></thead>
-      <tbody>${ways.map(([way, ...cells]) => `
-        <tr><th scope="row">${esc(way)}</th>${cells.map((c, i) => `<td data-label="${esc(cols[i])}">${esc(c)}</td>`).join('')}</tr>`).join('')}
-      </tbody>
-    </table>
-    <p style="margin-top:20px">Check for an official version first: <a href="/viaduct/extensions/">the extension list</a> shows which popular extensions have one. For Apple's packager, <a href="/viaduct/guides/safari-web-extension-converter-alternative/">the comparison</a> has the command.</p>`)}
+  ], undefined, ffDemo('store', 'With Viaduct', [
+    setupStep('Choose Firefox, and it asks for Full Disk Access and turns on the Add to Firefox button.'),
+    ['<strong>Open the extension\'s page on the <a href="https://chromewebstore.google.com/" rel="noopener">Chrome Web Store</a> in Firefox.</strong>', FST.open],
+    ['<strong>Click Add to Firefox.</strong> Viaduct downloads and converts it.', FST.click],
+    [FF_DONE, FST.on],
+  ]))}
+${ledger('Three ways', `${waysTable(ways, 'safari')}
+${waysTable(ffWays, 'firefox')}
+    <p style="margin-top:20px" data-for="safari">Check for an official version first: <a href="/viaduct/extensions/">the extension list</a> shows which popular extensions have one. For Apple's packager, <a href="/viaduct/guides/safari-web-extension-converter-alternative/">the comparison</a> has the command.</p>
+    <p style="margin-top:20px" data-for="firefox">Check for an official add-on first: <a href="/viaduct/extensions/">the extension list</a> shows which popular extensions have one. To load one yourself, <a href="${FF_TEMPORARY}" rel="noopener">Mozilla's guide</a> has the steps.</p>`)}
 ${faqRow([
-    ["What won't work in Safari?",
+    ...faqPair(["What won't work in Safari?",
       `Features built on an API Safari doesn't have, such as some sign-in flows or blocking network requests. Viaduct patches many differences, but that's why ${limited} only partly work.`],
-    ['Can Safari load an extension without an app?',
+    ["What won't work in Firefox?",
+      "Features built on something Firefox doesn't give add-ons, such as web push or capturing a tab. Viaduct patches many other differences."]),
+    ...faqPair(['Can Safari load an extension without an app?',
       "Only to test it. With Safari's developer features turned on, Settings → Developer → Add Temporary Extension loads a folder or .zip. Safari removes it after 24 hours or when you quit."],
-    ['Does this work on iPhone or iPad?',
+    ['Can Firefox load an extension without Viaduct?',
+      "Only for a while. Load Temporary Add-on in about:debugging loads an unpacked extension until you restart Firefox, and Firefox doesn't run a Chrome service worker background as it is."]),
+    ...faqPair(['Does this work on iPhone or iPad?',
       "Viaduct is Mac only. On iPhone and iPad, Safari extensions come inside apps, so you need the official version from the App Store, or Apple's packager and an Apple Developer Program membership to build one yourself."],
+    ['Does this work on iPhone or iPad?', 'No. Viaduct is Mac only.']),
     PRICE_FAQ,
   ])}
 ${namesRow('Extensions', EXTENSIONS.map((x) => [x.name, `/viaduct/extensions/${x.slug}/`]))}
@@ -1093,6 +1381,7 @@ function hubPage() {
   ];
   return head({
     title,
+    ffTitle: 'Chrome extensions you can run in Firefox · Viaduct',
     description,
     canonical,
     imageAlt: 'The Viaduct app window on macOS, its drop target ready to convert a Chrome extension into a native Safari extension',
@@ -1121,12 +1410,12 @@ function hubPage() {
     },
   }) + chrome(`${pageTop({
     crumbs: '<a href="/viaduct/">Viaduct</a> / Extensions',
-    h1: 'Chrome extensions, running in Safari',
-    lede: `Each extension here has a guide: whether its developer makes a Safari version, what changes once Viaduct converts it, and how to install it. New to this? Start with <a href="/viaduct/extensions/${GENERAL.slug}/">how Chrome extensions get into Safari</a>.`,
+    h1: `Chrome extensions, running in ${bx('Safari', 'Firefox')}`,
+    lede: `Each extension here has a guide: whether its developer makes a ${bx('Safari version', 'Firefox add-on')}, what changes once Viaduct converts it, and how to install it. New to this? Start with <a href="/viaduct/extensions/${GENERAL.slug}/">how Chrome extensions get into ${bx('Safari', 'Firefox')}</a>.`,
   })}
 ${groups.map(([category, xs]) => ledger(esc(category), `    <table class="compat" aria-labelledby="${slugify(category)}-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">${bx('Official Safari version', 'Official Firefox add-on')}</span></th><th scope="col"><span class="sr">Known limits in ${bx('Safari', 'Firefox')}</span></th></tr></thead>
       <tbody>
         ${xs.map(compatRow).join('\n        ')}
       </tbody>

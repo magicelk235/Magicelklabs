@@ -8,6 +8,12 @@
 
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* The page holds a Safari and a Firefox word for the rolling button. Only the
+     one showing may stay in the roll: the split and the width measurement
+     below take the first .roll__to they find. */
+  var other = document.documentElement.getAttribute('data-browser') === 'firefox' ? 'safari' : 'firefox';
+  Array.prototype.forEach.call(document.querySelectorAll('.roll [data-for="' + other + '"]'), function (el) { el.remove(); });
+
   /* ---- Rolling words ----------------------------------------------------------
      Each word in a .roll is split into letters that carry their index, so the
      CSS can stagger them. Runs before the engine mounts so its first frame
@@ -103,15 +109,24 @@
     var onScreen = !window.IntersectionObserver;
     if (still) video.controls = true;
 
+    // Where the recordings live and which browser they were made in. On the
+    // Firefox version browser.js has already swapped both.
+    var dir = video.getAttribute('data-dir') || './assets/install/';
+    var where = video.getAttribute('data-in') || 'Safari';
+    var did = where === 'Firefox' ? 'converts and installs it.' : 'builds, signs and installs it.';
+    // The still shown before the reel reaches the screen. Set here rather than
+    // in the markup so each version fetches only its own.
+    video.poster = dir + icons[0].getAttribute('data-ext') + '-poster.webp';
+
     function show(i) {
       icons[index].style.removeProperty('--p');
       index = i;
       var slug = icons[i].getAttribute('data-ext');
       var name = icons[i].querySelector('img').alt;
-      video.poster = './assets/install/' + slug + '-poster.webp';
-      video.src = './assets/install/' + slug + '.mp4';
-      video.setAttribute('aria-label', 'Screen recording in Safari: Add to Safari is clicked on the ' + name +
-        ' listing in the Chrome Web Store, and Viaduct builds, signs and installs it.');
+      video.poster = dir + slug + '-poster.webp';
+      video.src = dir + slug + '.mp4';
+      video.setAttribute('aria-label', 'Screen recording in ' + where + ': Add to ' + where + ' is clicked on the ' + name +
+        ' listing in the Chrome Web Store, and Viaduct ' + did);
       for (var k = 0; k < icons.length; k++) icons[k].setAttribute('aria-pressed', String(k === i));
       // Where the row scrolls (phones), bring the lit icon to its middle
       // without moving the page.

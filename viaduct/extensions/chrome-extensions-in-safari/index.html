@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-browser="safari">
 <head>
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests" />
+<script src="/viaduct/assets/browser.js?v=1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>How to use Chrome extensions in Safari on a Mac · Viaduct</title>
+<meta name="viaduct-title-firefox" content="How to use Chrome extensions in Firefox on a Mac · Viaduct" />
 <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
 <link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png" />
 <link rel="manifest" href="/viaduct/assets/viaduct.webmanifest" />
@@ -27,7 +29,7 @@
 <meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
 <link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="/assets/fonts.css?v=1" />
-<link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
+<link rel="stylesheet" href="/viaduct/assets/nav.css?v=4" />
 <link rel="stylesheet" href="/viaduct/assets/scrollcraft.css?v=2" />
 <style>
 /* The pages only ship dark. The canvas is a near-black with a trace of green in
@@ -81,13 +83,14 @@ code { font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospac
 .crumb a:hover { color:var(--ink); }
 .top h1 { font-size:clamp(2.5rem,5.4vw,4.25rem); line-height:1.02; max-width:17ch; margin-bottom:24px; }
 .lede { font-size:clamp(1.08rem,1.9vw,1.25rem); line-height:1.6; max-width:40rem; margin:0; }
+.aside { max-width:40rem; margin:0 0 20px; font-size:15px; }
 
 /* The ledger: each section is a row, its heading held in the left column while
    the body scrolls past on the right. */
 .row { display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:24px clamp(40px,5vw,72px); padding:64px 0; border-top:1px solid var(--hair); }
 .row > h2 { position:sticky; top:112px; align-self:start; font-size:clamp(1.55rem,2.5vw,2rem); max-width:13ch; }
 .row__body { min-width:0; }
-.row__body > :last-child { margin-bottom:0; }
+.row__body > :last-child, .row__body > [data-for] > :last-child { margin-bottom:0; }
 .row__body p { max-width:62ch; }
 
 /* Steps: bare numerals in the accent, hairlines between. In the
@@ -136,8 +139,8 @@ button.step__n:focus-visible { outline:2px solid var(--teal); outline-offset:2px
 .more a:hover { color:var(--teal); text-decoration:none; }
 
 /* The padding sits on the summary, so the whole row takes the tap. */
+.qa { border-top:1px solid var(--hair); }
 details { border-bottom:1px solid var(--hair); }
-details:first-child { border-top:1px solid var(--hair); }
 details summary { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 0; cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
 details summary::-webkit-details-marker { display:none; }
 details p { margin:0 0 18px; max-width:62ch; }
@@ -229,7 +232,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
       "url": "https://magicelklabs.com/viaduct/extensions/chrome-extensions-in-safari/",
       "inLanguage": "en-US",
       "image": "https://magicelklabs.com/viaduct/assets/viaduct-og.jpg",
-      "dateModified": "2026-11-09",
+      "dateModified": "2026-11-10",
       "author": {
         "@type": "Organization",
         "@id": "https://magicelklabs.com/#organization",
@@ -305,22 +308,23 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 
 <div class="top">
   <nav class="crumb" aria-label="Breadcrumb"><a href="/viaduct/">Viaduct</a> / <a href="/viaduct/extensions/">Extensions</a> / Chrome extensions in Safari</nav>
-  <h1>How to use Chrome extensions in Safari</h1>
-  <p class="lede">Safari can't install from the Chrome Web Store, but most Chrome extensions still run in it once they're packaged inside a Mac app. Viaduct does that from the store page.</p>
+  <h1><span data-for="safari">How to use Chrome extensions in Safari</span><span data-for="firefox">How to use Chrome extensions in Firefox</span></h1>
+  <p class="lede"><span data-for="safari">Safari can't install from the Chrome Web Store, but most Chrome extensions still run in it once they're packaged inside a Mac app. Viaduct does that from the store page.</span><span data-for="firefox">Firefox can't install from the Chrome Web Store, and it removes any add-on Mozilla didn't sign when it quits. Viaduct converts a Chrome extension from the store page and keeps it loaded.</span></p>
 </div>
 
-<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4" data-phone-ar="960 / 720" aria-labelledby="demo-h" style="--ar:1440 / 810">
+<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4" data-phone-ar="960 / 720" aria-labelledby="demo-h" style="--ar:1440 / 810" data-ff data-ff-data-sc-clip-map="full" data-ff-data-phone-ar="960 / 720" data-ff-style="--ar:1440 / 810">
   <div class="demo__stage" data-sc-stage>
     <h2 id="demo-h">With Viaduct</h2>
     <ol class="steps">
-      <li><span class="step__n" aria-hidden="true">1</span><p><strong><a href="/viaduct/">Get Viaduct</a> and run its setup.</strong> It walks you through installing Xcode, signing in to it with any Apple ID and turning on the Add to Safari button.</p></li>
-      <li data-t="0"><button type="button" class="step__n" aria-label="Show step 2 in the recording">2</button><p><strong>Open the extension's page on the <a href="https://chromewebstore.google.com/" rel="noopener">Chrome Web Store</a> in Safari.</strong></p></li>
-      <li data-t="6.2"><button type="button" class="step__n" aria-label="Show step 3 in the recording">3</button><p><strong>Click Add to Safari.</strong> Viaduct downloads, converts and signs it.</p></li>
-      <li data-t="14"><button type="button" class="step__n" aria-label="Show step 4 in the recording">4</button><p><strong>Switch it on</strong> in Safari → Settings → Extensions, and it's in your toolbar.</p></li>
+      <li><span class="step__n" aria-hidden="true">1</span><p><span data-for="safari"><strong><a href="/viaduct/">Get Viaduct</a> and run its setup.</strong> It walks you through installing Xcode, signing in to it with any Apple ID and turning on the Add to Safari button.</span><span data-for="firefox"><strong><a href="/viaduct/">Get Viaduct</a> and run its setup.</strong> Choose Firefox, and it asks for Full Disk Access and turns on the Add to Firefox button.</span></p></li>
+      <li data-t="0"><button type="button" class="step__n" aria-label="Show step 2 in the recording">2</button><p><span data-for="safari"><strong>Open the extension's page on the <a href="https://chromewebstore.google.com/" rel="noopener">Chrome Web Store</a> in Safari.</strong></span><span data-for="firefox"><strong>Open the extension's page on the <a href="https://chromewebstore.google.com/" rel="noopener">Chrome Web Store</a> in Firefox.</strong></span></p></li>
+      <li data-t="6.2" data-ff data-ff-data-t="5.9"><button type="button" class="step__n" aria-label="Show step 3 in the recording">3</button><p><span data-for="safari"><strong>Click Add to Safari.</strong> Viaduct downloads, converts and signs it.</span><span data-for="firefox"><strong>Click Add to Firefox.</strong> Viaduct downloads and converts it.</span></p></li>
+      <li data-t="14" data-ff data-ff-data-t="10.1"><button type="button" class="step__n" aria-label="Show step 4 in the recording">4</button><p><span data-for="safari"><strong>Switch it on</strong> in Safari → Settings → Extensions, and it's in your toolbar.</span><span data-for="firefox"><strong>It's under Firefox's Extensions button.</strong> There's nothing to switch on, and it stays after Firefox quits.</span></p></li>
     </ol>
     <figure class="frame demo__frame"><div class="demo__slot">
-      <img class="sc-stage__poster" src="/viaduct/assets/viaduct-install-poster.webp" width="1440" height="810" alt="" />
-      <video data-sc-scrub data-sc-src="/viaduct/assets/viaduct-install.mp4" data-sc-src-mobile="/viaduct/assets/viaduct-install-phone.mp4" data-phone-poster="/viaduct/assets/viaduct-install-phone-poster.webp" width="1440" height="810" muted playsinline aria-label="Screen recording in Safari: Add to Safari is clicked on the Dark Reader listing in the Chrome Web Store, Viaduct builds and signs it, the button becomes Remove from Safari, and Dark Reader's popup opens from the toolbar."></video>
+      <img class="sc-stage__poster" data-for="safari" loading="lazy" src="/viaduct/assets/viaduct-install-poster.webp" width="1440" height="810" alt="" />
+      <img class="sc-stage__poster" data-for="firefox" loading="lazy" src="/viaduct/assets/viaduct-install-firefox-poster.webp" width="1440" height="810" alt="" />
+      <video data-sc-scrub data-sc-src="/viaduct/assets/viaduct-install.mp4" data-sc-src-mobile="/viaduct/assets/viaduct-install-phone.mp4" data-poster="/viaduct/assets/viaduct-install-poster.webp" data-phone-poster="/viaduct/assets/viaduct-install-phone-poster.webp" width="1440" height="810" muted playsinline aria-label="Screen recording in Safari: Add to Safari is clicked on the Dark Reader listing in the Chrome Web Store, Viaduct builds and signs it, the button becomes Remove from Safari, and Dark Reader's popup opens from the toolbar." data-ff data-ff-data-sc-src="/viaduct/assets/viaduct-install-firefox.mp4" data-ff-data-sc-src-mobile="/viaduct/assets/viaduct-install-firefox-phone.mp4" data-ff-data-poster="/viaduct/assets/viaduct-install-firefox-poster.webp" data-ff-data-phone-poster="/viaduct/assets/viaduct-install-firefox-phone-poster.webp" data-ff-width="1440" data-ff-height="810" data-ff-aria-label="Screen recording in Firefox: Add to Firefox is clicked on the Dark Reader listing in the Chrome Web Store, Viaduct converts and installs it, and Dark Reader's popup opens from Firefox's Extensions button."></video>
     </div></figure>
   </div>
 </section>
@@ -328,7 +332,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 <section class="row" aria-labelledby="three-ways-h">
   <h2 id="three-ways-h">Three ways</h2>
   <div class="row__body">
-    <table class="ways three">
+    <table class="ways three" data-for="safari">
       <thead><tr><th scope="col"><span class="sr">Way</span></th><th scope="col">Who it's for</th><th scope="col">What you need</th><th scope="col">What you get</th></tr></thead>
       <tbody>
         <tr><th scope="row">An official Safari version</th><td data-label="Who it's for">Anyone, if one exists</td><td data-label="What you need">The App Store, or the developer's site. Some are paid.</td><td data-label="What you get">The developer's own Safari build, which can differ from the Chrome one</td></tr>
@@ -336,21 +340,38 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
         <tr><th scope="row">Viaduct</th><td data-label="Who it's for">Everyone else</td><td data-label="What you need">macOS 13 or later, and Xcode (free), which Viaduct runs for you</td><td data-label="What you get">The Chrome extension itself, converted, signed and installed, with fixes where Safari behaves differently</td></tr>
       </tbody>
     </table>
-    <p style="margin-top:20px">Check for an official version first: <a href="/viaduct/extensions/">the extension list</a> shows which popular extensions have one. For Apple's packager, <a href="/viaduct/guides/safari-web-extension-converter-alternative/">the comparison</a> has the command.</p>
+    <table class="ways three" data-for="firefox">
+      <thead><tr><th scope="col"><span class="sr">Way</span></th><th scope="col">Who it's for</th><th scope="col">What you need</th><th scope="col">What you get</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">An official Firefox add-on</th><td data-label="Who it's for">Anyone, if one exists</td><td data-label="What you need">addons.mozilla.org, or the developer's site</td><td data-label="What you get">The developer's own Firefox build, which can differ from the Chrome one</td></tr>
+        <tr><th scope="row">Loading it yourself</th><td data-label="Who it's for">Developers</td><td data-label="What you need">The extension's files, with a manifest Firefox accepts</td><td data-label="What you get">A temporary add-on that Firefox removes when it restarts</td></tr>
+        <tr><th scope="row">Viaduct</th><td data-label="Who it's for">Everyone else</td><td data-label="What you need">macOS 13 or later, and Firefox</td><td data-label="What you get">The Chrome extension itself, converted and installed, with fixes where Firefox behaves differently. It stays after Firefox quits.</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:20px" data-for="safari">Check for an official version first: <a href="/viaduct/extensions/">the extension list</a> shows which popular extensions have one. For Apple's packager, <a href="/viaduct/guides/safari-web-extension-converter-alternative/">the comparison</a> has the command.</p>
+    <p style="margin-top:20px" data-for="firefox">Check for an official add-on first: <a href="/viaduct/extensions/">the extension list</a> shows which popular extensions have one. To load one yourself, <a href="https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/" rel="noopener">Mozilla's guide</a> has the steps.</p>
   </div>
 </section>
 
 <section class="row" aria-labelledby="questions-h">
   <h2 id="questions-h">Questions</h2>
   <div class="row__body">
-    <details><summary>What won't work in Safari?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div class="qa">
+    <details data-for="safari"><summary>What won't work in Safari?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
       <p>Features built on an API Safari doesn't have, such as some sign-in flows or blocking network requests. Viaduct patches many differences, but that's why <a href="/viaduct/extensions/ublock-origin/">uBlock Origin</a>, <a href="/viaduct/extensions/clearurls/">ClearURLs</a>, <a href="/viaduct/extensions/xbrowsersync/">xBrowserSync</a>, <a href="/viaduct/extensions/vimium/">Vimium</a> and <a href="/viaduct/extensions/react-developer-tools/">React Developer Tools</a> only partly work.</p></details>
-    <details><summary>Can Safari load an extension without an app?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <details data-for="firefox"><summary>What won't work in Firefox?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>Features built on something Firefox doesn't give add-ons, such as web push or capturing a tab. Viaduct patches many other differences.</p></details>
+    <details data-for="safari"><summary>Can Safari load an extension without an app?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
       <p>Only to test it. With Safari's developer features turned on, Settings → Developer → Add Temporary Extension loads a folder or .zip. Safari removes it after 24 hours or when you quit.</p></details>
-    <details><summary>Does this work on iPhone or iPad?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <details data-for="firefox"><summary>Can Firefox load an extension without Viaduct?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>Only for a while. Load Temporary Add-on in about:debugging loads an unpacked extension until you restart Firefox, and Firefox doesn't run a Chrome service worker background as it is.</p></details>
+    <details data-for="safari"><summary>Does this work on iPhone or iPad?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
       <p>Viaduct is Mac only. On iPhone and iPad, Safari extensions come inside apps, so you need the official version from the App Store, or Apple's packager and an Apple Developer Program membership to build one yourself.</p></details>
+    <details data-for="firefox"><summary>Does this work on iPhone or iPad?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>No. Viaduct is Mac only.</p></details>
     <details><summary>What does Viaduct cost?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-      <p>The first 2 conversions are free, and Viaduct removes them after 7 days. A Safari license costs $19 once, converts as many as you like and keeps them installed.</p></details>
+      <p>The first 2 conversions are free, and Viaduct removes them after 7 days. A Safari or Firefox license costs $19 once, converts as many as you like in that browser and keeps them installed. Mixed covers both for $29.</p></details>
+    </div>
   </div>
 </section>
 
@@ -393,8 +414,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 
 <nav class="more" aria-label="More guides">More guides: <a href="/viaduct/guides/safari-extension-7-day-limit/">The 7-day limit</a>, <a href="/viaduct/guides/chrome-extension-to-safari-converter/">Chrome to Safari converter</a>, <a href="/viaduct/guides/move-chrome-extensions-to-safari/">Move from Chrome</a>, <a href="/viaduct/guides/install-crx-file-mac/">Install a .crx file</a>, <a href="/viaduct/guides/safari-web-extension-converter-alternative/">Apple's converter, compared</a> and <a href="/viaduct/guides/arc-to-safari/">Arc to Safari</a>.</nav>
 <div class="meta">
-  <p>Updated <time datetime="2026-11-09">November 9, 2026</time></p>
-  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple or Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
+  <p>Updated <time datetime="2026-11-10">November 10, 2026</time></p>
+  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple, Google or Mozilla. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
 </div>
 </main>
 <div id="site-footer"></div>
@@ -413,9 +434,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
     </div>
   </footer>
 </noscript>
-<script src="/viaduct/assets/nav.js?v=1"></script>
+<script src="/viaduct/assets/nav.js?v=4"></script>
 <script src="/assets/attribution.js"></script>
+<script src="/viaduct/assets/browser-swap.js?v=1"></script>
 <script src="/viaduct/assets/scrollcraft.js?v=2"></script>
-<script src="/viaduct/assets/guide.js?v=1"></script>
+<script src="/viaduct/assets/guide.js?v=2"></script>
 </body>
 </html>

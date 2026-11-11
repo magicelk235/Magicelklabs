@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-browser="safari">
 <head>
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests" />
+<script src="/viaduct/assets/browser.js?v=1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Chrome extensions you can run in Safari · Viaduct</title>
+<meta name="viaduct-title-firefox" content="Chrome extensions you can run in Firefox · Viaduct" />
 <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
 <link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png" />
 <link rel="manifest" href="/viaduct/assets/viaduct.webmanifest" />
@@ -27,7 +29,7 @@
 <meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
 <link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="/assets/fonts.css?v=1" />
-<link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
+<link rel="stylesheet" href="/viaduct/assets/nav.css?v=4" />
 <style>
 /* The pages only ship dark. The canvas is a near-black with a trace of green in
    it, so the teal accent sits on it like something lit, not a sticker on grey. */
@@ -80,13 +82,14 @@ code { font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospac
 .crumb a:hover { color:var(--ink); }
 .top h1 { font-size:clamp(2.5rem,5.4vw,4.25rem); line-height:1.02; max-width:17ch; margin-bottom:24px; }
 .lede { font-size:clamp(1.08rem,1.9vw,1.25rem); line-height:1.6; max-width:40rem; margin:0; }
+.aside { max-width:40rem; margin:0 0 20px; font-size:15px; }
 
 /* The ledger: each section is a row, its heading held in the left column while
    the body scrolls past on the right. */
 .row { display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:24px clamp(40px,5vw,72px); padding:64px 0; border-top:1px solid var(--hair); }
 .row > h2 { position:sticky; top:112px; align-self:start; font-size:clamp(1.55rem,2.5vw,2rem); max-width:13ch; }
 .row__body { min-width:0; }
-.row__body > :last-child { margin-bottom:0; }
+.row__body > :last-child, .row__body > [data-for] > :last-child { margin-bottom:0; }
 .row__body p { max-width:62ch; }
 
 /* Steps: bare numerals in the accent, hairlines between. In the
@@ -135,8 +138,8 @@ button.step__n:focus-visible { outline:2px solid var(--teal); outline-offset:2px
 .more a:hover { color:var(--teal); text-decoration:none; }
 
 /* The padding sits on the summary, so the whole row takes the tap. */
+.qa { border-top:1px solid var(--hair); }
 details { border-bottom:1px solid var(--hair); }
-details:first-child { border-top:1px solid var(--hair); }
 details summary { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 0; cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
 details summary::-webkit-details-marker { display:none; }
 details p { margin:0 0 18px; max-width:62ch; }
@@ -501,8 +504,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 
 <div class="top">
   <nav class="crumb" aria-label="Breadcrumb"><a href="/viaduct/">Viaduct</a> / Extensions</nav>
-  <h1>Chrome extensions, running in Safari</h1>
-  <p class="lede">Each extension here has a guide: whether its developer makes a Safari version, what changes once Viaduct converts it, and how to install it. New to this? Start with <a href="/viaduct/extensions/chrome-extensions-in-safari/">how Chrome extensions get into Safari</a>.</p>
+  <h1>Chrome extensions, running in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></h1>
+  <p class="lede">Each extension here has a guide: whether its developer makes a <span data-for="safari">Safari version</span><span data-for="firefox">Firefox add-on</span>, what changes once Viaduct converts it, and how to install it. New to this? Start with <a href="/viaduct/extensions/chrome-extensions-in-safari/">how Chrome extensions get into <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></a>.</p>
 </div>
 
 <section class="row" id="ai-assistants" aria-labelledby="ai-assistants-h">
@@ -510,9 +513,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="ai-assistants-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/claude-in-chrome/"><img src="/viaduct/assets/icons/claude-in-chrome.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Claude in Chrome</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/claude-in-chrome/"><img src="/viaduct/assets/icons/claude-in-chrome.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Claude in Chrome</b></a></th><td class="no" data-for="safari">No Safari version</td><td class="no" data-for="firefox">No Firefox add-on</td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -523,12 +526,12 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="privacy-ad-blocking-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/ublock-origin/"><img src="/viaduct/assets/icons/ublock-origin.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>uBlock Origin</b></a></th><td><a href="https://apps.apple.com/us/app/ublock-origin-lite/id6745342698" rel="noopener">uBlock Origin Lite</a></td><td>Can hide ads on a page but can't stop them loading.</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/clearurls/"><img src="/viaduct/assets/icons/clearurls.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>ClearURLs</b></a></th><td class="no">No Safari version</td><td>Installs and opens, but most links go through uncleaned.</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/decentraleyes/"><img src="/viaduct/assets/icons/decentraleyes.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Decentraleyes</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/i-still-dont-care-about-cookies/"><img src="/viaduct/assets/icons/i-still-dont-care-about-cookies.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>I still don't care about cookies</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/ublock-origin/"><img src="/viaduct/assets/icons/ublock-origin.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>uBlock Origin</b></a></th><td data-for="safari"><a href="https://apps.apple.com/us/app/ublock-origin-lite/id6745342698" rel="noopener">uBlock Origin Lite</a></td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/ublock-origin/" rel="noopener">uBlock Origin for Firefox</a></td><td data-for="safari">Can hide ads on a page but can't stop them loading.</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/clearurls/"><img src="/viaduct/assets/icons/clearurls.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>ClearURLs</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/clearurls/" rel="noopener">ClearURLs for Firefox</a></td><td data-for="safari">Installs and opens, but most links go through uncleaned.</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/decentraleyes/"><img src="/viaduct/assets/icons/decentraleyes.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Decentraleyes</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/decentraleyes/" rel="noopener">Decentraleyes for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/i-still-dont-care-about-cookies/"><img src="/viaduct/assets/icons/i-still-dont-care-about-cookies.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>I still don't care about cookies</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/istilldontcareaboutcookies/" rel="noopener">I still don't care about cookies for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -539,10 +542,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="userscripts-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/tampermonkey/"><img src="/viaduct/assets/icons/tampermonkey.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Tampermonkey</b></a></th><td><a href="https://apps.apple.com/us/app/tampermonkey/id6738342400" rel="noopener">Tampermonkey</a>, paid</td><td class="no">No known limits</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/violentmonkey/"><img src="/viaduct/assets/icons/violentmonkey.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Violentmonkey</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/tampermonkey/"><img src="/viaduct/assets/icons/tampermonkey.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Tampermonkey</b></a></th><td data-for="safari"><a href="https://apps.apple.com/us/app/tampermonkey/id6738342400" rel="noopener">Tampermonkey</a>, paid</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/tampermonkey/" rel="noopener">Tampermonkey for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/violentmonkey/"><img src="/viaduct/assets/icons/violentmonkey.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Violentmonkey</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/violentmonkey/" rel="noopener">Violentmonkey for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -553,9 +556,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="crypto-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/metamask/"><img src="/viaduct/assets/icons/metamask.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>MetaMask</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/metamask/"><img src="/viaduct/assets/icons/metamask.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>MetaMask</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/ether-metamask/" rel="noopener">MetaMask for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -566,11 +569,11 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="youtube-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/return-youtube-dislike/"><img src="/viaduct/assets/icons/return-youtube-dislike.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Return YouTube Dislike</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/sponsorblock/"><img src="/viaduct/assets/icons/sponsorblock.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>SponsorBlock</b></a></th><td><a href="https://apps.apple.com/us/app/sponsorblock-for-safari/id1573461917" rel="noopener">SponsorBlock for Safari</a>, paid</td><td class="no">No known limits</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/enhancer-for-youtube/"><img src="/viaduct/assets/icons/enhancer-for-youtube.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Enhancer for YouTube</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/return-youtube-dislike/"><img src="/viaduct/assets/icons/return-youtube-dislike.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Return YouTube Dislike</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/return-youtube-dislikes/" rel="noopener">Return YouTube Dislike for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/sponsorblock/"><img src="/viaduct/assets/icons/sponsorblock.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>SponsorBlock</b></a></th><td data-for="safari"><a href="https://apps.apple.com/us/app/sponsorblock-for-safari/id1573461917" rel="noopener">SponsorBlock for Safari</a>, paid</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/sponsorblock/" rel="noopener">SponsorBlock for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/enhancer-for-youtube/"><img src="/viaduct/assets/icons/enhancer-for-youtube.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Enhancer for YouTube</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/enhancer-for-youtube/" rel="noopener">Enhancer for YouTube for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -581,10 +584,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="customization-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/stylus/"><img src="/viaduct/assets/icons/stylus.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Stylus</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/dark-reader/"><img src="/viaduct/assets/icons/dark-reader.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Dark Reader</b></a></th><td><a href="https://apps.apple.com/us/app/dark-reader-for-safari/id1438243180" rel="noopener">Dark Reader for Safari</a>, paid</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/stylus/"><img src="/viaduct/assets/icons/stylus.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Stylus</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/styl-us/" rel="noopener">Stylus for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/dark-reader/"><img src="/viaduct/assets/icons/dark-reader.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Dark Reader</b></a></th><td data-for="safari"><a href="https://apps.apple.com/us/app/dark-reader-for-safari/id1438243180" rel="noopener">Dark Reader for Safari</a>, paid</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/darkreader/" rel="noopener">Dark Reader for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -595,9 +598,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="media-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/video-speed-controller/"><img src="/viaduct/assets/icons/video-speed-controller.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Video Speed Controller</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/video-speed-controller/"><img src="/viaduct/assets/icons/video-speed-controller.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Video Speed Controller</b></a></th><td class="no" data-for="safari">No Safari version</td><td class="no" data-for="firefox">No Firefox add-on</td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -608,9 +611,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="gaming-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/augmented-steam/"><img src="/viaduct/assets/icons/augmented-steam.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Augmented Steam</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/augmented-steam/"><img src="/viaduct/assets/icons/augmented-steam.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Augmented Steam</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/augmented-steam/" rel="noopener">Augmented Steam for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -621,9 +624,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="social-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/reddit-enhancement-suite/"><img src="/viaduct/assets/icons/reddit-enhancement-suite.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Reddit Enhancement Suite</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/reddit-enhancement-suite/"><img src="/viaduct/assets/icons/reddit-enhancement-suite.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Reddit Enhancement Suite</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/reddit-enhancement-suite/" rel="noopener">Reddit Enhancement Suite for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -634,14 +637,14 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="developer-tools-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/refined-github/"><img src="/viaduct/assets/icons/refined-github.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Refined GitHub</b></a></th><td><a href="https://apps.apple.com/us/app/refined-github/id1519867270" rel="noopener">Refined GitHub</a></td><td class="no">No known limits</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/user-agent-switcher/"><img src="/viaduct/assets/icons/user-agent-switcher.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>User-Agent Switcher and Manager</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/react-developer-tools/"><img src="/viaduct/assets/icons/react-developer-tools.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>React Developer Tools</b></a></th><td><a href="https://github.com/facebook/react/tree/main/packages/react-devtools" rel="noopener">React Developer Tools standalone app</a></td><td>Installs, but its Components and Profiler tabs are unlikely to load.</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/vue-devtools/"><img src="/viaduct/assets/icons/vue-devtools.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Vue.js devtools</b></a></th><td><a href="https://devtools.vuejs.org/guide/vite-plugin" rel="noopener">Vue DevTools Vite plugin</a></td><td class="no">No known limits</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/redux-devtools/"><img src="/viaduct/assets/icons/redux-devtools.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Redux DevTools</b></a></th><td><a href="https://github.com/reduxjs/redux-devtools/tree/main/packages/redux-devtools-remote" rel="noopener">Redux DevTools remote</a></td><td class="no">No known limits</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/colorzilla/"><img src="/viaduct/assets/icons/colorzilla.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>ColorZilla</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/refined-github/"><img src="/viaduct/assets/icons/refined-github.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Refined GitHub</b></a></th><td data-for="safari"><a href="https://apps.apple.com/us/app/refined-github/id1519867270" rel="noopener">Refined GitHub</a></td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/refined-github-/" rel="noopener">Refined GitHub for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/user-agent-switcher/"><img src="/viaduct/assets/icons/user-agent-switcher.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>User-Agent Switcher and Manager</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/user-agent-string-switcher/" rel="noopener">User-Agent Switcher and Manager for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/react-developer-tools/"><img src="/viaduct/assets/icons/react-developer-tools.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>React Developer Tools</b></a></th><td data-for="safari"><a href="https://github.com/facebook/react/tree/main/packages/react-devtools" rel="noopener">React Developer Tools standalone app</a></td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/react-devtools/" rel="noopener">React Developer Tools for Firefox</a></td><td data-for="safari">Installs, but its Components and Profiler tabs are unlikely to load.</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/vue-devtools/"><img src="/viaduct/assets/icons/vue-devtools.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Vue.js devtools</b></a></th><td data-for="safari"><a href="https://devtools.vuejs.org/guide/vite-plugin" rel="noopener">Vue DevTools Vite plugin</a></td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/vue-js-devtools/" rel="noopener">Vue.js devtools for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/redux-devtools/"><img src="/viaduct/assets/icons/redux-devtools.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Redux DevTools</b></a></th><td data-for="safari"><a href="https://github.com/reduxjs/redux-devtools/tree/main/packages/redux-devtools-remote" rel="noopener">Redux DevTools remote</a></td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/reduxdevtools/" rel="noopener">Redux DevTools for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/colorzilla/"><img src="/viaduct/assets/icons/colorzilla.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>ColorZilla</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/colorzilla/" rel="noopener">ColorZilla for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -652,10 +655,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="research-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/zotero-connector/"><img src="/viaduct/assets/icons/zotero-connector.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Zotero Connector</b></a></th><td><a href="https://www.zotero.org/download/" rel="noopener">Zotero desktop app</a></td><td class="no">No known limits</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/web-archives/"><img src="/viaduct/assets/icons/web-archives.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Web Archives</b></a></th><td><a href="https://apps.apple.com/us/app/web-archives-for-safari/id1603181853" rel="noopener">Web Archives for Safari</a>, paid</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/zotero-connector/"><img src="/viaduct/assets/icons/zotero-connector.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Zotero Connector</b></a></th><td data-for="safari"><a href="https://www.zotero.org/download/" rel="noopener">Zotero desktop app</a></td><td data-for="firefox"><a href="https://www.zotero.org/download/connectors" rel="noopener">Zotero Connector for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/web-archives/"><img src="/viaduct/assets/icons/web-archives.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Web Archives</b></a></th><td data-for="safari"><a href="https://apps.apple.com/us/app/web-archives-for-safari/id1603181853" rel="noopener">Web Archives for Safari</a>, paid</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/view-page-archive/" rel="noopener">Web Archives for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -666,9 +669,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="search-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/ublacklist/"><img src="/viaduct/assets/icons/ublacklist.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>uBlacklist</b></a></th><td><a href="https://apps.apple.com/us/app/ublacklist-for-safari/id1547912640" rel="noopener">uBlacklist for Safari</a></td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/ublacklist/"><img src="/viaduct/assets/icons/ublacklist.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>uBlacklist</b></a></th><td data-for="safari"><a href="https://apps.apple.com/us/app/ublacklist-for-safari/id1547912640" rel="noopener">uBlacklist for Safari</a></td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/ublacklist/" rel="noopener">uBlacklist for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -679,9 +682,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="sync-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/xbrowsersync/"><img src="/viaduct/assets/icons/xbrowsersync.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>xBrowserSync</b></a></th><td class="no">No Safari version</td><td>Installs and opens, but it can't read or change your Safari bookmarks.</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/xbrowsersync/"><img src="/viaduct/assets/icons/xbrowsersync.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>xBrowserSync</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/xbs/" rel="noopener">xBrowserSync for Firefox</a></td><td data-for="safari">Installs and opens, but it can't read or change your Safari bookmarks.</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -692,10 +695,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="productivity-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/vimium/"><img src="/viaduct/assets/icons/vimium.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Vimium</b></a></th><td class="no">No Safari version</td><td>Can't search your Safari history or bookmarks from the Vomnibar.</td></tr>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/onetab/"><img src="/viaduct/assets/icons/onetab.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>OneTab</b></a></th><td><a href="https://apps.apple.com/us/app/onetab/id1540160809" rel="noopener">OneTab</a></td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/vimium/"><img src="/viaduct/assets/icons/vimium.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Vimium</b></a></th><td class="no" data-for="safari">No Safari version</td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/vimium-ff/" rel="noopener">Vimium for Firefox</a></td><td data-for="safari">Can't search your Safari history or bookmarks from the Vomnibar.</td><td class="no" data-for="firefox">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/onetab/"><img src="/viaduct/assets/icons/onetab.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>OneTab</b></a></th><td data-for="safari"><a href="https://apps.apple.com/us/app/onetab/id1540160809" rel="noopener">OneTab</a></td><td data-for="firefox"><a href="https://addons.mozilla.org/firefox/addon/onetab/" rel="noopener">OneTab for Firefox</a></td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -706,9 +709,9 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   <div class="row__body">
     <table class="compat" aria-labelledby="language-h">
       <colgroup><col class="c-ext" /><col class="c-off" /><col /></colgroup>
-      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr">Official Safari version</span></th><th scope="col"><span class="sr">Known limits in Safari</span></th></tr></thead>
+      <thead><tr><th scope="col"><span class="sr">Extension</span></th><th scope="col"><span class="sr"><span data-for="safari">Official Safari version</span><span data-for="firefox">Official Firefox add-on</span></span></th><th scope="col"><span class="sr">Known limits in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></th></tr></thead>
       <tbody>
-        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/google-translate/"><img src="/viaduct/assets/icons/google-translate.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Google Translate</b></a></th><td class="no">No Safari version</td><td class="no">No known limits</td></tr>
+        <tr><th scope="row"><a class="ext" href="/viaduct/extensions/google-translate/"><img src="/viaduct/assets/icons/google-translate.webp" width="32" height="32" alt="" loading="lazy" decoding="async" /><b>Google Translate</b></a></th><td class="no" data-for="safari">No Safari version</td><td class="no" data-for="firefox">No Firefox add-on</td><td class="no" data-for="safari">No known limits</td><td class="no" data-for="firefox">No known limits</td></tr>
       </tbody>
     </table>
   </div>
@@ -735,7 +738,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
   </div>
 </section>
 <div class="meta">
-  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple or Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
+  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple, Google or Mozilla. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
 </div>
 </main>
 <div id="site-footer"></div>
@@ -754,7 +757,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
     </div>
   </footer>
 </noscript>
-<script src="/viaduct/assets/nav.js?v=1"></script>
+<script src="/viaduct/assets/nav.js?v=4"></script>
 <script src="/assets/attribution.js"></script>
 </body>
 </html>
