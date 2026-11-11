@@ -642,7 +642,7 @@ const PRICE_FAQ = ['What does Viaduct cost?',
 // cloud.umami.is, which reports to gateway.umami.is. The fonts are the site's
 // own (/assets/fonts.css). frame-ancestors is ignored when a policy arrives via
 // <meta>, so framing is not covered here.
-const CSP = "default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests";
+const CSP = "default-src 'self'; script-src 'self' https://cloud.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src https://www.googletagmanager.com https://td.doubleclick.net; upgrade-insecure-requests";
 
 // Social card: one image for the whole section, cropped to the 1.91:1 the
 // scrapers want. JPEG rather than the .webp hero because several scrapers still

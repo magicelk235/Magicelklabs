@@ -2,7 +2,7 @@
 <html lang="en" data-browser="safari">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; media-src 'self'; connect-src 'self' https://gateway.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src https://www.googletagmanager.com https://td.doubleclick.net; upgrade-insecure-requests">
   <script src="/viaduct/assets/browser.js?v=1"></script>
   <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -214,7 +214,9 @@
       records the page, the site or link that sent you there, your country,
       language, browser and device type, and whether you clicked a Buy or
       Download button. Umami doesn't set cookies or store anything in your
-      browser, and it doesn't keep your IP address. If you arrive from another
+      browser, and it doesn't keep your IP address.
+      The site also loads a Google tag. It tells Google Ads which pages you open and when you click a Buy button, so we can see whether an ad led to that click. Google sets cookies for this and receives your IP address, under <a href="https://policies.google.com/privacy" rel="noopener">Google's privacy policy</a>.
+      If you arrive from another
       site or a tagged link, the site keeps that source in your browser until
       you close the tab and adds it to its checkout links, so the store can
       show where a sale came from. The Viaduct app itself sends none of this.

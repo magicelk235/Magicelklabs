@@ -51,6 +51,8 @@ Visits are counted with [Umami Cloud](https://cloud.umami.is), which uses no coo
 
 Only `magicelklabs.com` is counted, so local previews send nothing. To stop counting your own visits on the live site, run `localStorage.setItem("umami.disabled", 1)` in that browser's console.
 
+The same file loads the Google tag (container `GTM-PKW9ZDW9`) and reports each Buy click to Google Ads as a conversion. Google sets cookies for this, and the site shows no consent banner. Like Umami it runs on `magicelklabs.com` only. Every page's CSP lists the Google hosts it needs: `www.googletagmanager.com`, `www.googleadservices.com`, `www.google.com` and `googleads.g.doubleclick.net` in `script-src`; those plus `ad.doubleclick.net` and `pagead2.googlesyndication.com` in `img-src` and `connect-src`; `www.googletagmanager.com` and `td.doubleclick.net` in `frame-src`. The guides take theirs from the `CSP` constant in `build.js`.
+
 ## Deployment
 
 Pushing to `main` publishes automatically through GitHub Pages. The custom domain comes from the `CNAME` file (`magicelklabs.com`), and `.nojekyll` tells Pages to serve the files as-is instead of running them through Jekyll.
