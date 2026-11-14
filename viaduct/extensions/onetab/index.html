@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-browser="safari">
 <head>
 <meta charset="UTF-8" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cloud.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src https://www.googletagmanager.com https://td.doubleclick.net; upgrade-insecure-requests" />
+<script src="/viaduct/assets/browser.js?v=1"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Run OneTab in Safari · Viaduct</title>
+<meta name="viaduct-title-firefox" content="Run OneTab in Firefox · Viaduct" />
 <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
 <link rel="apple-touch-icon" href="/viaduct/assets/viaduct-icon-dark.png" />
 <link rel="manifest" href="/viaduct/assets/viaduct.webmanifest" />
@@ -27,7 +29,7 @@
 <meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
 <link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="/assets/fonts.css?v=1" />
-<link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
+<link rel="stylesheet" href="/viaduct/assets/nav.css?v=5" />
 <link rel="stylesheet" href="/viaduct/assets/scrollcraft.css?v=2" />
 <style>
 /* The pages only ship dark. The canvas is a near-black with a trace of green in
@@ -81,13 +83,14 @@ code { font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,monospac
 .crumb a:hover { color:var(--ink); }
 .top h1 { font-size:clamp(2.5rem,5.4vw,4.25rem); line-height:1.02; max-width:17ch; margin-bottom:24px; }
 .lede { font-size:clamp(1.08rem,1.9vw,1.25rem); line-height:1.6; max-width:40rem; margin:0; }
+.aside { max-width:40rem; margin:0 0 20px; font-size:15px; }
 
 /* The ledger: each section is a row, its heading held in the left column while
    the body scrolls past on the right. */
 .row { display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:24px clamp(40px,5vw,72px); padding:64px 0; border-top:1px solid var(--hair); }
 .row > h2 { position:sticky; top:112px; align-self:start; font-size:clamp(1.55rem,2.5vw,2rem); max-width:13ch; }
 .row__body { min-width:0; }
-.row__body > :last-child { margin-bottom:0; }
+.row__body > :last-child, .row__body > [data-for] > :last-child { margin-bottom:0; }
 .row__body p { max-width:62ch; }
 
 /* Steps: bare numerals in the accent, hairlines between. In the
@@ -136,8 +139,8 @@ button.step__n:focus-visible { outline:2px solid var(--teal); outline-offset:2px
 .more a:hover { color:var(--teal); text-decoration:none; }
 
 /* The padding sits on the summary, so the whole row takes the tap. */
+.qa { border-top:1px solid var(--hair); }
 details { border-bottom:1px solid var(--hair); }
-details:first-child { border-top:1px solid var(--hair); }
 details summary { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 0; cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
 details summary::-webkit-details-marker { display:none; }
 details p { margin:0 0 18px; max-width:62ch; }
@@ -229,7 +232,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
       "url": "https://magicelklabs.com/viaduct/extensions/onetab/",
       "inLanguage": "en-US",
       "image": "https://magicelklabs.com/viaduct/assets/viaduct-og.jpg",
-      "dateModified": "2026-11-09",
+      "dateModified": "2026-11-14",
       "author": {
         "@type": "Organization",
         "@id": "https://magicelklabs.com/#organization",
@@ -292,7 +295,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
     </div>
     <div class="nav-actions">
       <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
+      <a href="/viaduct/#pricing" class="btn-teal btn-sm">Buy</a>
     </div>
   </nav>
 </header>
@@ -300,22 +303,23 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 
 <div class="top">
   <nav class="crumb" aria-label="Breadcrumb"><a href="/viaduct/">Viaduct</a> / <a href="/viaduct/extensions/">Extensions</a> / OneTab</nav>
-  <h1>Run OneTab in Safari</h1>
-  <p class="lede">Its developer makes a Safari version too. Viaduct runs the Chrome one you already know.</p>
+  <h1><span data-for="safari">Run OneTab in Safari</span><span data-for="firefox">Run OneTab in Firefox</span></h1>
+  <p class="lede"><span data-for="safari">Its developer makes a Safari version too. Viaduct runs the Chrome one you already know.</span><span data-for="firefox">OneTab has its own Firefox add-on. Viaduct converts the Chrome version when that's the one you want.</span></p>
 </div>
 
-<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4" data-sc-clip-map="travel" data-phone-ar="960 / 540" aria-labelledby="demo-h" style="--ar:1440 / 810">
+<section class="demo" data-demo data-sc-act="scrub" data-sc-span="2.4" data-sc-clip-map="travel" data-phone-ar="960 / 540" aria-labelledby="demo-h" style="--ar:1440 / 810" data-ff data-ff-data-sc-clip-map="travel" data-ff-data-phone-ar="960 / 540" data-ff-style="--ar:1440 / 810">
   <div class="demo__stage" data-sc-stage>
     <h2 id="demo-h">Install it</h2>
     <ol class="steps">
-      <li><span class="step__n" aria-hidden="true">1</span><p><strong><a href="/viaduct/">Get Viaduct</a> and run its setup.</strong> It walks you through installing Xcode (free), signing in to it with any Apple ID and turning on the Add to Safari button.</p></li>
-      <li data-t="0"><button type="button" class="step__n" aria-label="Show step 2 in the recording">2</button><p><strong>Open <a href="https://chromewebstore.google.com/detail/chphlpgkkbolifaimnlloiipkdnihall" rel="noopener">OneTab on the Chrome Web Store</a> in Safari.</strong></p></li>
-      <li data-t="2.6"><button type="button" class="step__n" aria-label="Show step 3 in the recording">3</button><p><strong>Click Add to Safari, then Convert Anyway.</strong> Viaduct first offers the official Safari version, then downloads, converts and signs it.</p></li>
-      <li data-t="20"><button type="button" class="step__n" aria-label="Show step 4 in the recording">4</button><p><strong>Switch it on</strong> in Safari → Settings → Extensions, and it's in your toolbar.</p></li>
+      <li><span class="step__n" aria-hidden="true">1</span><p><span data-for="safari"><strong><a href="/viaduct/">Get Viaduct</a> and run its setup.</strong> It walks you through installing Xcode (free), signing in to it with any Apple ID and turning on the Add to Safari button.</span><span data-for="firefox"><strong><a href="/viaduct/">Get Viaduct</a> and run its setup.</strong> Choose Firefox, and it asks for Full Disk Access and turns on the Add to Firefox button.</span></p></li>
+      <li data-t="0"><button type="button" class="step__n" aria-label="Show step 2 in the recording">2</button><p><span data-for="safari"><strong>Open <a href="https://chromewebstore.google.com/detail/chphlpgkkbolifaimnlloiipkdnihall" rel="noopener">OneTab on the Chrome Web Store</a> in Safari.</strong></span><span data-for="firefox"><strong>Open <a href="https://chromewebstore.google.com/detail/chphlpgkkbolifaimnlloiipkdnihall" rel="noopener">OneTab on the Chrome Web Store</a> in Firefox.</strong></span></p></li>
+      <li data-t="2.6" data-ff data-ff-data-t="2.5"><button type="button" class="step__n" aria-label="Show step 3 in the recording">3</button><p><span data-for="safari"><strong>Click Add to Safari, then Convert Anyway.</strong> Viaduct first offers the official Safari version, then downloads, converts and signs it.</span><span data-for="firefox"><strong>Click Add to Firefox.</strong> Viaduct downloads and converts it.</span></p></li>
+      <li data-t="20" data-ff data-ff-data-t="7.3"><button type="button" class="step__n" aria-label="Show step 4 in the recording">4</button><p><span data-for="safari"><strong>Switch it on</strong> in Safari → Settings → Extensions, and it's in your toolbar.</span><span data-for="firefox"><strong>It's under Firefox's Extensions button.</strong> There's nothing to switch on, and it stays after Firefox quits.</span></p></li>
     </ol>
     <figure class="frame demo__frame"><div class="demo__slot">
-      <img class="sc-stage__poster" src="/viaduct/assets/install/onetab-poster.webp" width="1440" height="810" alt="" />
-      <video data-sc-scrub data-sc-src="/viaduct/assets/install/onetab.mp4" data-sc-src-mobile="/viaduct/assets/install/onetab-phone.mp4" data-phone-poster="/viaduct/assets/install/onetab-phone-poster.webp" width="1440" height="810" muted playsinline aria-label="Screen recording in Safari: Add to Safari is clicked on the OneTab listing in the Chrome Web Store, and Viaduct builds, signs and installs it."></video>
+      <img class="sc-stage__poster" data-for="safari" loading="lazy" src="/viaduct/assets/install/onetab-poster.webp" width="1440" height="810" alt="" />
+      <img class="sc-stage__poster" data-for="firefox" loading="lazy" src="/viaduct/assets/install/firefox/onetab-poster.webp" width="1440" height="810" alt="" />
+      <video data-sc-scrub data-sc-src="/viaduct/assets/install/onetab.mp4" data-sc-src-mobile="/viaduct/assets/install/onetab-phone.mp4" data-poster="/viaduct/assets/install/onetab-poster.webp" data-phone-poster="/viaduct/assets/install/onetab-phone-poster.webp" width="1440" height="810" muted playsinline aria-label="Screen recording in Safari: Add to Safari is clicked on the OneTab listing in the Chrome Web Store, and Viaduct builds, signs and installs it." data-ff data-ff-data-sc-src="/viaduct/assets/install/firefox/onetab.mp4" data-ff-data-sc-src-mobile="/viaduct/assets/install/firefox/onetab-phone.mp4" data-ff-data-poster="/viaduct/assets/install/firefox/onetab-poster.webp" data-ff-data-phone-poster="/viaduct/assets/install/firefox/onetab-phone-poster.webp" data-ff-width="1440" data-ff-height="810" data-ff-aria-label="Screen recording in Firefox: Add to Firefox is clicked on the OneTab listing in the Chrome Web Store, and Viaduct converts and installs it."></video>
     </div></figure>
   </div>
 </section>
@@ -323,21 +327,27 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
 <section class="row" aria-labelledby="questions-h">
   <h2 id="questions-h">Questions</h2>
   <div class="row__body">
-    <details><summary>Does its developer make one for Safari?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+    <div class="qa">
+    <details data-for="safari"><summary>Does its developer make one for Safari?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
       <p>Yes: <a href="https://apps.apple.com/us/app/onetab/id1540160809" rel="noopener">OneTab</a> (Mac App Store). Viaduct offers it before converting the Chrome one.</p></details>
+    <details data-for="firefox"><summary>Does its developer make one for Firefox?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>Yes: <a href="https://addons.mozilla.org/firefox/addon/onetab/" rel="noopener">OneTab for Firefox</a> (addons.mozilla.org).</p></details>
+    <details data-for="firefox"><summary>Does it stay after Firefox quits?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+      <p>Yes. Firefox removes any add-on Mozilla didn't sign when it quits, so Viaduct loads yours again each time Firefox opens, with its settings. Viaduct has to stay on in Login Items for that.</p></details>
     <details><summary>Is it the real extension, or a clone?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-      <p>The real one. Viaduct downloads the same package Chrome installs from the Web Store and adds fixes where Safari behaves differently.</p></details>
+      <p>The real one. Viaduct downloads the same package Chrome installs from the Web Store and adds fixes where <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span> behaves differently.</p></details>
     <details><summary>Will it update itself?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-      <p>With Pro, yes. Turn on Update Chrome Web Store extensions weekly in Viaduct's settings, and it rebuilds the extension when the store has a new version.</p></details>
+      <p>With a license, yes. Turn on Update Chrome Web Store extensions weekly in Viaduct's settings, and it rebuilds the extension when the store has a new version.</p></details>
     <details><summary>What does Viaduct cost?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-      <p>Two conversions are free, and Viaduct removes them after 7 days. Pro is $19 once: it converts as many as you like and keeps them installed.</p></details>
+      <p>The first 2 conversions are free, and Viaduct removes them after 7 days. A Safari or Firefox license costs $19 once, converts as many as you like in that browser and keeps them installed. Mixed covers both for $29.</p></details>
+    </div>
   </div>
 </section>
 
 <nav class="more" aria-label="More guides">More guides: <a href="/viaduct/extensions/vimium/">Vimium</a>, <a href="/viaduct/extensions/react-developer-tools/">React Developer Tools</a>, <a href="/viaduct/extensions/vue-devtools/">Vue.js devtools</a>, <a href="/viaduct/extensions/chrome-extensions-in-safari/">Chrome extensions in Safari</a> and <a href="/viaduct/extensions/">every extension</a>.</nav>
 <div class="meta">
-  <p>Updated <time datetime="2026-11-09">November 9, 2026</time></p>
-  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple or Google. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
+  <p>Updated <time datetime="2026-11-14">November 14, 2026</time></p>
+  <p>All extension names are trademarks of their respective owners. Viaduct is not affiliated with or endorsed by the developers of the extensions listed here, nor by Apple, Google or Mozilla. Viaduct converts extensions locally on your Mac; nothing is redistributed.</p>
 </div>
 </main>
 <div id="site-footer"></div>
@@ -356,9 +366,10 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid
     </div>
   </footer>
 </noscript>
-<script src="/viaduct/assets/nav.js?v=1"></script>
+<script src="/viaduct/assets/nav.js?v=5"></script>
 <script src="/assets/attribution.js"></script>
+<script src="/viaduct/assets/browser-swap.js?v=1"></script>
 <script src="/viaduct/assets/scrollcraft.js?v=2"></script>
-<script src="/viaduct/assets/guide.js?v=1"></script>
+<script src="/viaduct/assets/guide.js?v=2"></script>
 </body>
 </html>

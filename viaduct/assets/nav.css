@@ -3,6 +3,12 @@
    --ink/--body/--lip tokens; buttons come from the page's .btn-teal/.btn-ghost.
    nav.js adds html.glassy where the displacement map works (Chromium); the
    plain blur below is everyone else's glass. */
+
+/* Every Viaduct page holds a Safari and a Firefox version of what differs,
+   marked data-for. browser.js sets html[data-browser]; this hides the other. */
+html[data-browser="safari"] [data-for="firefox"],
+html[data-browser="firefox"] [data-for="safari"] { display: none !important; }
+
 .nav { position: fixed; top: 12px; inset-inline: 0; z-index: 60; padding-inline: 12px; }
 .nav-pill {
   position: relative; max-width: 1024px; margin-inline: auto; height: 54px;
@@ -25,23 +31,41 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(14, 18, 17, .58); }
 .brand:hover { text-decoration: none; }
 .brand img { width: 21px; height: 21px; display: block; }
 .brand span { font-family: "Cabinet Grotesk", Inter, system-ui, sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -0.02em; line-height: 1; color: var(--ink); }
-.nav-links { position: absolute; left: 50%; translate: -50% 0; display: flex; gap: 28px; font-size: 14px; font-weight: 500; }
+.nav-links { position: absolute; left: 50%; translate: -50% 0; display: flex; align-items: center; gap: 28px; font-size: 14px; font-weight: 500; }
 .nav-links a { color: var(--body); text-decoration: none; transition: color .2s; }
 .nav-links a:hover { color: var(--ink); text-decoration: none; }
 .nav-actions { display: flex; align-items: center; gap: 6px; }
 .nav-actions a:hover { text-decoration: none; }
+/* Safari and Firefox, set like the section links at the head of the centred
+   group. The one the page is showing is lit; a tap on the other swaps to it. */
+.nav-switch { display: flex; align-items: center; padding-right: 22px; border-right: 1px solid rgba(255, 255, 255, .12); }
+.nav-switch button {
+  position: relative; height: 34px; padding: 0 8px;
+  border: 0; border-radius: 8px; background: transparent; color: var(--mute);
+  font: 500 14px/1 Inter, system-ui, sans-serif; cursor: pointer; transition: color .2s;
+}
+.nav-switch button:hover { color: var(--ink); }
+.nav-switch button[aria-pressed="true"] { color: var(--ink); font-weight: 600; cursor: default; }
+.nav-switch button:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 
+/* Without room for the section links, the switch keeps the middle alone. */
 @media (max-width: 1023px) {
-  .nav-links { display: none; }
+  .nav-links { position: static; translate: none; margin-inline: auto; }
+  .nav-links a { display: none; }
+  .nav-switch { padding-right: 0; border-right: 0; }
 }
 @media (max-width: 720px) {
   .nav { top: 10px; }
   .nav-pill { height: 50px; }
   .nav .nav-download { display: none; }
+  .nav-pill { gap: 8px; }
+  .nav-switch button { padding: 0 6px; font-size: 13px; }
 }
 /* The logo and buttons are smaller than a fingertip; widen what catches the
    tap without changing how they look. */
 @media (pointer: coarse) {
   .brand, .nav-actions a { position: relative; }
   .brand::after, .nav-actions a::after { content: ""; position: absolute; inset: -8px; }
+  /* Taller only: side by side, a wider area would overlap the other button. */
+  .nav-switch button::before { content: ""; position: absolute; inset: -6px 0; }
 }

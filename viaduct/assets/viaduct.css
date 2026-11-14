@@ -100,7 +100,27 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
    Ambient only: the hero carries no illustration of its own. */
 .hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 112px 24px 96px; overflow: clip; }
 .hero__inner { position: relative; z-index: 1; width: 100%; max-width: 1024px; margin-inline: auto; text-align: center; }
-.hero h1 { font-size: clamp(2.6rem, 6.6vw, 4.9rem); line-height: 1.02; margin-bottom: 24px; }
+.hero h1 { position: relative; z-index: 1; font-size: clamp(2.6rem, 6.6vw, 4.9rem); line-height: 1.02; margin-bottom: 24px; }
+/* The two browser names in the headline are the switch. The one this version
+   is about is lit; the other is dimmed until hover. Picking it moves the
+   light across before the page reloads. Without the script both stay teal. */
+.hero-pick {
+  padding: 0; border: 0; background: none;
+  font: inherit; letter-spacing: inherit; color: var(--teal); cursor: pointer;
+  transition: color .4s, text-shadow .4s; -webkit-tap-highlight-color: transparent;
+}
+.hero-pick[aria-pressed="true"] {
+  color: var(--teal-press); cursor: default;
+  text-shadow: 0 0 .22em rgba(45, 212, 191, .55), 0 0 .7em rgba(45, 212, 191, .4), 0 0 1.5em rgba(45, 212, 191, .22);
+}
+.hero-pick[aria-pressed="false"] { color: #1F8F82; }
+.hero-pick:focus-visible { outline-offset: 6px; }
+@media (hover: hover) {
+  .hero-pick[aria-pressed="false"]:hover { color: var(--teal); text-shadow: 0 0 .6em rgba(45, 212, 191, .28); }
+}
+@media (prefers-reduced-motion: reduce) { .hero-pick { transition: none; } }
+/* Arriving from the switch, the hero is already in place. */
+html[data-swapped] .rise { animation: none; }
 .hero__lede { max-width: 36rem; margin: 0 auto 36px; font-size: clamp(1.05rem, 2.2vw, 1.25rem); line-height: 1.62; }
 .hero__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
 .nowrap { white-space: nowrap; }
@@ -113,6 +133,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   mask-image: linear-gradient(to bottom, #000 0%, #000 52%, rgba(0, 0, 0, .5) 78%, transparent 97%);
 }
 .rays.lit { opacity: .82; }
+html[data-swapped] .rays { transition: none; }
 
 /* ---------------------------------------------------------------- flip --
    The peak. Everything is keyed off the act's --sc-p:
@@ -276,7 +297,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 .reel__head p { margin: 18px 0 0; font-size: 17px; line-height: 1.65; max-width: 40ch; }
 .reel__frame { margin-top: 32px; }
 .reel__slot { aspect-ratio: 16 / 9; }
-.reel__slot video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.reel__slot :is(video, img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .reel__strip { position: relative; margin-top: 14px; }
 .reel__icons { display: grid; grid-template-columns: repeat(22, minmax(0, 1fr)); gap: 4px; }
 .reel__icon {
@@ -315,39 +336,63 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 .eng__num.teal { color: var(--teal); }
 .eng__cap { margin: 8px 0 0 !important; font-size: 14px !important; color: var(--body); }
 
-/* -------------------------------------------------------------- pricing -- */
+/* -------------------------------------------------------------- pricing --
+   Three cards on screen: the free plan, the license for the browser this
+   version of the page is about, and Both. The other browser's card is in the
+   markup and hidden by data-for. The row runs wider than the 896px column
+   the title sits in. */
 .pricing__title { margin-bottom: 40px; }
-.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
-.plan { display: flex; flex-direction: column; padding: 30px; border-radius: 16px; background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); }
+#pricing { max-width: 1140px; }
+.plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+.plan { display: flex; flex-direction: column; padding: 26px 24px; border-radius: 16px; background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); }
 .plan h3 { font-size: 20px; font-weight: 700; }
-.price { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 24px; }
-.price-num { font: 800 46px/1 var(--sc-font-display); letter-spacing: -.035em; color: var(--ink); }
+.price { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 18px; }
+.price-num { font: 800 clamp(46px, 4.4vw, 54px)/1 var(--sc-font-display); letter-spacing: -.035em; color: var(--ink); }
 .price-note { font-size: 14px; color: #7FA39D; }
 .plan__rows { list-style: none; margin: 0 0 28px; padding: 0; flex: 1; }
 .p-row { display: flex; gap: 11px; align-items: baseline; padding: 11px 0; border-top: 1px solid var(--hair-soft); font-size: 15px; line-height: 1.55; }
 .p-row:first-child { border-top: 0; }
 .p-row::before { content: "✓"; flex: none; font-size: 13px; color: var(--teal); }
-/* The paid tier: the one card lit from inside by the brand colour. Same box
-   as the free card; only the fill and the edge change. */
-.plan--pro {
+.p-row--no::before { content: "✕"; color: var(--mute); }
+/* Both, the license for the two browsers, is the one card drenched in the
+   brand's teal, the same band that floods the store act. It carries the
+   page's white on-band button and stands 12px proud of the row; the others
+   stay on the plain surface so nothing competes with it. */
+.plan--both {
   position: relative;
-  background: linear-gradient(168deg, #0C302C 0%, #0A1E1C 58%, #08110F 100%);
-  border-color: rgba(45, 212, 191, .22); box-shadow: inset 0 1px 0 rgba(45, 212, 191, .16);
+  background: linear-gradient(168deg, var(--band-top), var(--band-bot));
+  border-color: rgba(110, 224, 209, .34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
 }
-.plan--pro::before {
+.plan--both::before {
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: radial-gradient(120% 70% at 50% -10%, rgba(45, 212, 191, .14), transparent 62%);
+  background: radial-gradient(120% 60% at 50% -10%, rgba(110, 224, 209, .3), transparent 64%);
 }
-.plan--pro > * { position: relative; }
-.plan--pro h3, .plan--pro .price-num, .plan--pro b { color: #EEFBF8; }
-.plan--pro .p-row { color: #BFDBD5; border-top-color: rgba(255, 255, 255, .07); }
+.plan--both > * { position: relative; }
+.plan--both h3 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 10px; }
+.plan--both :is(h3, .price-num, b) { color: var(--band-ink); }
+.plan--both .price-note { color: var(--band-body); }
+.plan--both .p-row { color: var(--band-body); border-top-color: rgba(255, 255, 255, .12); }
+.plan--both .p-row::before { color: var(--band-bright); }
+.plan__tag { padding: 5px 11px; border-radius: 999px; background: rgba(4, 33, 29, .5); font: 600 13px/1.2 var(--sc-font-text); letter-spacing: 0; color: var(--band-bright); white-space: nowrap; }
+.plan--both .btn-teal { background: var(--band-ink); color: var(--band-bot); box-shadow: 0 8px 22px -10px rgba(0, 0, 0, .55); }
+@media (hover: hover) { .plan--both .btn-teal:hover { background: #fff; } }
+@media (min-width: 901px) { .plan--both { margin-block: -12px; padding-block: 38px; } }
+/* Three don't fit side by side here, so Both takes the full row under the
+   other two, with its rows beside its price. */
+@media (min-width: 721px) and (max-width: 900px) {
+  .plans { grid-template-columns: 1fr 1fr; }
+  .plan--both {
+    grid-column: 1 / -1; display: grid; column-gap: 40px; align-items: start;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "name rows" "price rows" "buy rows";
+  }
+  .plan--both h3 { grid-area: name; }
+  .plan--both .price { grid-area: price; }
+  .plan--both .plan__rows { grid-area: rows; margin: 0; }
+  .plan--both .btn-block { grid-area: buy; align-self: end; }
+}
 
-/* The current version and the press mention, under the cards. */
-.release { margin-top: 28px; font-size: 14px; line-height: 1.6; color: var(--mute); }
-.release p { margin: 0; }
-.release p + p { margin-top: 12px; }
-.release a { padding-block: 6px; color: var(--body); font-weight: 500; text-underline-offset: 4px; text-decoration-thickness: 1px; text-decoration-color: rgba(45, 212, 191, .45); }
-@media (hover: hover) { .release a:hover { color: var(--ink); text-decoration-color: var(--teal); } }
 
 /* ------------------------------------------------------------------- faq -- */
 .section--faq { padding-bottom: 40px; }

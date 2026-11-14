@@ -1,11 +1,39 @@
-/* The Viaduct nav (see nav.css): it gets heavier once the page scrolls, and
-   in Chromium it turns into real glass. */
+/* The Viaduct nav (see nav.css): it carries the Safari / Firefox switch, gets
+   heavier once the page scrolls, and in Chromium turns into real glass. */
 (function () {
   'use strict';
 
   var nav = document.getElementById('nav');
   var pill = nav && nav.querySelector('.nav-pill');
   if (!pill) return;
+
+  /* ---- Safari / Firefox switch (browser.js decides which one is showing).
+     Both names sit in the middle of the pill, ahead of the section links;
+     the one showing is lit, the other swaps to it. */
+  var vb = window.viaductBrowser;
+  var links = pill.querySelector('.nav-links');
+  if (vb && links) {
+    var names = { safari: 'Safari', firefox: 'Firefox' };
+    var sw = document.createElement('div');
+    sw.className = 'nav-switch';
+    sw.setAttribute('role', 'group');
+    sw.setAttribute('aria-label', 'Browser');
+    ['safari', 'firefox'].forEach(function (b) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = names[b];
+      btn.setAttribute('aria-pressed', String(b === vb.current));
+      if (b !== vb.current) {
+        btn.setAttribute('aria-label', 'Show Viaduct for ' + names[b]);
+        btn.addEventListener('click', function () { vb.choose(b); });
+      }
+      sw.appendChild(btn);
+    });
+    links.prepend(sw);
+  }
+  /* A guide's <title> is the Safari one; the Firefox version brings its own. */
+  var ffTitle = vb && vb.current === 'firefox' && document.querySelector('meta[name="viaduct-title-firefox"]');
+  if (ffTitle) document.title = ffTitle.content;
 
   /* ---- Weight on scroll: a 12px sentinel at the top of the page. */
   if ('IntersectionObserver' in window) {

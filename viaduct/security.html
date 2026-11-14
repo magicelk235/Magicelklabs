@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-browser="safari">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; media-src 'self'; connect-src 'self' https://gateway.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src https://www.googletagmanager.com https://td.doubleclick.net; upgrade-insecure-requests">
+  <script src="/viaduct/assets/browser.js?v=1"></script>
   <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Security Policy — Viaduct</title>
@@ -27,7 +28,7 @@
   <meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
   <link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/assets/fonts.css?v=1" />
-  <link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
+  <link rel="stylesheet" href="/viaduct/assets/nav.css?v=5" />
   <style>
     /* Viaduct's tokens, as in assets/viaduct.css. footer.js styles itself with
        --hair/--mute/--ink and hovers in --accent. */
@@ -72,7 +73,7 @@
     pre { background: var(--surface); border: 1px solid var(--hair); box-shadow: var(--lip); border-radius: 10px; padding: 20px; overflow-x: auto; font-size: 13px; line-height: 1.6; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--body); white-space: pre-wrap; }
   </style>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebPage","name":"Security Policy — Viaduct","description":"Viaduct security policy. How to report a vulnerability in the Viaduct app or its CLI engine, and what to expect.","url":"https://magicelklabs.com/viaduct/security.html","inLanguage":"en","dateModified":"2026-10-17","isPartOf":{"@type":"WebSite","@id":"https://magicelklabs.com/#website","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","@id":"https://magicelklabs.com/#organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
+  {"@context":"https://schema.org","@type":"WebPage","name":"Security Policy — Viaduct","description":"Viaduct security policy. How to report a vulnerability in the Viaduct app or its CLI engine, and what to expect.","url":"https://magicelklabs.com/viaduct/security.html","inLanguage":"en","dateModified":"2026-11-09","isPartOf":{"@type":"WebSite","@id":"https://magicelklabs.com/#website","name":"Magicelk Labs","url":"https://magicelklabs.com/"},"publisher":{"@type":"Organization","@id":"https://magicelklabs.com/#organization","name":"Magicelk Labs","url":"https://magicelklabs.com/"}}
   </script>
 <script defer src="/assets/analytics.js"></script>
 </head>
@@ -91,14 +92,14 @@
     </div>
     <div class="nav-actions">
       <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
+      <a href="/viaduct/#pricing" class="btn-teal btn-sm">Buy</a>
     </div>
   </nav>
 </header>
   <main class="wrap">
 
     <h1>Security Policy</h1>
-    <p class="meta">Last updated: October 17, 2026</p>
+    <p class="meta">Last updated: November 9, 2026</p>
 
     <h2>Supported versions</h2>
     <p>
@@ -142,14 +143,32 @@
     <p>
       Viaduct wraps the
       <a href="https://www.npmjs.com/package/@magicelk235/viaduct" rel="noopener">@magicelk235/viaduct</a>
-      command-line tool, which it downloads from npm and keeps up to date. It
-      can download extensions from the Chrome Web Store, sign them with your
-      local Apple identity, read extension settings from your Chromium browser
-      profiles, and update itself through Sparkle. Reports touching any of these
-      paths (CLI invocation, code signing, the <code>viaduct://</code> URL scheme,
-      browser profile reads, or either update flow) are in scope. Vulnerabilities
-      in the upstream CLI package itself should be
-      reported against that package.
+      command-line tool, which it downloads from npm and keeps up to date, and
+      its two engines:
+      <a href="https://www.npmjs.com/package/@magicelk235/aqueduct" rel="noopener">@magicelk235/aqueduct</a>
+      for Safari and
+      <a href="https://www.npmjs.com/package/@magicelk235/lavaduct" rel="noopener">@magicelk235/lavaduct</a>
+      for Firefox. It can download extensions from the Chrome Web Store, sign
+      them with your local Apple identity, read extension settings from your
+      Chromium browser profiles, and update itself through Sparkle.
+    </p>
+    <p>
+      For Firefox, Viaduct registers a launch agent (<code>ViaductHelper</code>,
+      listed in Login Items) that loads your add-ons through Firefox's own
+      remote debugging each time Firefox opens. It sets Firefox's
+      remote-debugging prefs in your profile's <code>user.js</code>, and one
+      stays changed until you remove your last add-on: Firefox won't ask before
+      a debugger connects. The Add to Firefox button reaches the app through the same
+      <code>ViaductHelper</code>, run as a native messaging host from a
+      manifest in <code>~/Library/Application Support/Mozilla/NativeMessagingHosts/</code>.
+    </p>
+    <p>
+      Reports touching any of these paths (CLI invocation, code signing, the
+      <code>viaduct://</code> URL scheme, browser profile reads, the Firefox
+      agent and the settings it changes, the native messaging host and its
+      manifest, or either update flow) are in scope. Vulnerabilities in the
+      upstream CLI packages themselves should be reported against those
+      packages.
     </p>
 
 <div id="site-footer"></div>
@@ -169,7 +188,7 @@
   </footer>
 </noscript>
   </main>
-<script src="/viaduct/assets/nav.js?v=1"></script>
+<script src="/viaduct/assets/nav.js?v=5"></script>
 <script src="/assets/attribution.js"></script>
 </body>
 </html>

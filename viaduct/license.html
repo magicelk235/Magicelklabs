@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-browser="safari">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://gateway.umami.is; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; media-src 'self'; connect-src 'self' https://gateway.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src https://www.googletagmanager.com https://td.doubleclick.net; upgrade-insecure-requests">
+  <script src="/viaduct/assets/browser.js?v=1"></script>
   <link rel="icon" type="image/png" href="/viaduct/assets/viaduct-icon-dark.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>License — Viaduct</title>
@@ -27,7 +28,7 @@
   <meta name="twitter:image" content="https://magicelklabs.com/viaduct/assets/viaduct-og.jpg" />
   <link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/assets/fonts.css?v=1" />
-  <link rel="stylesheet" href="/viaduct/assets/nav.css?v=1" />
+  <link rel="stylesheet" href="/viaduct/assets/nav.css?v=5" />
   <style>
     /* Viaduct's tokens, as in assets/viaduct.css. footer.js styles itself with
        --hair/--mute/--ink and hovers in --accent. */
@@ -91,7 +92,7 @@
     </div>
     <div class="nav-actions">
       <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-sm nav-download">Download</a>
-      <a data-gumroad-action="buy" data-gumroad-price="19" href="https://gumroad.com/l/viaduct" class="btn-teal btn-sm">Get Pro</a>
+      <a href="/viaduct/#pricing" class="btn-teal btn-sm">Buy</a>
     </div>
   </nav>
 </header>
@@ -294,7 +295,7 @@ of your licenses.</pre>
   </footer>
 </noscript>
   </main>
-<script src="/viaduct/assets/nav.js?v=1"></script>
+<script src="/viaduct/assets/nav.js?v=5"></script>
 <script src="/assets/attribution.js"></script>
 </body>
 </html>
