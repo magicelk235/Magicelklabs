@@ -703,7 +703,7 @@ function head({ title, ffTitle, description, canonical, imageAlt, jsonld, css = 
 <meta name="twitter:image" content="${OG_IMAGE}" />
 <link rel="preload" href="/assets/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="/assets/fonts.css?v=1" />
-<link rel="stylesheet" href="/viaduct/assets/nav.css?v=4" />${demo ? `
+<link rel="stylesheet" href="/viaduct/assets/nav.css?v=5" />${demo ? `
 <link rel="stylesheet" href="/viaduct/assets/scrollcraft.css?v=2" />` : ''}
 <style>${CSS}${css}</style>
 <script type="application/ld+json">
@@ -760,7 +760,7 @@ ${inner}
     </div>
   </footer>
 </noscript>
-<script src="/viaduct/assets/nav.js?v=4"></script>
+<script src="/viaduct/assets/nav.js?v=5"></script>
 <script src="/assets/attribution.js"></script>${demo ? `
 <script src="/viaduct/assets/browser-swap.js?v=1"></script>
 <script src="/viaduct/assets/scrollcraft.js?v=2"></script>

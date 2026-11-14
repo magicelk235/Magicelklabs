@@ -7,19 +7,29 @@
   var pill = nav && nav.querySelector('.nav-pill');
   if (!pill) return;
 
-  /* ---- Safari / Firefox switch (browser.js decides which one is showing). */
+  /* ---- Safari / Firefox switch (browser.js decides which one is showing).
+     Both names sit in the middle of the pill, ahead of the section links;
+     the one showing is lit, the other swaps to it. */
   var vb = window.viaductBrowser;
-  var actions = pill.querySelector('.nav-actions');
-  if (vb && actions) {
+  var links = pill.querySelector('.nav-links');
+  if (vb && links) {
     var names = { safari: 'Safari', firefox: 'Firefox' };
-    var other = vb.current === 'firefox' ? 'safari' : 'firefox';
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'nav-switch';
-    btn.textContent = names[other];
-    btn.setAttribute('aria-label', 'Show Viaduct for ' + names[other]);
-    btn.addEventListener('click', function () { vb.choose(other); });
-    actions.prepend(btn);
+    var sw = document.createElement('div');
+    sw.className = 'nav-switch';
+    sw.setAttribute('role', 'group');
+    sw.setAttribute('aria-label', 'Browser');
+    ['safari', 'firefox'].forEach(function (b) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = names[b];
+      btn.setAttribute('aria-pressed', String(b === vb.current));
+      if (b !== vb.current) {
+        btn.setAttribute('aria-label', 'Show Viaduct for ' + names[b]);
+        btn.addEventListener('click', function () { vb.choose(b); });
+      }
+      sw.appendChild(btn);
+    });
+    links.prepend(sw);
   }
   /* A guide's <title> is the Safari one; the Firefox version brings its own. */
   var ffTitle = vb && vb.current === 'firefox' && document.querySelector('meta[name="viaduct-title-firefox"]');
