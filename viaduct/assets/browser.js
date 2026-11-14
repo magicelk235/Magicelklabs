@@ -40,6 +40,17 @@
   var current = asked || saved() || detect();
   document.documentElement.setAttribute('data-browser', current);
 
+  // The product page's headline switch reloads into the other version and
+  // leaves this mark, the hero light's clock, so the hero neither plays its
+  // entrance a second time nor starts its light over.
+  try {
+    var swapped = sessionStorage.getItem('viaduct-swapped');
+    if (swapped) {
+      sessionStorage.removeItem('viaduct-swapped');
+      document.documentElement.setAttribute('data-swapped', swapped);
+    }
+  } catch (e) {}
+
   function withBrowserParam(b) {
     var search = location.search.replace(/([?&])browser=[^&#]*&?/g, '$1').replace(/[?&]$/, '');
     if (b) search += (search ? '&' : '?') + 'browser=' + b;

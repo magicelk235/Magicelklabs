@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; media-src 'self' blob:; connect-src 'self' https://gateway.umami.is https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://pagead2.googlesyndication.com; form-action 'self'; base-uri 'self'; object-src 'none'; frame-src https://buy.polar.sh https://polar.sh https://www.googletagmanager.com https://td.doubleclick.net">
-<script src="/viaduct/assets/browser.js?v=1"></script>
+<script src="/viaduct/assets/browser.js?v=3"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Viaduct: run Chrome extensions in Safari and Firefox on your Mac</title>
 <meta name="description" content="Viaduct converts any Chrome extension into a native Safari Web Extension, or a Firefox add-on that stays installed. One click, and you never open a terminal.">
@@ -32,8 +32,8 @@
 <link rel="stylesheet" href="/assets/fonts.css?v=1">
 <!-- Bump ?v= when these files change; Pages lets browsers cache them for ten minutes. -->
 <link rel="stylesheet" href="./assets/scrollcraft.css?v=2">
-<link rel="stylesheet" href="./assets/viaduct.css?v=18">
-<link rel="stylesheet" href="./assets/nav.css?v=4">
+<link rel="stylesheet" href="./assets/viaduct.css?v=25">
+<link rel="stylesheet" href="./assets/nav.css?v=5">
 <script>document.documentElement.classList.remove('no-js');</script>
 <script type="application/ld+json">
 {
@@ -97,9 +97,8 @@
 <section id="top" class="hero">
   <canvas class="rays" id="hero-rays" aria-hidden="true"></canvas>
   <div class="hero__inner">
-    <h1 class="rise">Run Chrome extensions<br class="br-wide"> <span class="nowrap">in <span class="teal"><span data-for="safari">Safari.</span><span data-for="firefox">Firefox.</span></span></span></h1>
-    <p class="hero__lede rise" style="--rise-delay:.12s" data-for="safari">Viaduct converts any Chrome extension into a native Safari Web Extension, or a Firefox add-on that stays installed. You never have to open a terminal.</p>
-    <p class="hero__lede rise" style="--rise-delay:.12s" data-for="firefox">Viaduct turns any Chrome extension into a Firefox add-on that stays installed after Firefox quits. You never have to open a terminal.</p>
+    <h1 class="rise">Run Chrome extensions<br class="br-wide"> in <button type="button" class="hero-pick" data-pick="safari">Safari</button> and <button type="button" class="hero-pick" data-pick="firefox">Firefox</button>.</h1>
+    <p class="hero__lede rise" style="--rise-delay:.12s">Pick a Chrome extension and Viaduct gets it working in your browser.</p>
     <div class="hero__actions rise" style="--rise-delay:.2s">
       <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-lg">Download</a>
       <a href="#pricing" class="btn-teal btn-lg">Buy</a>
@@ -371,8 +370,10 @@
   </div>
 </section>
 
-<!-- PRICING: four cards, the free plan and the three licenses. Both is the
-     one drenched in teal; the other three stay on the plain surface. -->
+<!-- PRICING: three cards on screen. Free, the license for the browser this
+     version of the page is about, and Both, the one card drenched in teal.
+     The other browser's license is in the markup too; data-for hides it, and
+     the nav's browser switch brings it up. -->
 <section id="get" class="section" aria-labelledby="pricing-h">
   <div id="pricing" class="wrap wrap--4">
     <h2 id="pricing-h" class="pricing__title" data-sc-in>Start free. Pay once for your browser.</h2>
@@ -381,41 +382,43 @@
         <h3>Free</h3>
         <p class="price"><span class="price-num">$0</span></p>
         <ul class="plan__rows">
-          <li class="p-row"><span>Convert up to <b>2 extensions</b></span></li>
-          <li class="p-row">Safari or Firefox</li>
-          <li class="p-row">Extensions kept for 7 days</li>
+          <li class="p-row"><span>Convert <b>2 extensions</b></span></li>
+          <li class="p-row"><span data-for="safari">In Safari or Firefox</span><span data-for="firefox">In Firefox or Safari</span></li>
+          <li class="p-row p-row--no">Removed after 7 days</li>
+          <li class="p-row p-row--no">No Web Store updates</li>
         </ul>
         <a href="https://github.com/magicelk235/viaduct-app/releases/latest/download/Viaduct.dmg" class="btn-ghost btn-block">Download</a>
       </div>
-      <div class="plan">
+      <div class="plan" data-for="safari">
         <h3>Safari</h3>
         <p class="price"><span class="price-num">$19</span><span class="price-note">one time</span></p>
         <ul class="plan__rows">
-          <li class="p-row"><span><b>Unlimited</b> conversions in Safari</span></li>
+          <li class="p-row"><span><b>Unlimited</b> in Safari</span></li>
+          <li class="p-row p-row--no">Firefox stays on the free plan</li>
           <li class="p-row">Extensions stay installed</li>
           <li class="p-row">Weekly Web Store updates</li>
           <li class="p-row">Works on 3 Macs</li>
-          <li class="p-row p-row--no">Doesn't cover Firefox</li>
         </ul>
         <a href="https://buy.polar.sh/polar_cl_Ns3uKKSVeiB34PlvHjqM864ytr9YRigIvqc1j1Yy2cF" data-product="Viaduct Safari" class="btn-teal btn-block" data-polar-checkout data-polar-checkout-theme="dark">Buy for Safari</a>
       </div>
-      <div class="plan">
+      <div class="plan" data-for="firefox">
         <h3>Firefox</h3>
         <p class="price"><span class="price-num">$19</span><span class="price-note">one time</span></p>
         <ul class="plan__rows">
-          <li class="p-row"><span><b>Unlimited</b> conversions in Firefox</span></li>
+          <li class="p-row"><span><b>Unlimited</b> in Firefox</span></li>
+          <li class="p-row p-row--no">Safari stays on the free plan</li>
           <li class="p-row">Extensions stay installed</li>
           <li class="p-row">Weekly Web Store updates</li>
           <li class="p-row">Works on 3 Macs</li>
-          <li class="p-row p-row--no">Doesn't cover Safari</li>
         </ul>
         <a href="https://buy.polar.sh/polar_cl_kYYElpaU4pmRWDwI5KJAtcbd6epjDwG5HcHZE08b7gp" data-product="Viaduct Firefox" class="btn-teal btn-block" data-polar-checkout data-polar-checkout-theme="dark">Buy for Firefox</a>
       </div>
       <div class="plan plan--both">
-        <h3>Both <span class="plan__tag">Save $9</span></h3>
+        <h3>Both <span class="plan__tag"><span data-for="safari">Adds Firefox for $10</span><span data-for="firefox">Adds Safari for $10</span></span></h3>
         <p class="price"><span class="price-num">$29</span><span class="price-note">one time</span></p>
         <ul class="plan__rows">
-          <li class="p-row"><span><b>Unlimited</b> conversions in Safari and Firefox</span></li>
+          <li class="p-row"><span><b>Unlimited</b> in <span data-for="safari">Safari</span><span data-for="firefox">Firefox</span></span></li>
+          <li class="p-row"><span><b>Unlimited</b> in <span data-for="safari">Firefox</span><span data-for="firefox">Safari</span></span></li>
           <li class="p-row">Extensions stay installed</li>
           <li class="p-row">Weekly Web Store updates</li>
           <li class="p-row">Works on 3 Macs</li>
@@ -450,7 +453,7 @@
       </details>
       <details>
         <summary>Which license do I need?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <p>The one for the browser you use. A <b>Safari</b> or <b>Firefox</b> license makes that browser unlimited, and <b>Mixed</b> covers both for less than buying the two.</p>
+        <p>The one for the browser you use. A <b>Safari</b> or <b>Firefox</b> license makes that browser unlimited, and <b>Mixed</b>, the Both card, covers the two for $10 more. <span data-for="safari">Pricing shows the Safari license here. Choose Firefox at the top of the page to see that one.</span><span data-for="firefox">Pricing shows the Firefox license here. Choose Safari at the top of the page to see that one.</span></p>
       </details>
       <details>
         <summary>I bought Viaduct Pro. What do I have now?<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
@@ -492,8 +495,8 @@
 
 <script src="./assets/browser-swap.js?v=1"></script>
 <script src="./assets/scrollcraft.js?v=2"></script>
-<script src="./assets/nav.js?v=4"></script>
-<script src="./assets/viaduct.js?v=9"></script>
+<script src="./assets/nav.js?v=5"></script>
+<script src="./assets/viaduct.js?v=13"></script>
 <script src="/assets/attribution.js"></script>
 </body>
 </html>

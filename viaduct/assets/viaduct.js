@@ -14,6 +14,35 @@
   var other = document.documentElement.getAttribute('data-browser') === 'firefox' ? 'safari' : 'firefox';
   Array.prototype.forEach.call(document.querySelectorAll('.roll [data-for="' + other + '"]'), function (el) { el.remove(); });
 
+  /* ---- The headline's browser names -------------------------------------------------
+     Safari and Firefox in the headline are the switch. The one showing is
+     lit; a click moves the light to the other name, and only then reloads
+     the page as that version. */
+  (function () {
+    var vb = window.viaductBrowser;
+    var picks = document.querySelectorAll('.hero h1 .hero-pick');
+    if (!vb || picks.length !== 2) return;
+    var busy = false;
+    var t0 = parseFloat(document.documentElement.getAttribute('data-swapped')) || 0;
+
+    function press(name) { for (var i = 0; i < 2; i++) picks[i].setAttribute('aria-pressed', String(picks[i].getAttribute('data-pick') === name)); }
+    press(vb.current);
+
+    function go(to) {
+      if (busy || to === vb.current) return;
+      busy = true;
+      press(to);
+      setTimeout(function () {
+        // browser.js reads this on the next load and holds the hero's entrance;
+        // the rays pick their clock up from it so the light carries on.
+        try { sessionStorage.setItem('viaduct-swapped', String(t0 + performance.now() / 1000)); } catch (e) {}
+        vb.choose(to);
+      }, reduce ? 0 : 420);
+    }
+
+    for (var i = 0; i < 2; i++) (function (b) { b.addEventListener('click', function () { go(b.getAttribute('data-pick')); }); })(picks[i]);
+  })();
+
   /* ---- Rolling words ----------------------------------------------------------
      Each word in a .roll is split into letters that carry their index, so the
      CSS can stagger them. Runs before the engine mounts so its first frame
@@ -108,6 +137,11 @@
     var loaded = false;
     var onScreen = !window.IntersectionObserver;
     if (still) video.controls = true;
+    // The reel runs at twice the recorded speed: most of each recording is
+    // the wait while Viaduct converts. A new src resets playbackRate to the
+    // default, so the default is what's set. With controls on, the reader
+    // gets the recording as it was made.
+    else video.defaultPlaybackRate = video.playbackRate = 2;
 
     // Where the recordings live and which browser they were made in. On the
     // Firefox version browser.js has already swapped both.
@@ -289,9 +323,12 @@
     if (window.ResizeObserver) new ResizeObserver(resize).observe(cv);
     else addEventListener('resize', resize);
 
+    // After a switch from the headline the clock carries on from the page
+    // that was left, so the beams don't jump back to where they started.
+    var t0 = parseFloat(document.documentElement.getAttribute('data-swapped')) || 0;
     var raf = 0, running = false;
     function frame(t) {
-      gl.uniform1f(uTime, t * 0.001);
+      gl.uniform1f(uTime, t0 + t * 0.001);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       raf = requestAnimationFrame(frame);
     }

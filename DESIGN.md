@@ -119,13 +119,27 @@ scheme is a bug.
   the nav, `.btn-lg` 15px in the hero, `.btn-block` full width in pricing).
   The nav pill ends with a small ghost Download and a small accent Buy
   (Download hides under 720px); the hero pairs the same two at large size.
-  On Viaduct both Buy links go to `/viaduct/#pricing`: four cards (Free,
-  Safari, Firefox, Both). Both is the premium one: the only card on the teal
-  band, with the white on-band button, a teal glow under it, a "Save $9" tag,
-  and 12px more height above and below on desktop. The other three stay on
-  the plain surface. The Safari and Firefox cards end on a crossed row
-  naming the browser they don't cover. The row runs 1140px wide, two by two
-  under 1040px and one column on phones.
+  On Viaduct both Buy links go to `/viaduct/#pricing`: three cards on screen
+  (Free, the license for the browser this version of the page is about, and
+  Both). The other browser's license card is in the markup, hidden by
+  `data-for`, and the nav's browser switch brings it up; the "Which license
+  do I need?" answer says so. Three, not four, because the page already
+  knows the visitor's browser and a fourth card is a choice nobody on that
+  version needs to weigh. Both is the premium one: the only card on the teal
+  band, with the white on-band button, a tag pricing the second browser
+  ("Adds Firefox for $10", or Safari on the Firefox version) and 12px more
+  height above and below on desktop. It has no coloured glow under it; a
+  coloured shadow on a dark page reads as generated. The other two stay on
+  the plain surface. Every card lists the same things in the same order, one
+  line each, so the rows line up across the cards: this browser, the other
+  browser, whether extensions are kept, Web Store updates, Macs. What a
+  card leaves out is a crossed row in that same slot: Free has "Removed
+  after 7 days" and "No Web Store updates", a single browser's license has
+  "Firefox stays on the free plan" (or Safari), and Both has none. Keep
+  rows short enough not to wrap at 901px, or the lines stop matching.
+  The row runs 1140px wide; from 721px to 900px
+  Free and the browser's license sit side by side with Both across the full
+  row under them, its rows beside its price; phones get one column.
 - **FAQ rows.** Spyglass, Lector, Viaduct and the extension guides end their
   content on a FAQ of `<details>` rows split by hairlines, each with a chevron
   that turns when it opens. The vertical padding sits on the `<summary>`, not
@@ -197,9 +211,19 @@ Safari version or a Firefox version of itself.
   Safari page. Titles, descriptions, canonical URLs and JSON-LD are Safari's;
   a guide's Firefox tab title rides in `<meta name="viaduct-title-firefox">`
   and `nav.js` applies it.
-- **The switch.** `nav.js` puts the other browser's name at the front of
-  `.nav-actions` set like the section links (Safari on the Firefox version, Firefox on the Safari one); a tap swaps to that
-  browser. Choosing
+- **The switch.** `nav.js` puts both names, Safari and Firefox, at the head
+  of the centred `.nav-links` group, set like the section links with a
+  hairline after them. The one showing is lit and the other is muted; a tap
+  on the muted one swaps to it. Under 1024px the section links hide and the
+  switch keeps the middle of the pill alone. It is never beside the Download
+  and Buy buttons. On the product page the headline is a second switch:
+  "Safari" and "Firefox" in "Run Chrome extensions in Safari and Firefox."
+  are buttons (`.hero-pick`), always in that order. The one showing is lit:
+  brighter teal with a teal text-shadow, the page's one coloured glow, asked
+  for by the owner. The other is dimmed until hover. Picking it moves the
+  light across, then reloads; `browser.js` marks that load
+  `html[data-swapped]` so the hero skips its entrance. Reduced motion
+  switches at once. Everything below the hero is about one browser. Choosing
   saves the choice and reloads: the scroll engine measures its pinned sections
   once, so a version is never swapped in place.
 - **Words** that differ sit side by side as `data-for="safari"` and
