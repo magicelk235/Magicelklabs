@@ -32,7 +32,7 @@
 <link rel="stylesheet" href="/assets/fonts.css?v=1">
 <!-- Bump ?v= when these files change; Pages lets browsers cache them for ten minutes. -->
 <link rel="stylesheet" href="./assets/scrollcraft.css?v=2">
-<link rel="stylesheet" href="./assets/viaduct.css?v=25">
+<link rel="stylesheet" href="./assets/viaduct.css?v=26">
 <link rel="stylesheet" href="./assets/nav.css?v=5">
 <script>document.documentElement.classList.remove('no-js');</script>
 <script type="application/ld+json">
@@ -182,21 +182,20 @@
 
 <!-- COMPATIBILITY: each way a converted extension breaks, struck out and
      answered as its row comes into view. Dark Reader, the same extension the
-     page has followed so far, is the first row. -->
+     page has followed so far, is the first row. The Firefox version shows what
+     keeps working instead: the restart chart, then one card per fix. -->
 <section class="compat section" aria-labelledby="compat-h">
   <div class="wrap compat__grid">
     <div class="compat__head">
       <div class="compat__sticky" data-sc-in data-sc-stagger="70">
-        <h2 id="compat-h">Converting isn't the hard part. Working is.</h2>
+        <h2 id="compat-h"><span data-for="safari">Converting isn't the hard part. Working is.</span><span data-for="firefox">Quit Firefox. Your extensions stay.</span></h2>
         <p data-for="safari">Safari implements dozens of <code>chrome.*</code> APIs differently, or not at all, so a converted extension installs fine and then quietly stops working. Viaduct ships a runtime layer that patches the gaps.</p>
-        <p data-for="firefox">Firefox drops any add-on Mozilla didn't sign when it quits, and it implements parts of <code>chrome.*</code> differently or not at all. Viaduct keeps yours loaded and ships a runtime layer that patches the gaps.</p>
+        <p data-for="firefox">Firefox removes any add-on Mozilla didn't sign the moment it quits. Viaduct loads yours again every time Firefox opens, settings and all, and fills in the parts of <code>chrome.*</code> Firefox doesn't have.</p>
         <p class="stat" data-for="safari"><span class="stat__num" data-sc-count="0 60" data-sc-count-ms="1300">60</span><span class="stat__plus">+</span></p>
         <p class="stat__cap" data-for="safari"><code>chrome.*</code> namespaces the runtime layer normalizes, so your extension keeps working after the move.</p>
-        <p class="stat" data-for="firefox"><span class="stat__num" data-sc-count="0 10" data-sc-count-ms="900">10</span></p>
-        <p class="stat__cap" data-for="firefox"><code>chrome.*</code> namespaces the runtime layer adds or corrects in Firefox, so your extension keeps working after the move.</p>
       </div>
     </div>
-    <div class="fixes">
+    <div class="fixes" data-for="safari">
       <div class="fix" data-sc-in data-for="safari">
         <b>Dark Reader</b>
         <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Popup buttons go dead. Background ports route by an extension id that Safari reports differently.</span></p>
@@ -217,30 +216,53 @@
         <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Safari exposes <code>chrome.*</code> as immutable native objects, so extensions that patch them crash at startup.</span></p>
         <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct makes them writable again.</p>
       </div>
-      <div class="fix" data-sc-in data-for="firefox">
-        <b>Every add-on</b>
-        <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Firefox removes any add-on Mozilla didn't sign the moment it quits.</span></p>
-        <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct loads yours again every time Firefox opens, with their settings.</p>
+    </div>
+    <div class="ffw" data-for="firefox">
+      <figure class="restart" data-sc-in role="img" aria-label="Five days of opening Firefox. On its own, Firefox has Dark Reader, Tampermonkey, Adblock Plus and Grammarly on Monday and none of them after that. With Viaduct, all four are there every day.">
+        <div class="restart__row restart__row--days" aria-hidden="true"><span></span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span></div>
+        <div class="restart__row restart__row--alone" aria-hidden="true">
+          <b>Firefox alone</b>
+          <span class="tb"><img src="./assets/icons/dark-reader.webp" alt=""><img src="./assets/icons/tampermonkey.webp" alt=""><img src="./assets/icons/adblock-plus.webp" alt=""><img src="./assets/icons/grammarly.webp" alt=""></span>
+          <span class="tb tb--gone" style="--d:0"><img src="./assets/icons/dark-reader.webp" alt=""><img src="./assets/icons/tampermonkey.webp" alt=""><img src="./assets/icons/adblock-plus.webp" alt=""><img src="./assets/icons/grammarly.webp" alt=""></span>
+          <span class="tb tb--gone" style="--d:1"><img src="./assets/icons/dark-reader.webp" alt=""><img src="./assets/icons/tampermonkey.webp" alt=""><img src="./assets/icons/adblock-plus.webp" alt=""><img src="./assets/icons/grammarly.webp" alt=""></span>
+          <span class="tb tb--gone" style="--d:2"><img src="./assets/icons/dark-reader.webp" alt=""><img src="./assets/icons/tampermonkey.webp" alt=""><img src="./assets/icons/adblock-plus.webp" alt=""><img src="./assets/icons/grammarly.webp" alt=""></span>
+          <span class="tb tb--gone" style="--d:3"><img src="./assets/icons/dark-reader.webp" alt=""><img src="./assets/icons/tampermonkey.webp" alt=""><img src="./assets/icons/adblock-plus.webp" alt=""><img src="./assets/icons/grammarly.webp" alt=""></span>
+        </div>
+        <div class="restart__row restart__row--kept" aria-hidden="true">
+          <b>With Viaduct</b>
+          <span class="tb"><img src="./assets/icons/dark-reader.webp" alt=""><img src="./assets/icons/tampermonkey.webp" alt=""><img src="./assets/icons/adblock-plus.webp" alt=""><img src="./assets/icons/grammarly.webp" alt=""></span>
+          <span class="tb"><img src="./assets/icons/dark-reader.webp" alt=""><img src="./assets/icons/tampermonkey.webp" alt=""><img src="./assets/icons/adblock-plus.webp" alt=""><img src="./assets/icons/grammarly.webp" alt=""></span>
+          <span class="tb"><img src="./assets/icons/dark-reader.webp" alt=""><img src="./assets/icons/tampermonkey.webp" alt=""><img src="./assets/icons/adblock-plus.webp" alt=""><img src="./assets/icons/grammarly.webp" alt=""></span>
+          <span class="tb"><img src="./assets/icons/dark-reader.webp" alt=""><img src="./assets/icons/tampermonkey.webp" alt=""><img src="./assets/icons/adblock-plus.webp" alt=""><img src="./assets/icons/grammarly.webp" alt=""></span>
+          <span class="tb"><img src="./assets/icons/dark-reader.webp" alt=""><img src="./assets/icons/tampermonkey.webp" alt=""><img src="./assets/icons/adblock-plus.webp" alt=""><img src="./assets/icons/grammarly.webp" alt=""></span>
+        </div>
+      </figure>
+      <div class="works works--wide" data-sc-in>
+        <img src="./assets/icons/adblock-plus.webp" alt="" width="40" height="40">
+        <div>
+          <h3>Adblock Plus loads all of EasyList.</h3>
+          <p>Firefox caps an add-on at 30,000 blocking rules. Viaduct raises the cap to Chrome's.</p>
+          <div class="meter" role="img" aria-label="56,000 rules loaded, past Firefox's limit of 30,000.">
+            <span class="meter__bar"></span>
+            <span class="meter__cap"><i>Firefox's limit, 30,000</i></span>
+            <span class="meter__val">56,000 rules</span>
+          </div>
+        </div>
       </div>
-      <div class="fix" data-sc-in data-for="firefox">
-        <b>Adblock Plus</b>
-        <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">It turns on 56,000 blocking rules and Firefox allows an add-on 30,000, so none of EasyList loads.</span></p>
-        <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct raises Firefox's limit to match Chrome's.</p>
+      <div class="works" data-sc-in>
+        <img src="./assets/icons/tampermonkey.webp" alt="" width="40" height="40">
+        <h3>Tampermonkey runs your scripts.</h3>
+        <p>Viaduct sets <code>chrome.runtime.id</code> before any user script loads.</p>
       </div>
-      <div class="fix" data-sc-in data-for="firefox">
-        <b>Tampermonkey</b>
-        <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">It reads <code>chrome.runtime.id</code> where user scripts run, and Firefox leaves it out there.</span></p>
-        <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct defines it before any user script loads.</p>
+      <div class="works" data-sc-in>
+        <img src="./assets/icons/grammarly.webp" alt="" width="40" height="40">
+        <h3>Grammarly starts up.</h3>
+        <p>Viaduct answers the <code>storage.session</code> call Firefox doesn't have.</p>
       </div>
-      <div class="fix" data-sc-in data-for="firefox">
-        <b>Grammarly</b>
-        <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Its background waits on <code>storage.session.setAccessLevel</code>, which Firefox doesn't have, so it never gets an answer.</span></p>
-        <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct answers the call.</p>
-      </div>
-      <div class="fix" data-sc-in data-for="firefox">
-        <b>Side panels</b>
-        <p class="fix__break"><span class="fix__lbl">Breaks</span><span class="fix__txt">Firefox has no <code>chrome.sidePanel</code>, so an extension that lives in Chrome's side panel has nowhere to open.</span></p>
-        <p class="fix__fix"><span class="fix__lbl">Fixed</span>Viaduct builds it on Firefox's own sidebar.</p>
+      <div class="works" data-sc-in>
+        <img src="./assets/icons/claude-in-chrome.webp" alt="" width="40" height="40">
+        <h3>Claude opens in the sidebar.</h3>
+        <p>Chrome's side panel becomes Firefox's own.</p>
       </div>
     </div>
   </div>
