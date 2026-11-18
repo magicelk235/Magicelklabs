@@ -8,28 +8,24 @@
   if (!pill) return;
 
   /* ---- Safari / Firefox switch (browser.js decides which one is showing).
-     Both names sit in the middle of the pill, ahead of the section links;
-     the one showing is lit, the other swaps to it. */
+     The browser the page is showing sits in small type after the wordmark;
+     a tap swaps to the other one. */
   var vb = window.viaductBrowser;
-  var links = pill.querySelector('.nav-links');
-  if (vb && links) {
+  var brand = pill.querySelector('.brand');
+  if (vb && brand) {
     var names = { safari: 'Safari', firefox: 'Firefox' };
-    var sw = document.createElement('div');
+    var other = vb.current === 'safari' ? 'firefox' : 'safari';
+    var id = document.createElement('div');
+    id.className = 'nav-id';
+    brand.before(id);
+    id.appendChild(brand);
+    var sw = document.createElement('button');
+    sw.type = 'button';
     sw.className = 'nav-switch';
-    sw.setAttribute('role', 'group');
-    sw.setAttribute('aria-label', 'Browser');
-    ['safari', 'firefox'].forEach(function (b) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = names[b];
-      btn.setAttribute('aria-pressed', String(b === vb.current));
-      if (b !== vb.current) {
-        btn.setAttribute('aria-label', 'Show Viaduct for ' + names[b]);
-        btn.addEventListener('click', function () { vb.choose(b); });
-      }
-      sw.appendChild(btn);
-    });
-    links.prepend(sw);
+    sw.setAttribute('aria-label', 'Showing ' + names[vb.current] + '. Switch to ' + names[other]);
+    sw.innerHTML = '<span>' + names[vb.current] + '</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4h8M8 2l2 2-2 2M10 8H2M4 6 2 8l2 2"/></svg>';
+    sw.addEventListener('click', function () { vb.choose(other); });
+    id.appendChild(sw);
   }
   /* A guide's <title> is the Safari one; the Firefox version brings its own. */
   var ffTitle = vb && vb.current === 'firefox' && document.querySelector('meta[name="viaduct-title-firefox"]');
