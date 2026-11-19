@@ -44,11 +44,13 @@ html.glassy .nav.scrolled .nav-pill { background: rgba(14, 18, 17, .58); }
 .nav-switch {
   position: relative; display: inline-flex; align-items: center; gap: 4px;
   height: 24px; padding: 0 5px; margin-left: -1px;
-  border: 0; border-radius: 6px; background: transparent; color: var(--teal);
+  border: 0; border-radius: 6px; background: transparent; color: var(--teal-press);
   font: 600 11px/1 Inter, system-ui, sans-serif; letter-spacing: .02em; cursor: pointer;
   transition: color .2s, background-color .2s;
 }
 .nav-switch svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity .2s; }
+/* The same light as the lit browser name in the hero headline. */
+.nav-switch span { text-shadow: 0 0 .22em rgba(45, 212, 191, .55), 0 0 .7em rgba(45, 212, 191, .4), 0 0 1.5em rgba(45, 212, 191, .22); }
 .nav-switch:hover { color: var(--teal-press); background: rgba(45, 212, 191, .08); }
 .nav-switch:hover svg, .nav-switch:focus-visible svg { opacity: .7; }
 .nav-switch:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
