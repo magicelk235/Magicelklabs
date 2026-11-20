@@ -39,7 +39,7 @@
       name: "Viaduct",
       href: "/viaduct/",
       cover: "/assets/viaduct-cover.webp",
-      alt: "The Viaduct cover: Run any Chrome extension, now native in Safari, beside the app window's drop zone",
+      alt: "The Viaduct cover: Leave Chrome, keep your extensions, over a wall of extension icons",
       line: "Get Chrome extensions into Safari straight from the Chrome Web Store, or drop one in, without opening a terminal."
     },
     {
