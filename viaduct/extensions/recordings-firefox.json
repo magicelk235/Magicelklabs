@@ -1,0 +1,153 @@
+{
+ "_batch": {
+  "at": {
+   "convert": 0,
+   "on": 5.6
+  },
+  "h": 1016,
+  "phone": [
+   686,
+   720
+  ],
+  "w": 1388
+ },
+ "_drop": {
+  "at": {
+   "convert": 6.3,
+   "drop": 3.7,
+   "on": 11.4
+  },
+  "h": 940,
+  "phone": [
+   640,
+   720
+  ],
+  "w": 1260
+ },
+ "_store": {
+  "at": {
+   "click": 5.9,
+   "on": 10.1,
+   "open": 0
+  },
+  "h": 810,
+  "phone": [
+   960,
+   720
+  ],
+  "travel": false,
+  "w": 1440
+ },
+ "augmented-steam": {
+  "click": 2.6,
+  "on": 10.8
+ },
+ "claude-in-chrome": {
+  "click": 2.6,
+  "on": 10.9
+ },
+ "clearurls": {
+  "drop": 2.9,
+  "on": 10.7
+ },
+ "colorzilla": {
+  "click": 2.6,
+  "on": 6.5
+ },
+ "decentraleyes": {
+  "click": 2.6,
+  "on": 6.8
+ },
+ "enhancer-for-youtube": {
+  "click": 2.5,
+  "on": 7.6
+ },
+ "google-translate": {
+  "click": 2.6,
+  "on": 6.1
+ },
+ "i-still-dont-care-about-cookies": {
+  "click": 2.6,
+  "on": 5.3
+ },
+ "metamask": {
+  "click": 2.6,
+  "on": 15.0
+ },
+ "onetab": {
+  "click": 2.5,
+  "on": 7.3
+ },
+ "react-developer-tools": {
+  "click": 2.6,
+  "on": 5.1
+ },
+ "reddit-enhancement-suite": {
+  "click": 2.6,
+  "on": 6.8
+ },
+ "redux-devtools": {
+  "click": 2.5,
+  "on": 5.3
+ },
+ "refined-github": {
+  "click": 2.6,
+  "on": 7.8
+ },
+ "return-youtube-dislike": {
+  "click": 2.6,
+  "on": 7.8
+ },
+ "sponsorblock": {
+  "click": 2.6,
+  "on": 5.1
+ },
+ "stylus": {
+  "click": 2.6,
+  "on": 5.3
+ },
+ "tampermonkey": {
+  "click": 2.6,
+  "on": 6.1
+ },
+ "ublacklist": {
+  "click": 2.6,
+  "on": 7.7
+ },
+ "ublock-origin": {
+  "drop": 2.9,
+  "on": 11.7
+ },
+ "user-agent-switcher": {
+  "click": 2.6,
+  "on": 5.1
+ },
+ "video-speed-controller": {
+  "click": 2.6,
+  "on": 5.3
+ },
+ "vimium": {
+  "click": 2.6,
+  "on": 5.0
+ },
+ "violentmonkey": {
+  "click": 2.6,
+  "on": 5.1
+ },
+ "vue-devtools": {
+  "click": 2.6,
+  "on": 8.4
+ },
+ "web-archives": {
+  "click": 2.6,
+  "on": 5.3
+ },
+ "xbrowsersync": {
+  "drop": 2.9,
+  "on": 10.6
+ },
+ "zotero-connector": {
+  "click": 2.6,
+  "on": 6.0
+ }
+}

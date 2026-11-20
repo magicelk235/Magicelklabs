@@ -64,7 +64,7 @@ WCAG AA at the 11–14px sizes it is set in (the labels, the footer links).
 **Committed color, not timid accents.** Viaduct's brand surfaces are drenched
 in deep teal (`linear-gradient(168deg,#0F4D48,#093732)`, the `--band-top` /
 `--band-bot` pair in `viaduct/assets/viaduct.css`). It floods the store act
-the moment the install button flips, and carries the Pro pricing panel. The
+the moment the install button flips, and fills the Both card in pricing. The
 rest of the page stays on the green-black canvas, so the flood is the one
 colour event on the page. On-band text: near-white ink
 `#F2FBF9`, body `#C6E3DE`, dim `#93C2BB`, bright accent `#6EE0D1`; on-band
@@ -117,9 +117,29 @@ scheme is a bug.
   `.btn-ghost` (lit pane) for Download and the page's accent (`.btn-teal`,
   `.btn-red`, `.btn-brass`) for buying, in three sizes (`.btn-sm` 13.5px in
   the nav, `.btn-lg` 15px in the hero, `.btn-block` full width in pricing).
-  The nav pill ends with a small ghost Download and a small accent Buy or
-  Get Pro (Download hides under 720px); the hero pairs the same two at large
-  size.
+  The nav pill ends with a small ghost Download and a small accent Buy
+  (Download hides under 720px); the hero pairs the same two at large size.
+  On Viaduct both Buy links go to `/viaduct/#pricing`: three cards on screen
+  (Free, the license for the browser this version of the page is about, and
+  Both). The other browser's license card is in the markup, hidden by
+  `data-for`, and the nav's browser switch brings it up; the "Which license
+  do I need?" answer says so. Three, not four, because the page already
+  knows the visitor's browser and a fourth card is a choice nobody on that
+  version needs to weigh. Both is the premium one: the only card on the teal
+  band, with the white on-band button, a tag pricing the second browser
+  ("Adds Firefox for $10", or Safari on the Firefox version) and 12px more
+  height above and below on desktop. It has no coloured glow under it; a
+  coloured shadow on a dark page reads as generated. The other two stay on
+  the plain surface. Every card lists the same things in the same order, one
+  line each, so the rows line up across the cards: this browser, the other
+  browser, whether extensions are kept, Web Store updates, Macs. What a
+  card leaves out is a crossed row in that same slot: Free has "Removed
+  after 7 days" and "No Web Store updates", a single browser's license has
+  "Firefox stays on the free plan" (or Safari), and Both has none. Keep
+  rows short enough not to wrap at 901px, or the lines stop matching.
+  The row runs 1140px wide; from 721px to 900px
+  Free and the browser's license sit side by side with Both across the full
+  row under them, its rows beside its price; phones get one column.
 - **FAQ rows.** Spyglass, Lector, Viaduct and the extension guides end their
   content on a FAQ of `<details>` rows split by hairlines, each with a chevron
   that turns when it opens. The vertical padding sits on the `<summary>`, not
@@ -175,6 +195,59 @@ scheme is a bug.
   eyebrow, closing price band or link arrows. The "Updated" date sits at the
   foot beside the trademark note. Only the hub has no recording; it is a
   catalogue, with each extension's icon in its tables.
+
+### Viaduct: Safari or Firefox
+
+Every Viaduct page (product, guides, hub, legal) is one URL that shows a
+Safari version or a Firefox version of itself.
+
+- **Which one.** `viaduct/assets/browser.js` loads blocking in `<head>`, right
+  after the CSP meta and before any stylesheet, and sets `html[data-browser]`.
+  First match wins: `?browser=safari|firefox` (also saved), the saved choice
+  (`localStorage['viaduct-browser']`), crawlers get Safari, Firefox gets
+  Firefox, Safari gets Safari, any other browser on a Mac, iPhone or iPad gets
+  Safari, everything else gets Firefox. The markup default is
+  `data-browser="safari"`, so crawlers and visitors without JavaScript read the
+  Safari page. Titles, descriptions, canonical URLs and JSON-LD are Safari's;
+  a guide's Firefox tab title rides in `<meta name="viaduct-title-firefox">`
+  and `nav.js` applies it.
+- **The switch.** `nav.js` puts both names, Safari and Firefox, at the head
+  of the centred `.nav-links` group, set like the section links with a
+  hairline after them. The one showing is lit and the other is muted; a tap
+  on the muted one swaps to it. Under 1024px the section links hide and the
+  switch keeps the middle of the pill alone. It is never beside the Download
+  and Buy buttons. On the product page the headline is a second switch:
+  "Safari" and "Firefox" in "Run Chrome extensions in Safari and Firefox."
+  are buttons (`.hero-pick`), always in that order. The one showing is lit:
+  brighter teal with a teal text-shadow, the page's one coloured glow, asked
+  for by the owner. The other is dimmed until hover. Picking it moves the
+  light across, then reloads; `browser.js` marks that load
+  `html[data-swapped]` so the hero skips its entrance. Reduced motion
+  switches at once. Everything below the hero is about one browser. Choosing
+  saves the choice and reloads: the scroll engine measures its pinned sections
+  once, so a version is never swapped in place.
+- **Words** that differ sit side by side as `data-for="safari"` and
+  `data-for="firefox"` elements, and `nav.css` hides the other browser's.
+  build.js has `bx(safari, firefox)` for inline pairs.
+- **Images** are the same pairs, both `loading="lazy"`: a lazy image that
+  isn't displayed is never fetched.
+- **Recordings** stay one element. Its Firefox values sit in `data-ff-<attr>`
+  attributes on an element marked `data-ff`, and `viaductBrowser.swap()`
+  copies them onto `<attr>` on the Firefox version. `browser-swap.js` makes
+  that call and must sit directly before `scrollcraft.js`, so the engine only
+  ever reads one browser's sources. A version must never download the other
+  browser's video; check the network log.
+- **Firefox recordings** follow the Safari names: `viaduct-install-firefox*`,
+  `viaduct-drop-firefox*`, `viaduct-batch-firefox*`,
+  `install/firefox/<slug>*`, with step times in
+  `viaduct/extensions/recordings-firefox.json`. All 28 guide recordings and
+  the three shared ones exist. build.js uses one when its entry and its
+  `.mp4` both exist, and otherwise falls back to the Safari recording with a
+  note under it. On the product page the install scrub has a poster pair and
+  a caption set per browser, and the reel's first still is set by
+  `viaduct.js` so each version fetches only its own. The store page in the
+  Firefox footage is light: the Chrome Web Store ignores Firefox's dark mode.
+  That is the one accepted exception to "Dark only".
 
 ### The shelf
 
@@ -253,7 +326,7 @@ starts it; under reduced motion it never loads.
 Viaduct follows one real extension, Dark Reader, through the page:
 
 - **Hero:** a centred headline under SideRays (React Bits, plain WebGL, in
-  `viaduct.js`), Download and Get Pro. No product imagery; a layered
+  `viaduct.js`), Download and Buy. No product imagery; a layered
   two-screenshot hero was tried and rejected.
 - **The store act (`#how`, pinned, the page's peak):** the real Dark Reader
   listing, captured from headless Chrome, which gets the same "Switch to
@@ -411,11 +484,12 @@ adds rendered Google Drive previews and thumbnails. The Drive
 info card is free for everyone, and 1.0 buyers get Spyglass Drive for life.
 macOS 14+.
 
-**Viaduct** — Run Chrome extensions in Safari, natively. Drop in a `.zip`,
+**Viaduct** — Run Chrome extensions in Safari or Firefox. Drop in a `.zip`,
 `.crx`, or unpacked folder; Viaduct converts, signs, and installs it into
-Safari. Runs in Safari's own engine (keeps battery life). Free for 2
-conversions, which Viaduct removes after 7 days; then $19 one-time (unlimited,
-keeps extensions installed, opt-in weekly Web Store updates). macOS 13+.
+Safari, or installs it in Firefox as an add-on that stays installed. Free for 2
+conversions, which Viaduct removes after 7 days; then one-time licenses:
+Safari $19, Firefox $19, Mixed $29 for both (unlimited, keeps extensions
+installed, opt-in weekly Web Store updates). macOS 13+.
 
 **Lector** — Copy or translate any text on your Mac's screen. ⌘⇧2 copies the
 text under a crosshair; ⌘⇧1 paints the translation over the original, in

@@ -8,6 +8,41 @@
 
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* The page holds a Safari and a Firefox word for the rolling button. Only the
+     one showing may stay in the roll: the split and the width measurement
+     below take the first .roll__to they find. */
+  var other = document.documentElement.getAttribute('data-browser') === 'firefox' ? 'safari' : 'firefox';
+  Array.prototype.forEach.call(document.querySelectorAll('.roll [data-for="' + other + '"]'), function (el) { el.remove(); });
+
+  /* ---- The headline's browser names -------------------------------------------------
+     Safari and Firefox in the headline are the switch. The one showing is
+     lit; a click moves the light to the other name, and only then reloads
+     the page as that version. */
+  (function () {
+    var vb = window.viaductBrowser;
+    var picks = document.querySelectorAll('.hero h1 .hero-pick');
+    if (!vb || picks.length !== 2) return;
+    var busy = false;
+    var t0 = parseFloat(document.documentElement.getAttribute('data-swapped')) || 0;
+
+    function press(name) { for (var i = 0; i < 2; i++) picks[i].setAttribute('aria-pressed', String(picks[i].getAttribute('data-pick') === name)); }
+    press(vb.current);
+
+    function go(to) {
+      if (busy || to === vb.current) return;
+      busy = true;
+      press(to);
+      setTimeout(function () {
+        // browser.js reads this on the next load and holds the hero's entrance;
+        // the rays pick their clock up from it so the light carries on.
+        try { sessionStorage.setItem('viaduct-swapped', String(t0 + performance.now() / 1000)); } catch (e) {}
+        vb.choose(to);
+      }, reduce ? 0 : 420);
+    }
+
+    for (var i = 0; i < 2; i++) (function (b) { b.addEventListener('click', function () { go(b.getAttribute('data-pick')); }); })(picks[i]);
+  })();
+
   /* ---- Rolling words ----------------------------------------------------------
      Each word in a .roll is split into letters that carry their index, so the
      CSS can stagger them. Runs before the engine mounts so its first frame
@@ -102,16 +137,30 @@
     var loaded = false;
     var onScreen = !window.IntersectionObserver;
     if (still) video.controls = true;
+    // The reel runs at twice the recorded speed: most of each recording is
+    // the wait while Viaduct converts. A new src resets playbackRate to the
+    // default, so the default is what's set. With controls on, the reader
+    // gets the recording as it was made.
+    else video.defaultPlaybackRate = video.playbackRate = 2;
+
+    // Where the recordings live and which browser they were made in. On the
+    // Firefox version browser.js has already swapped both.
+    var dir = video.getAttribute('data-dir') || './assets/install/';
+    var where = video.getAttribute('data-in') || 'Safari';
+    var did = where === 'Firefox' ? 'converts and installs it.' : 'builds, signs and installs it.';
+    // The still shown before the reel reaches the screen. Set here rather than
+    // in the markup so each version fetches only its own.
+    video.poster = dir + icons[0].getAttribute('data-ext') + '-poster.webp';
 
     function show(i) {
       icons[index].style.removeProperty('--p');
       index = i;
       var slug = icons[i].getAttribute('data-ext');
       var name = icons[i].querySelector('img').alt;
-      video.poster = './assets/install/' + slug + '-poster.webp';
-      video.src = './assets/install/' + slug + '.mp4';
-      video.setAttribute('aria-label', 'Screen recording in Safari: Add to Safari is clicked on the ' + name +
-        ' listing in the Chrome Web Store, and Viaduct builds, signs and installs it.');
+      video.poster = dir + slug + '-poster.webp';
+      video.src = dir + slug + '.mp4';
+      video.setAttribute('aria-label', 'Screen recording in ' + where + ': Add to ' + where + ' is clicked on the ' + name +
+        ' listing in the Chrome Web Store, and Viaduct ' + did);
       for (var k = 0; k < icons.length; k++) icons[k].setAttribute('aria-pressed', String(k === i));
       // Where the row scrolls (phones), bring the lit icon to its middle
       // without moving the page.
@@ -274,9 +323,12 @@
     if (window.ResizeObserver) new ResizeObserver(resize).observe(cv);
     else addEventListener('resize', resize);
 
+    // After a switch from the headline the clock carries on from the page
+    // that was left, so the beams don't jump back to where they started.
+    var t0 = parseFloat(document.documentElement.getAttribute('data-swapped')) || 0;
     var raf = 0, running = false;
     function frame(t) {
-      gl.uniform1f(uTime, t * 0.001);
+      gl.uniform1f(uTime, t0 + t * 0.001);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       raf = requestAnimationFrame(frame);
     }
